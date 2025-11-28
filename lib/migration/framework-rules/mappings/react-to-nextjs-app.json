@@ -1,0 +1,184 @@
+{
+  "id": "react-to-nextjs-app-mappings",
+  "sourceFramework": "react",
+  "targetFramework": "nextjs",
+  "targetRouter": "app",
+  "imports": {
+    "react-router-dom": "next/navigation",
+    "react-router": "next/navigation",
+    "Link": "next/link",
+    "useHistory": "useRouter",
+    "useLocation": "usePathname, useSearchParams",
+    "useParams": "useParams (from next/navigation)",
+    "useRouteMatch": "usePathname",
+    "Redirect": "redirect (from next/navigation)",
+    "Route": "",
+    "Switch": "",
+    "BrowserRouter": "",
+    "HashRouter": "",
+    "import React from 'react'": ""
+  },
+  "routing": {
+    "<Route path=\"/\" exact component={Home} />": "app/page.tsx",
+    "<Route path=\"/about\" component={About} />": "app/about/page.tsx",
+    "<Route path=\"/users/:id\" component={User} />": "app/users/[id]/page.tsx",
+    "<Route path=\"/posts/:category/:slug\" component={Post} />": "app/posts/[category]/[slug]/page.tsx",
+    "<Link to=\"/about\">": "<Link href=\"/about\">",
+    "<Link to={`/users/${id}`}>": "<Link href={`/users/${id}`}>",
+    "history.push('/path')": "router.push('/path')",
+    "history.replace('/path')": "router.replace('/path')",
+    "history.goBack()": "router.back()",
+    "<Redirect to=\"/login\" />": "redirect('/login')"
+  },
+  "components": {
+    "className": "className",
+    "style": "style",
+    "onClick": "onClick (requires 'use client')",
+    "onChange": "onChange (requires 'use client')",
+    "ref": "ref (requires 'use client')",
+    "useState": "useState (requires 'use client')",
+    "useEffect": "useEffect (requires 'use client')",
+    "useContext": "useContext (requires 'use client')"
+  },
+  "styling": {
+    "import './App.css'": "import './App.module.css' (or global.css in app/)",
+    "import styles from './Component.css'": "import styles from './Component.module.css'",
+    ".css": ".module.css",
+    "className=\"container\"": "className={styles.container}"
+  },
+  "stateManagement": {
+    "useSelector": "useSelector (requires 'use client')",
+    "useDispatch": "useDispatch (requires 'use client')",
+    "Provider": "Provider (Client Component wrapper)",
+    "Context.Provider": "Context.Provider (Client Component)",
+    "createStore": "Consider Server State or React Query"
+  },
+  "buildSystem": {
+    "webpack.config.js": "next.config.js",
+    ".babelrc": "next.config.js (or remove for SWC)",
+    "public/index.html": "app/layout.tsx",
+    "src/index.js": "app/layout.tsx"
+  },
+  "lifecycleMappings": {
+    "componentDidMount": "useEffect(() => { /* code */ }, []) with 'use client'",
+    "componentWillUnmount": "useEffect(() => { return () => { /* cleanup */ } }, []) with 'use client'",
+    "componentDidUpdate": "useEffect(() => { /* code */ }, [dependencies]) with 'use client'",
+    "componentDidCatch": "error.tsx boundary",
+    "getDerivedStateFromProps": "useMemo or useEffect with 'use client'",
+    "shouldComponentUpdate": "React.memo with 'use client'",
+    "getSnapshotBeforeUpdate": "useLayoutEffect with 'use client'"
+  },
+  "dataFetching": {
+    "useEffect + fetch": "async Server Component with fetch",
+    "axios.get": "async Server Component with fetch",
+    "fetch in component": "async Server Component or 'use client' with SWR/React Query",
+    "getServerSideProps": "async Server Component",
+    "getStaticProps": "async Server Component with fetch caching"
+  },
+  "apiMappings": {
+    "fetch": "fetch (with Next.js caching)",
+    "axios": "fetch (recommended) or axios",
+    "XMLHttpRequest": "fetch"
+  },
+  "serverComponents": {
+    "defaultBehavior": "All components are Server Components by default",
+    "clientDirective": "'use client' at top of file for interactivity",
+    "asyncComponents": "Server Components can be async",
+    "dataFetching": "Direct fetch in Server Components",
+    "streaming": "Suspense boundaries for streaming"
+  },
+  "specialFiles": {
+    "layout.tsx": "Shared layout for route segment",
+    "page.tsx": "Route page component",
+    "loading.tsx": "Loading UI with Suspense",
+    "error.tsx": "Error boundary",
+    "not-found.tsx": "404 page",
+    "template.tsx": "Re-rendered layout",
+    "route.ts": "API route handler"
+  },
+  "mustPreserve": [
+    "Component logic and behavior",
+    "Business logic",
+    "Data transformations",
+    "Validation logic",
+    "Error handling",
+    "User interactions"
+  ],
+  "mustTransform": [
+    "React Router imports to next/navigation",
+    "Routing configuration to app directory",
+    "Link components",
+    "Navigation methods",
+    "CSS imports for CSS Modules",
+    "File structure to app directory",
+    "Add 'use client' to interactive components"
+  ],
+  "mustRemove": [
+    "react-router-dom dependency",
+    "react-router dependency",
+    "BrowserRouter wrapper",
+    "Route and Switch components",
+    "Redirect components",
+    "Custom routing configuration",
+    "import React from 'react' (not needed)"
+  ],
+  "mustRefactor": [
+    "Client-side data fetching to Server Components",
+    "Global CSS imports to app/layout.tsx",
+    "HTML template to app/layout.tsx",
+    "Environment variables to .env.local",
+    "Split components into Server and Client",
+    "Move interactive logic to Client Components",
+    "Use Server Actions for mutations"
+  ],
+  "breakingChanges": [
+    {
+      "id": "server-components-default",
+      "description": "All components are Server Components by default",
+      "affectedAPIs": ["useState", "useEffect", "useContext", "event handlers"],
+      "migrationPath": "Add 'use client' directive to interactive components",
+      "autoFixable": true
+    },
+    {
+      "id": "async-components",
+      "description": "Server Components can be async, Client Components cannot",
+      "affectedAPIs": ["async function Component()"],
+      "migrationPath": "Keep async in Server Components, use useEffect in Client Components",
+      "autoFixable": false
+    },
+    {
+      "id": "metadata-api",
+      "description": "next/head replaced by metadata export",
+      "affectedAPIs": ["Head component"],
+      "migrationPath": "Export metadata object from page.tsx",
+      "autoFixable": true
+    },
+    {
+      "id": "router-api-change",
+      "description": "useRouter from next/router replaced by next/navigation",
+      "affectedAPIs": ["useRouter", "usePathname", "useSearchParams"],
+      "migrationPath": "Import from next/navigation and update usage",
+      "autoFixable": true
+    }
+  ],
+  "deprecations": [
+    {
+      "id": "next-head",
+      "deprecated": "next/head",
+      "replacement": "metadata export",
+      "version": "13.0.0"
+    },
+    {
+      "id": "next-router",
+      "deprecated": "next/router (in app directory)",
+      "replacement": "next/navigation",
+      "version": "13.0.0"
+    },
+    {
+      "id": "pages-directory",
+      "deprecated": "pages directory",
+      "replacement": "app directory",
+      "version": "13.0.0"
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "id": "react-to-nextjs-pages",
+  "sourceFramework": "react",
+  "sourceVersionRange": ">=16.8.0",
+  "targetFramework": "nextjs",
+  "targetVersionRange": ">=12.0.0",
+  "difficulty": "medium",
+  "estimatedTime": "4-8 hours",
+  "automationLevel": "partial",
+  "description": "Migrate React application to Next.js using Pages Router",
+  "prerequisites": [
+    "React 16.8+ with hooks",
+    "React Router for routing",
+    "Understanding of SSR concepts"
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "title": "Setup Next.js project structure",
+      "description": "Initialize Next.js and configure pages directory",
+      "automated": true,
+      "estimatedTime": "15 minutes",
+      "commands": [
+        "npx create-next-app@latest --typescript --use-npm"
+      ]
+    },
+    {
+      "order": 2,
+      "title": "Convert routing to file-based",
+      "description": "Transform React Router routes to Next.js pages",
+      "automated": true,
+      "estimatedTime": "1-2 hours"
+    },
+    {
+      "order": 3,
+      "title": "Migrate components",
+      "description": "Move and adapt React components to Next.js",
+      "automated": true,
+      "estimatedTime": "2-3 hours"
+    },
+    {
+      "order": 4,
+      "title": "Update imports and dependencies",
+      "description": "Replace React Router with Next.js navigation",
+      "automated": true,
+      "estimatedTime": "30 minutes"
+    },
+    {
+      "order": 5,
+      "title": "Configure data fetching",
+      "description": "Implement getServerSideProps or getStaticProps",
+      "automated": false,
+      "estimatedTime": "1-2 hours",
+      "manualSteps": [
+        "Identify client-side data fetching",
+        "Choose appropriate data fetching method",
+        "Implement server-side data fetching"
+      ]
+    },
+    {
+      "order": 6,
+      "title": "Test and validate",
+      "description": "Run tests and verify functionality",
+      "automated": false,
+      "estimatedTime": "1 hour",
+      "manualSteps": [
+        "Run development server",
+        "Test all routes",
+        "Verify data fetching",
+        "Check for console errors"
+      ]
+    }
+  ],
+  "commonIssues": [
+    {
+      "id": "react-router-link",
+      "title": "React Router Link not working",
+      "description": "Link component from react-router-dom needs to be replaced",
+      "severity": "error",
+      "solution": "Replace with next/link: import Link from 'next/link'",
+      "affectedVersions": ["*"]
+    },
+    {
+      "id": "client-side-routing",
+      "title": "Client-side routing patterns",
+      "description": "useHistory, useLocation hooks don't exist in Next.js",
+      "severity": "error",
+      "solution": "Use next/router: import { useRouter } from 'next/router'",
+      "affectedVersions": ["*"]
+    },
+    {
+      "id": "css-imports",
+      "title": "Global CSS imports",
+      "description": "CSS imports must be in _app.tsx",
+      "severity": "warning",
+      "solution": "Move global CSS imports to pages/_app.tsx",
+      "affectedVersions": ["*"]
+    }
+  ]
+}

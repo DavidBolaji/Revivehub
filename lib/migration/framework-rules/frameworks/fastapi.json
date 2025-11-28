@@ -1,0 +1,60 @@
+{
+  "id": "fastapi",
+  "name": "fastapi",
+  "displayName": "FastAPI",
+  "language": "python",
+  "category": "backend",
+  "description": "Modern, fast web framework for building APIs with Python 3.8+",
+  "officialWebsite": "https://fastapi.tiangolo.com",
+  "versions": [
+    {
+      "version": "0.104.0",
+      "releaseDate": "2023-10-30",
+      "status": "stable",
+      "breakingChanges": [],
+      "deprecations": [],
+      "newFeatures": [
+        {
+          "id": "fastapi-0104-pydantic-v2",
+          "name": "Pydantic V2 Support",
+          "description": "Full support for Pydantic V2 with improved performance",
+          "examples": [
+            "from pydantic import BaseModel, Field"
+          ]
+        }
+      ],
+      "migrationGuides": [
+        "https://fastapi.tiangolo.com/release-notes/"
+      ],
+      "configuration": {
+        "fileStructure": {
+          "routes": "app/routers",
+          "models": "app/models",
+          "schemas": "app/schemas",
+          "dependencies": "app/dependencies"
+        },
+        "componentConventions": {
+          "fileExtension": ".py",
+          "namingConvention": "camelCase",
+          "exportStyle": "named"
+        },
+        "syntaxMappings": {},
+        "apiMappings": {},
+        "lifecycleMappings": {},
+        "buildTool": "pip",
+        "packageManager": ["pip", "poetry", "pipenv"]
+      }
+    }
+  ],
+  "compatibleTargets": [],
+  "defaultMappings": {
+    "imports": {
+      "fastapi": "fastapi"
+    },
+    "routing": {},
+    "components": {},
+    "styling": {},
+    "stateManagement": {},
+    "buildSystem": {}
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "enabled": true,
+  "name": "ReviveHub Progress Tracker",
+  "description": "Tracks completed tasks by appending timestamp, feature completed, Kiro technique used, code files generated, and key learnings to KIRO_USAGE.md",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "PROGRESS.md",
+      "app/**/*",
+      "components/**/*",
+      "hooks/**/*",
+      "services/**/*",
+      "lib/**/*",
+      "types/**/*",
+      "patterns/**/*",
+      "transformers/**/*"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A task has been completed in the ReviveHub project. Please analyze the recent changes and append to KIRO_USAGE.md with the following information:\n- Timestamp (current date and time)\n- Feature completed (what was built or modified)\n- Kiro technique used (which AI-assisted development technique was applied)\n- Code files generated or modified (list the relevant files)\n- Key learnings (insights gained from this task)\n\nFormat the entry as a clear, structured log entry that maintains consistency with existing entries in KIRO_USAGE.md."
+  }
+}

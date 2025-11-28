@@ -1,0 +1,120 @@
+{
+  "id": "flask-to-fastapi",
+  "sourceFramework": "flask",
+  "sourceVersionRange": ">=2.0.0",
+  "targetFramework": "fastapi",
+  "targetVersionRange": ">=0.100.0",
+  "difficulty": "medium",
+  "estimatedTime": "6-12 hours",
+  "automationLevel": "partial",
+  "description": "Migrate Flask application to FastAPI with async support and automatic API documentation",
+  "prerequisites": [
+    "Python 3.8+",
+    "Understanding of async/await",
+    "Familiarity with type hints"
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "title": "Setup FastAPI project",
+      "description": "Initialize FastAPI application structure",
+      "automated": true,
+      "estimatedTime": "30 minutes",
+      "commands": [
+        "pip install fastapi uvicorn[standard] pydantic"
+      ]
+    },
+    {
+      "order": 2,
+      "title": "Convert route decorators",
+      "description": "Transform Flask @app.route to FastAPI path operations",
+      "automated": true,
+      "estimatedTime": "2-3 hours"
+    },
+    {
+      "order": 3,
+      "title": "Add type hints and Pydantic models",
+      "description": "Create Pydantic models for request/response validation",
+      "automated": true,
+      "estimatedTime": "2-3 hours"
+    },
+    {
+      "order": 4,
+      "title": "Convert request/response handling",
+      "description": "Update request.form, request.json to FastAPI patterns",
+      "automated": true,
+      "estimatedTime": "1-2 hours"
+    },
+    {
+      "order": 5,
+      "title": "Migrate middleware and dependencies",
+      "description": "Convert Flask before_request to FastAPI dependencies",
+      "automated": false,
+      "estimatedTime": "1-2 hours",
+      "manualSteps": [
+        "Identify middleware functions",
+        "Create FastAPI dependency functions",
+        "Update route dependencies"
+      ]
+    },
+    {
+      "order": 6,
+      "title": "Convert to async where beneficial",
+      "description": "Identify I/O operations and convert to async",
+      "automated": false,
+      "estimatedTime": "2-3 hours",
+      "manualSteps": [
+        "Identify database operations",
+        "Convert to async database client",
+        "Update route handlers to async"
+      ]
+    },
+    {
+      "order": 7,
+      "title": "Test and validate",
+      "description": "Test all endpoints and verify functionality",
+      "automated": false,
+      "estimatedTime": "1-2 hours",
+      "manualSteps": [
+        "Run uvicorn server",
+        "Test all endpoints",
+        "Check automatic API docs at /docs",
+        "Verify request validation"
+      ]
+    }
+  ],
+  "commonIssues": [
+    {
+      "id": "flask-request-object",
+      "title": "Flask request object not available",
+      "description": "Flask's global request object doesn't exist in FastAPI",
+      "severity": "error",
+      "solution": "Use FastAPI's dependency injection: def endpoint(request: Request)",
+      "affectedVersions": ["*"]
+    },
+    {
+      "id": "flask-jsonify",
+      "title": "jsonify not needed",
+      "description": "FastAPI automatically serializes return values",
+      "severity": "info",
+      "solution": "Remove jsonify() calls and return dict/Pydantic model directly",
+      "affectedVersions": ["*"]
+    },
+    {
+      "id": "flask-blueprints",
+      "title": "Flask Blueprints conversion",
+      "description": "Blueprints need to be converted to APIRouter",
+      "severity": "warning",
+      "solution": "Use FastAPI's APIRouter: router = APIRouter(prefix='/api')",
+      "affectedVersions": ["*"]
+    },
+    {
+      "id": "sync-async-mixing",
+      "title": "Mixing sync and async code",
+      "description": "Cannot call async functions from sync routes",
+      "severity": "error",
+      "solution": "Make route handler async: async def endpoint()",
+      "affectedVersions": ["*"]
+    }
+  ]
+}

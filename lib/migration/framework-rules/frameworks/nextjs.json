@@ -1,0 +1,200 @@
+{
+  "id": "nextjs",
+  "name": "nextjs",
+  "displayName": "Next.js",
+  "language": "javascript",
+  "category": "fullstack",
+  "description": "The React Framework for Production",
+  "officialWebsite": "https://nextjs.org",
+  "versions": [
+    {
+      "version": "14.0.0",
+      "releaseDate": "2023-10-26",
+      "status": "stable",
+      "breakingChanges": [
+        {
+          "id": "nextjs-14-turbopack-stable",
+          "description": "Turbopack is now stable for local development",
+          "affectedAPIs": ["next dev"],
+          "migrationPath": "Update next.config.js to use Turbopack",
+          "autoFixable": true
+        }
+      ],
+      "deprecations": [
+        {
+          "id": "nextjs-14-legacy-image",
+          "deprecated": "next/legacy/image",
+          "replacement": "next/image",
+          "version": "13.0.0",
+          "removalVersion": "15.0.0"
+        }
+      ],
+      "newFeatures": [
+        {
+          "id": "nextjs-14-server-actions",
+          "name": "Server Actions (Stable)",
+          "description": "Server-side mutations with progressive enhancement",
+          "examples": [
+            "'use server'",
+            "async function action() { 'use server'; ... }"
+          ]
+        },
+        {
+          "id": "nextjs-14-partial-prerendering",
+          "name": "Partial Prerendering",
+          "description": "Combine static and dynamic rendering in the same route",
+          "examples": [
+            "export const experimental_ppr = true"
+          ]
+        }
+      ],
+      "migrationGuides": [
+        "https://nextjs.org/docs/app/building-your-application/upgrading/version-14"
+      ],
+      "configuration": {
+        "fileStructure": {
+          "pages": "app",
+          "components": "components",
+          "layouts": "app",
+          "api": "app/api",
+          "public": "public"
+        },
+        "componentConventions": {
+          "fileExtension": ".tsx",
+          "namingConvention": "PascalCase",
+          "exportStyle": "default",
+          "serverComponents": true
+        },
+        "syntaxMappings": {
+          "import React from 'react'": ""
+        },
+        "apiMappings": {
+          "fetch": "fetch (native with caching)",
+          "axios": "fetch or server actions"
+        },
+        "lifecycleMappings": {
+          "componentDidMount": "useEffect(() => {}, [])",
+          "componentWillUnmount": "useEffect(() => { return () => {} }, [])",
+          "componentDidUpdate": "useEffect(() => {}, [deps])"
+        },
+        "buildTool": "turbopack",
+        "packageManager": ["npm", "yarn", "pnpm"]
+      }
+    },
+    {
+      "version": "13.0.0",
+      "releaseDate": "2022-10-25",
+      "status": "stable",
+      "breakingChanges": [
+        {
+          "id": "nextjs-13-app-router",
+          "description": "New App Router with React Server Components",
+          "affectedAPIs": ["pages directory", "getServerSideProps", "getStaticProps"],
+          "migrationPath": "Migrate to app directory with server components",
+          "autoFixable": false
+        }
+      ],
+      "deprecations": [
+        {
+          "id": "nextjs-13-next-image-legacy",
+          "deprecated": "next/legacy/image",
+          "replacement": "next/image",
+          "version": "13.0.0"
+        }
+      ],
+      "newFeatures": [
+        {
+          "id": "nextjs-13-app-directory",
+          "name": "App Directory (Beta)",
+          "description": "New routing system with layouts and server components",
+          "examples": [
+            "app/page.tsx",
+            "app/layout.tsx",
+            "app/loading.tsx"
+          ]
+        }
+      ],
+      "migrationGuides": [
+        "https://nextjs.org/docs/app/building-your-application/upgrading/version-13"
+      ],
+      "configuration": {
+        "fileStructure": {
+          "pages": "pages",
+          "components": "components",
+          "api": "pages/api",
+          "public": "public"
+        },
+        "componentConventions": {
+          "fileExtension": ".tsx",
+          "namingConvention": "PascalCase",
+          "exportStyle": "default"
+        },
+        "syntaxMappings": {},
+        "apiMappings": {},
+        "lifecycleMappings": {},
+        "buildTool": "webpack",
+        "packageManager": ["npm", "yarn", "pnpm"]
+      }
+    },
+    {
+      "version": "12.0.0",
+      "releaseDate": "2021-10-26",
+      "status": "deprecated",
+      "breakingChanges": [
+        {
+          "id": "nextjs-12-swc-compiler",
+          "description": "SWC compiler replaces Babel by default",
+          "affectedAPIs": [".babelrc"],
+          "migrationPath": "Remove .babelrc or configure SWC",
+          "autoFixable": true
+        }
+      ],
+      "deprecations": [],
+      "newFeatures": [
+        {
+          "id": "nextjs-12-middleware",
+          "name": "Middleware",
+          "description": "Run code before a request is completed",
+          "examples": [
+            "middleware.ts",
+            "export function middleware(request) { ... }"
+          ]
+        }
+      ],
+      "migrationGuides": [
+        "https://nextjs.org/docs/app/building-your-application/upgrading/version-12"
+      ],
+      "configuration": {
+        "fileStructure": {
+          "pages": "pages",
+          "components": "components",
+          "api": "pages/api",
+          "public": "public"
+        },
+        "componentConventions": {
+          "fileExtension": ".tsx",
+          "namingConvention": "PascalCase",
+          "exportStyle": "default"
+        },
+        "syntaxMappings": {},
+        "apiMappings": {},
+        "lifecycleMappings": {},
+        "buildTool": "webpack",
+        "packageManager": ["npm", "yarn", "pnpm"]
+      }
+    }
+  ],
+  "compatibleTargets": [],
+  "defaultMappings": {
+    "imports": {
+      "next/link": "next/link",
+      "next/image": "next/image",
+      "next/router": "next/navigation"
+    },
+    "routing": {},
+    "components": {},
+    "styling": {},
+    "stateManagement": {},
+    "buildSystem": {}
+  }
+}

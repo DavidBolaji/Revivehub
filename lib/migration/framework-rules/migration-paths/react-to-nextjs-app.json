@@ -1,0 +1,123 @@
+{
+  "id": "react-to-nextjs-app",
+  "sourceFramework": "react",
+  "sourceVersionRange": ">=18.0.0",
+  "targetFramework": "nextjs",
+  "targetVersionRange": ">=13.4.0",
+  "difficulty": "hard",
+  "estimatedTime": "8-16 hours",
+  "automationLevel": "partial",
+  "description": "Migrate React application to Next.js using App Router with Server Components",
+  "prerequisites": [
+    "React 18+ with concurrent features",
+    "Understanding of Server Components",
+    "Familiarity with async/await patterns"
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "title": "Setup Next.js with App Router",
+      "description": "Initialize Next.js 13+ with app directory",
+      "automated": true,
+      "estimatedTime": "15 minutes",
+      "commands": [
+        "npx create-next-app@latest --typescript --app --use-npm"
+      ]
+    },
+    {
+      "order": 2,
+      "title": "Convert routing to app directory",
+      "description": "Transform React Router routes to app directory structure",
+      "automated": true,
+      "estimatedTime": "2-3 hours"
+    },
+    {
+      "order": 3,
+      "title": "Identify client vs server components",
+      "description": "Analyze components for client-side interactivity",
+      "automated": true,
+      "estimatedTime": "1-2 hours"
+    },
+    {
+      "order": 4,
+      "title": "Migrate to Server Components",
+      "description": "Convert components to Server Components where possible",
+      "automated": true,
+      "estimatedTime": "3-4 hours"
+    },
+    {
+      "order": 5,
+      "title": "Add 'use client' directives",
+      "description": "Mark interactive components with 'use client'",
+      "automated": true,
+      "estimatedTime": "1 hour"
+    },
+    {
+      "order": 6,
+      "title": "Implement layouts and loading states",
+      "description": "Create layout.tsx and loading.tsx files",
+      "automated": true,
+      "estimatedTime": "1-2 hours"
+    },
+    {
+      "order": 7,
+      "title": "Migrate data fetching to server",
+      "description": "Use async Server Components for data fetching",
+      "automated": false,
+      "estimatedTime": "2-3 hours",
+      "manualSteps": [
+        "Identify data fetching logic",
+        "Move to Server Components",
+        "Use fetch with caching",
+        "Implement error boundaries"
+      ]
+    },
+    {
+      "order": 8,
+      "title": "Test and validate",
+      "description": "Comprehensive testing of server and client components",
+      "automated": false,
+      "estimatedTime": "2 hours",
+      "manualSteps": [
+        "Test server component rendering",
+        "Verify client interactivity",
+        "Check data fetching and caching",
+        "Test loading and error states"
+      ]
+    }
+  ],
+  "commonIssues": [
+    {
+      "id": "use-client-missing",
+      "title": "Hooks in Server Components",
+      "description": "useState, useEffect, and other hooks require 'use client'",
+      "severity": "error",
+      "solution": "Add 'use client' directive at the top of the file",
+      "affectedVersions": [">=13.0.0"]
+    },
+    {
+      "id": "async-component-client",
+      "title": "Async Client Components",
+      "description": "Client Components cannot be async",
+      "severity": "error",
+      "solution": "Move async logic to Server Components or use useEffect",
+      "affectedVersions": [">=13.0.0"]
+    },
+    {
+      "id": "context-server-client",
+      "title": "Context across Server/Client boundary",
+      "description": "Context providers must be Client Components",
+      "severity": "warning",
+      "solution": "Create a separate Client Component for context provider",
+      "affectedVersions": [">=13.0.0"]
+    },
+    {
+      "id": "metadata-export",
+      "title": "Head component deprecated",
+      "description": "next/head is replaced by metadata export",
+      "severity": "warning",
+      "solution": "Export metadata object from page.tsx",
+      "affectedVersions": [">=13.0.0"]
+    }
+  ]
+}

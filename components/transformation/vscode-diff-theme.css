@@ -1,0 +1,213 @@
+/* VS Code Diff Viewer Theme */
+
+/* Override Prism theme for VS Code-like colors */
+.vscode-diff-viewer {
+  /* Light theme colors */
+  --vscode-editor-bg: #ffffff;
+  --vscode-editor-fg: #24292f;
+  --vscode-line-number: #57606a;
+  --vscode-line-number-active: #24292f;
+  --vscode-selection-bg: #0969da1a;
+  --vscode-added-bg: #e6ffec;
+  --vscode-added-border: #2ea043;
+  --vscode-added-fg: #116329;
+  --vscode-removed-bg: #ffebe9;
+  --vscode-removed-border: #cf222e;
+  --vscode-removed-fg: #82071e;
+  --vscode-modified-bg: #fff8e1;
+  --vscode-modified-border: #fb8500;
+  --vscode-gutter-bg: #f6f8fa;
+  --vscode-gutter-border: #d0d7de;
+}
+
+/* Dark theme colors */
+.dark .vscode-diff-viewer {
+  --vscode-editor-bg: #0d1117;
+  --vscode-editor-fg: #e6edf3;
+  --vscode-line-number: #6e7681;
+  --vscode-line-number-active: #e6edf3;
+  --vscode-selection-bg: #388bfd26;
+  --vscode-added-bg: #1e4620;
+  --vscode-added-border: #2ea043;
+  --vscode-added-fg: #7ee787;
+  --vscode-removed-bg: #4b1818;
+  --vscode-removed-border: #cf222e;
+  --vscode-removed-fg: #ff7b72;
+  --vscode-modified-bg: #3d3d1f;
+  --vscode-modified-border: #fb8500;
+  --vscode-gutter-bg: #161b22;
+  --vscode-gutter-border: #30363d;
+}
+
+/* Enhanced syntax highlighting for code */
+.vscode-diff-viewer .token.comment,
+.vscode-diff-viewer .token.prolog,
+.vscode-diff-viewer .token.doctype,
+.vscode-diff-viewer .token.cdata {
+  color: #6a737d;
+}
+
+.dark .vscode-diff-viewer .token.comment,
+.dark .vscode-diff-viewer .token.prolog,
+.dark .vscode-diff-viewer .token.doctype,
+.dark .vscode-diff-viewer .token.cdata {
+  color: #8b949e;
+}
+
+.vscode-diff-viewer .token.punctuation {
+  color: #24292f;
+}
+
+.dark .vscode-diff-viewer .token.punctuation {
+  color: #e6edf3;
+}
+
+.vscode-diff-viewer .token.property,
+.vscode-diff-viewer .token.tag,
+.vscode-diff-viewer .token.boolean,
+.vscode-diff-viewer .token.number,
+.vscode-diff-viewer .token.constant,
+.vscode-diff-viewer .token.symbol,
+.vscode-diff-viewer .token.deleted {
+  color: #0550ae;
+}
+
+.dark .vscode-diff-viewer .token.property,
+.dark .vscode-diff-viewer .token.tag,
+.dark .vscode-diff-viewer .token.boolean,
+.dark .vscode-diff-viewer .token.number,
+.dark .vscode-diff-viewer .token.constant,
+.dark .vscode-diff-viewer .token.symbol,
+.dark .vscode-diff-viewer .token.deleted {
+  color: #79c0ff;
+}
+
+.vscode-diff-viewer .token.selector,
+.vscode-diff-viewer .token.attr-name,
+.vscode-diff-viewer .token.string,
+.vscode-diff-viewer .token.char,
+.vscode-diff-viewer .token.builtin,
+.vscode-diff-viewer .token.inserted {
+  color: #0a3069;
+}
+
+.dark .vscode-diff-viewer .token.selector,
+.dark .vscode-diff-viewer .token.attr-name,
+.dark .vscode-diff-viewer .token.string,
+.dark .vscode-diff-viewer .token.char,
+.dark .vscode-diff-viewer .token.builtin,
+.dark .vscode-diff-viewer .token.inserted {
+  color: #a5d6ff;
+}
+
+.vscode-diff-viewer .token.operator,
+.vscode-diff-viewer .token.entity,
+.vscode-diff-viewer .token.url,
+.vscode-diff-viewer .language-css .token.string,
+.vscode-diff-viewer .style .token.string {
+  color: #cf222e;
+}
+
+.dark .vscode-diff-viewer .token.operator,
+.dark .vscode-diff-viewer .token.entity,
+.dark .vscode-diff-viewer .token.url,
+.dark .vscode-diff-viewer .language-css .token.string,
+.dark .vscode-diff-viewer .style .token.string {
+  color: #ff7b72;
+}
+
+.vscode-diff-viewer .token.atrule,
+.vscode-diff-viewer .token.attr-value,
+.vscode-diff-viewer .token.keyword {
+  color: #cf222e;
+}
+
+.dark .vscode-diff-viewer .token.atrule,
+.dark .vscode-diff-viewer .token.attr-value,
+.dark .vscode-diff-viewer .token.keyword {
+  color: #ff7b72;
+}
+
+.vscode-diff-viewer .token.function,
+.vscode-diff-viewer .token.class-name {
+  color: #8250df;
+}
+
+.dark .vscode-diff-viewer .token.function,
+.dark .vscode-diff-viewer .token.class-name {
+  color: #d2a8ff;
+}
+
+.vscode-diff-viewer .token.regex,
+.vscode-diff-viewer .token.important,
+.vscode-diff-viewer .token.variable {
+  color: #953800;
+}
+
+.dark .vscode-diff-viewer .token.regex,
+.dark .vscode-diff-viewer .token.important,
+.dark .vscode-diff-viewer .token.variable {
+  color: #ffa657;
+}
+
+/* Smooth scrollbar styling */
+.vscode-diff-viewer ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.vscode-diff-viewer ::-webkit-scrollbar-track {
+  background: var(--vscode-gutter-bg);
+}
+
+.vscode-diff-viewer ::-webkit-scrollbar-thumb {
+  background: #d0d7de;
+  border-radius: 5px;
+}
+
+.dark .vscode-diff-viewer ::-webkit-scrollbar-thumb {
+  background: #30363d;
+}
+
+.vscode-diff-viewer ::-webkit-scrollbar-thumb:hover {
+  background: #b1bac4;
+}
+
+.dark .vscode-diff-viewer ::-webkit-scrollbar-thumb:hover {
+  background: #484f58;
+}
+
+/* Line highlight on hover */
+.vscode-diff-viewer .diff-line:hover {
+  background-color: rgba(9, 105, 218, 0.05);
+}
+
+.dark .vscode-diff-viewer .diff-line:hover {
+  background-color: rgba(56, 139, 253, 0.1);
+}
+
+/* Current change highlight */
+.vscode-diff-viewer .diff-line-current {
+  box-shadow: inset 0 0 0 1px #0969da;
+}
+
+.dark .vscode-diff-viewer .diff-line-current {
+  box-shadow: inset 0 0 0 1px #388bfd;
+}
+
+/* Inline diff character-level changes */
+.vscode-diff-viewer .diff-char-added {
+  background-color: #acf2bd;
+}
+
+.dark .vscode-diff-viewer .diff-char-added {
+  background-color: #2ea04366;
+}
+
+.vscode-diff-viewer .diff-char-removed {
+  background-color: #ffd7d5;
+}
+
+.dark .vscode-diff-viewer .diff-char-removed {
+  background-color: #cf222e66;
+}

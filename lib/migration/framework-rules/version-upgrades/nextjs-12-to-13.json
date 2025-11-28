@@ -1,0 +1,185 @@
+{
+  "id": "nextjs-12-to-13",
+  "framework": "nextjs",
+  "sourceVersion": "12.x",
+  "targetVersion": "13.x",
+  "releaseDate": "2022-10-25",
+  "difficulty": "medium",
+  "estimatedTime": "2-4 hours",
+  "description": "Upgrade Next.js from version 12 to 13 with optional App Router migration",
+  "breakingChanges": [
+    {
+      "id": "nextjs-13-swc-required",
+      "description": "SWC compiler is now required, Babel support deprecated",
+      "affectedAPIs": [".babelrc", "babel.config.js"],
+      "migrationPath": "Remove Babel config or migrate to SWC",
+      "autoFixable": true,
+      "severity": "warning",
+      "detection": {
+        "filePatterns": [".babelrc", "babel.config.js", ".babelrc.js"],
+        "codePatterns": []
+      },
+      "autoFix": {
+        "action": "remove-file",
+        "files": [".babelrc", "babel.config.js", ".babelrc.js"],
+        "message": "Babel config removed. Next.js 13 uses SWC by default."
+      }
+    },
+    {
+      "id": "nextjs-13-image-component",
+      "description": "next/image has new required props and behavior",
+      "affectedAPIs": ["next/image"],
+      "migrationPath": "Update Image component usage or use next/legacy/image",
+      "autoFixable": true,
+      "severity": "error",
+      "detection": {
+        "filePatterns": ["**/*.tsx", "**/*.jsx"],
+        "codePatterns": [
+          "import.*Image.*from ['\"]next/image['\"]",
+          "<Image(?!.*alt=)"
+        ]
+      },
+      "autoFix": {
+        "action": "add-prop",
+        "component": "Image",
+        "prop": "alt",
+        "defaultValue": "\"\"",
+        "message": "Added required alt prop to Image component"
+      }
+    },
+    {
+      "id": "nextjs-13-link-no-anchor",
+      "description": "Link component no longer requires <a> child",
+      "affectedAPIs": ["next/link"],
+      "migrationPath": "Remove <a> tag from Link children",
+      "autoFixable": true,
+      "severity": "warning",
+      "detection": {
+        "filePatterns": ["**/*.tsx", "**/*.jsx"],
+        "codePatterns": [
+          "<Link[^>]*>\\s*<a[^>]*>"
+        ]
+      },
+      "autoFix": {
+        "action": "transform-jsx",
+        "pattern": "<Link><a>",
+        "replacement": "<Link>",
+        "message": "Removed unnecessary <a> tag from Link component"
+      }
+    },
+    {
+      "id": "nextjs-13-target-removed",
+      "description": "target option in next.config.js is removed",
+      "affectedAPIs": ["next.config.js"],
+      "migrationPath": "Remove target option from next.config.js",
+      "autoFixable": true,
+      "severity": "error",
+      "detection": {
+        "filePatterns": ["next.config.js", "next.config.mjs"],
+        "codePatterns": ["target:\\s*['\"]"]
+      },
+      "autoFix": {
+        "action": "remove-config-key",
+        "file": "next.config.js",
+        "key": "target",
+        "message": "Removed deprecated target option from next.config.js"
+      }
+    }
+  ],
+  "deprecations": [
+    {
+      "id": "nextjs-13-swc-minify",
+      "deprecated": "swcMinify: true",
+      "replacement": "Default behavior (SWC minification is default)",
+      "version": "13.0.0",
+      "removalVersion": "14.0.0",
+      "severity": "info",
+      "detection": {
+        "filePatterns": ["next.config.js", "next.config.mjs"],
+        "codePatterns": ["swcMinify:\\s*true"]
+      },
+      "autoFix": {
+        "action": "remove-config-key",
+        "file": "next.config.js",
+        "key": "swcMinify",
+        "message": "Removed swcMinify option (now default behavior)"
+      }
+    },
+    {
+      "id": "nextjs-13-legacy-image",
+      "deprecated": "next/image (old behavior)",
+      "replacement": "next/image (new) or next/legacy/image",
+      "version": "13.0.0",
+      "severity": "warning",
+      "detection": {
+        "filePatterns": ["**/*.tsx", "**/*.jsx"],
+        "codePatterns": ["import.*Image.*from ['\"]next/image['\"]"]
+      },
+      "manualSteps": [
+        "Review Image component usage",
+        "Add alt prop if missing",
+        "Consider using next/legacy/image for gradual migration"
+      ]
+    }
+  ],
+  "newFeatures": [
+    {
+      "id": "nextjs-13-app-directory",
+      "name": "App Directory (Beta)",
+      "description": "New routing system with layouts, server components, and streaming",
+      "optional": true,
+      "examples": [
+        "app/page.tsx",
+        "app/layout.tsx",
+        "app/loading.tsx",
+        "app/error.tsx"
+      ],
+      "migrationSteps": [
+        "Create app directory",
+        "Add app/layout.tsx root layout",
+        "Gradually migrate pages to app directory",
+        "Use Server Components by default"
+      ]
+    },
+    {
+      "id": "nextjs-13-turbopack",
+      "name": "Turbopack (Alpha)",
+      "description": "Rust-based bundler for faster development",
+      "optional": true,
+      "examples": [
+        "next dev --turbo"
+      ],
+      "migrationSteps": [
+        "Run 'next dev --turbo' to try Turbopack",
+        "Report issues to Next.js team"
+      ]
+    }
+  ],
+  "dependencyUpdates": {
+    "required": {
+      "next": "^13.0.0",
+      "react": "^18.2.0",
+      "react-dom": "^18.2.0"
+    },
+    "optional": {},
+    "remove": []
+  },
+  "configChanges": {
+    "next.config.js": {
+      "add": {
+        "experimental": {
+          "appDir": false
+        }
+      },
+      "remove": ["target", "swcMinify"],
+      "modify": {}
+    }
+  },
+  "migrationGuide": "https://nextjs.org/docs/app/building-your-application/upgrading/version-13",
+  "automationLevel": "high",
+  "manualReviewRequired": [
+    "Image component usage",
+    "Custom Babel plugins",
+    "App Directory migration decision"
+  ]
+}

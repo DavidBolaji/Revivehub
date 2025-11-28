@@ -1,0 +1,107 @@
+{
+  "id": "react-to-nextjs-pages-mappings",
+  "sourceFramework": "react",
+  "targetFramework": "nextjs",
+  "targetRouter": "pages",
+  "imports": {
+    "react-router-dom": "next/router",
+    "react-router": "next/router",
+    "Link": "next/link",
+    "useHistory": "useRouter",
+    "useLocation": "useRouter",
+    "useParams": "useRouter",
+    "useRouteMatch": "useRouter",
+    "Redirect": "next/router",
+    "Route": "",
+    "Switch": "",
+    "BrowserRouter": "",
+    "HashRouter": ""
+  },
+  "routing": {
+    "<Route path=\"/\" exact component={Home} />": "pages/index.tsx",
+    "<Route path=\"/about\" component={About} />": "pages/about.tsx",
+    "<Route path=\"/users/:id\" component={User} />": "pages/users/[id].tsx",
+    "<Route path=\"/posts/:category/:slug\" component={Post} />": "pages/posts/[category]/[slug].tsx",
+    "<Link to=\"/about\">": "<Link href=\"/about\">",
+    "<Link to={`/users/${id}`}>": "<Link href={`/users/${id}`}>",
+    "history.push('/path')": "router.push('/path')",
+    "history.replace('/path')": "router.replace('/path')",
+    "history.goBack()": "router.back()",
+    "<Redirect to=\"/login\" />": "router.push('/login')"
+  },
+  "components": {
+    "className": "className",
+    "style": "style",
+    "onClick": "onClick",
+    "onChange": "onChange",
+    "ref": "ref"
+  },
+  "styling": {
+    "import './App.css'": "import './App.module.css' (move to _app.tsx for global)",
+    "import styles from './Component.css'": "import styles from './Component.module.css'",
+    ".css": ".module.css",
+    "className=\"container\"": "className={styles.container}"
+  },
+  "stateManagement": {
+    "useSelector": "useSelector (Redux still works)",
+    "useDispatch": "useDispatch (Redux still works)",
+    "Provider": "Provider (wrap in _app.tsx)",
+    "createStore": "configureStore (Redux Toolkit recommended)"
+  },
+  "buildSystem": {
+    "webpack.config.js": "next.config.js",
+    ".babelrc": "next.config.js (or remove for SWC)",
+    "public/index.html": "pages/_document.tsx",
+    "src/index.js": "pages/_app.tsx"
+  },
+  "lifecycleMappings": {
+    "componentDidMount": "useEffect(() => { /* code */ }, [])",
+    "componentWillUnmount": "useEffect(() => { return () => { /* cleanup */ } }, [])",
+    "componentDidUpdate": "useEffect(() => { /* code */ }, [dependencies])",
+    "componentDidCatch": "Error Boundary component",
+    "getDerivedStateFromProps": "useMemo or useEffect",
+    "shouldComponentUpdate": "React.memo",
+    "getSnapshotBeforeUpdate": "useLayoutEffect"
+  },
+  "dataFetching": {
+    "useEffect + fetch": "getServerSideProps or getStaticProps",
+    "axios.get": "getServerSideProps with fetch",
+    "fetch in component": "getServerSideProps or SWR/React Query"
+  },
+  "apiMappings": {
+    "fetch": "fetch (native)",
+    "axios": "fetch or axios (still works)",
+    "XMLHttpRequest": "fetch"
+  },
+  "mustPreserve": [
+    "Component logic and behavior",
+    "State management patterns",
+    "Event handlers",
+    "Business logic",
+    "Data transformations",
+    "Validation logic",
+    "Error handling"
+  ],
+  "mustTransform": [
+    "React Router imports and components",
+    "Routing configuration",
+    "Link components",
+    "Navigation methods",
+    "CSS imports (for CSS Modules)",
+    "File structure to pages directory"
+  ],
+  "mustRemove": [
+    "react-router-dom dependency",
+    "react-router dependency",
+    "BrowserRouter wrapper",
+    "Route and Switch components",
+    "Redirect components",
+    "Custom routing configuration"
+  ],
+  "mustRefactor": [
+    "Client-side data fetching to getServerSideProps/getStaticProps",
+    "Global CSS imports to _app.tsx",
+    "HTML template to _document.tsx",
+    "Environment variables to next.config.js or .env.local"
+  ]
+}

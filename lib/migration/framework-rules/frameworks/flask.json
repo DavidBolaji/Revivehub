@@ -1,0 +1,79 @@
+{
+  "id": "flask",
+  "name": "flask",
+  "displayName": "Flask",
+  "language": "python",
+  "category": "backend",
+  "description": "A lightweight WSGI web application framework",
+  "officialWebsite": "https://flask.palletsprojects.com",
+  "versions": [
+    {
+      "version": "3.0.0",
+      "releaseDate": "2023-09-30",
+      "status": "stable",
+      "breakingChanges": [
+        {
+          "id": "flask-3-python-version",
+          "description": "Requires Python 3.8+",
+          "affectedAPIs": ["Python version"],
+          "migrationPath": "Upgrade to Python 3.8 or higher",
+          "autoFixable": false
+        }
+      ],
+      "deprecations": [],
+      "newFeatures": [
+        {
+          "id": "flask-3-async-views",
+          "name": "Native Async Support",
+          "description": "Built-in support for async views and middleware",
+          "examples": [
+            "@app.route('/async')\nasync def async_view():\n    return await fetch_data()"
+          ]
+        }
+      ],
+      "migrationGuides": [
+        "https://flask.palletsprojects.com/en/3.0.x/changes/"
+      ],
+      "configuration": {
+        "fileStructure": {
+          "routes": "routes",
+          "models": "models",
+          "templates": "templates",
+          "static": "static"
+        },
+        "componentConventions": {
+          "fileExtension": ".py",
+          "namingConvention": "camelCase",
+          "exportStyle": "named"
+        },
+        "syntaxMappings": {},
+        "apiMappings": {},
+        "lifecycleMappings": {},
+        "buildTool": "pip",
+        "packageManager": ["pip", "poetry", "pipenv"]
+      }
+    }
+  ],
+  "compatibleTargets": [
+    {
+      "framework": "fastapi",
+      "difficulty": "medium",
+      "estimatedTime": "6-12 hours",
+      "commonPatterns": [
+        "Route decorator conversion",
+        "Request/Response handling",
+        "Dependency injection"
+      ]
+    }
+  ],
+  "defaultMappings": {
+    "imports": {
+      "flask": "flask"
+    },
+    "routing": {},
+    "components": {},
+    "styling": {},
+    "stateManagement": {},
+    "buildSystem": {}
+  }
+}

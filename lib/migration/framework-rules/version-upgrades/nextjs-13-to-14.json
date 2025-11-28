@@ -1,0 +1,181 @@
+{
+  "id": "nextjs-13-to-14",
+  "framework": "nextjs",
+  "sourceVersion": "13.x",
+  "targetVersion": "14.x",
+  "releaseDate": "2023-10-26",
+  "difficulty": "easy",
+  "estimatedTime": "1-2 hours",
+  "description": "Upgrade Next.js from version 13 to 14 with stable features",
+  "breakingChanges": [
+    {
+      "id": "nextjs-14-minimum-versions",
+      "description": "Minimum Node.js version is 18.17",
+      "affectedAPIs": ["Node.js runtime"],
+      "migrationPath": "Upgrade Node.js to 18.17 or higher",
+      "autoFixable": false,
+      "severity": "error",
+      "detection": {
+        "filePatterns": [".nvmrc", "package.json"],
+        "codePatterns": ["\"node\":\\s*\"[^\"]*\""],
+        "runtimeCheck": "process.version"
+      },
+      "manualSteps": [
+        "Check Node.js version: node --version",
+        "Upgrade Node.js to 18.17 or higher",
+        "Update .nvmrc if present"
+      ]
+    },
+    {
+      "id": "nextjs-14-image-onload",
+      "description": "Image onLoad receives img element reference",
+      "affectedAPIs": ["next/image onLoad"],
+      "migrationPath": "Update onLoad handler to accept img element",
+      "autoFixable": false,
+      "severity": "warning",
+      "detection": {
+        "filePatterns": ["**/*.tsx", "**/*.jsx"],
+        "codePatterns": ["<Image[^>]*onLoad"]
+      },
+      "manualSteps": [
+        "Review Image onLoad handlers",
+        "Update to accept img element: onLoad={(img) => ...}"
+      ]
+    }
+  ],
+  "deprecations": [
+    {
+      "id": "nextjs-14-legacy-image-final",
+      "deprecated": "next/legacy/image",
+      "replacement": "next/image",
+      "version": "13.0.0",
+      "removalVersion": "15.0.0",
+      "severity": "warning",
+      "detection": {
+        "filePatterns": ["**/*.tsx", "**/*.jsx"],
+        "codePatterns": ["import.*from ['\"]next/legacy/image['\"]"]
+      },
+      "autoFix": {
+        "action": "replace-import",
+        "from": "next/legacy/image",
+        "to": "next/image",
+        "message": "Migrated from next/legacy/image to next/image"
+      }
+    },
+    {
+      "id": "nextjs-14-pages-router-data-fetching",
+      "deprecated": "getServerSideProps, getStaticProps (in favor of App Router)",
+      "replacement": "Server Components in App Router",
+      "version": "13.0.0",
+      "severity": "info",
+      "detection": {
+        "filePatterns": ["pages/**/*.tsx", "pages/**/*.jsx"],
+        "codePatterns": ["export\\s+(async\\s+)?function\\s+getServerSideProps", "export\\s+(async\\s+)?function\\s+getStaticProps"]
+      },
+      "manualSteps": [
+        "Consider migrating to App Router",
+        "Use Server Components for data fetching",
+        "Pages Router still fully supported"
+      ]
+    }
+  ],
+  "newFeatures": [
+    {
+      "id": "nextjs-14-server-actions-stable",
+      "name": "Server Actions (Stable)",
+      "description": "Server-side mutations with progressive enhancement",
+      "optional": false,
+      "examples": [
+        "'use server'",
+        "async function createUser(formData: FormData) { 'use server'; ... }",
+        "<form action={createUser}>"
+      ],
+      "migrationSteps": [
+        "Remove experimental.serverActions from next.config.js",
+        "Use Server Actions for form submissions",
+        "Replace API routes with Server Actions where appropriate"
+      ]
+    },
+    {
+      "id": "nextjs-14-partial-prerendering",
+      "name": "Partial Prerendering (Preview)",
+      "description": "Combine static and dynamic rendering in the same route",
+      "optional": true,
+      "examples": [
+        "export const experimental_ppr = true"
+      ],
+      "migrationSteps": [
+        "Enable in next.config.js: experimental: { ppr: true }",
+        "Add experimental_ppr to route segments",
+        "Test with Suspense boundaries"
+      ]
+    },
+    {
+      "id": "nextjs-14-turbopack-stable",
+      "name": "Turbopack for Development (Stable)",
+      "description": "Faster development with Turbopack",
+      "optional": true,
+      "examples": [
+        "next dev --turbo"
+      ],
+      "migrationSteps": [
+        "Run 'next dev --turbo' for development",
+        "Update package.json scripts if desired"
+      ]
+    },
+    {
+      "id": "nextjs-14-metadata-improvements",
+      "name": "Enhanced Metadata API",
+      "description": "Improved metadata generation and viewport configuration",
+      "optional": false,
+      "examples": [
+        "export const viewport = { width: 'device-width', initialScale: 1 }",
+        "export const metadata = { title: 'Page Title' }"
+      ],
+      "migrationSteps": [
+        "Separate viewport from metadata",
+        "Use new viewport export for viewport configuration"
+      ]
+    }
+  ],
+  "dependencyUpdates": {
+    "required": {
+      "next": "^14.0.0",
+      "react": "^18.2.0",
+      "react-dom": "^18.2.0"
+    },
+    "optional": {
+      "@next/bundle-analyzer": "^14.0.0",
+      "@next/mdx": "^14.0.0"
+    },
+    "remove": []
+  },
+  "configChanges": {
+    "next.config.js": {
+      "add": {},
+      "remove": ["experimental.serverActions"],
+      "modify": {
+        "experimental.appDir": {
+          "from": true,
+          "to": "remove (app directory is stable)",
+          "message": "App directory is now stable, remove experimental flag"
+        }
+      }
+    }
+  },
+  "migrationGuide": "https://nextjs.org/docs/app/building-your-application/upgrading/version-14",
+  "automationLevel": "high",
+  "manualReviewRequired": [
+    "Node.js version compatibility",
+    "Image onLoad handlers",
+    "Server Actions migration from API routes"
+  ],
+  "performanceImprovements": [
+    "5x faster local server startup",
+    "Faster code updates with Fast Refresh",
+    "Improved memory usage",
+    "Better tree-shaking"
+  ],
+  "codemodAvailable": true,
+  "codemodCommand": "npx @next/codemod@latest upgrade latest"
+}

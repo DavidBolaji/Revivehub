@@ -1,0 +1,85 @@
+{
+  "id": "react",
+  "name": "react",
+  "displayName": "React",
+  "language": "javascript",
+  "category": "frontend",
+  "description": "A JavaScript library for building user interfaces",
+  "officialWebsite": "https://react.dev",
+  "versions": [
+    {
+      "version": "18.2.0",
+      "releaseDate": "2023-06-14",
+      "status": "stable",
+      "breakingChanges": [],
+      "deprecations": [],
+      "newFeatures": [
+        {
+          "id": "react-18-concurrent",
+          "name": "Concurrent Rendering",
+          "description": "Automatic batching and concurrent features",
+          "examples": [
+            "useTransition()",
+            "useDeferredValue()",
+            "startTransition()"
+          ]
+        }
+      ],
+      "migrationGuides": [
+        "https://react.dev/blog/2022/03/29/react-v18"
+      ],
+      "configuration": {
+        "fileStructure": {
+          "components": "src/components",
+          "pages": "src/pages",
+          "hooks": "src/hooks",
+          "utils": "src/utils",
+          "styles": "src/styles"
+        },
+        "componentConventions": {
+          "fileExtension": ".jsx",
+          "namingConvention": "PascalCase",
+          "exportStyle": "default"
+        },
+        "syntaxMappings": {},
+        "apiMappings": {},
+        "lifecycleMappings": {},
+        "buildTool": "webpack",
+        "packageManager": ["npm", "yarn", "pnpm"]
+      }
+    }
+  ],
+  "compatibleTargets": [
+    {
+      "framework": "nextjs",
+      "difficulty": "medium",
+      "estimatedTime": "4-8 hours",
+      "commonPatterns": [
+        "Component migration",
+        "Routing conversion",
+        "State management adaptation"
+      ]
+    },
+    {
+      "framework": "vue3",
+      "difficulty": "hard",
+      "estimatedTime": "8-16 hours",
+      "commonPatterns": [
+        "JSX to template syntax",
+        "Hooks to Composition API",
+        "Props and events conversion"
+      ]
+    }
+  ],
+  "defaultMappings": {
+    "imports": {
+      "react": "react",
+      "react-dom": "react-dom"
+    },
+    "routing": {},
+    "components": {},
+    "styling": {},
+    "stateManagement": {},
+    "buildSystem": {}
+  }
+}

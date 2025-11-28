@@ -1,0 +1,230 @@
+{
+  "id": "nextjs-12-to-14",
+  "framework": "nextjs",
+  "sourceVersion": "12.x",
+  "targetVersion": "14.x",
+  "releaseDate": "2023-10-26",
+  "difficulty": "medium",
+  "estimatedTime": "3-6 hours",
+  "description": "Upgrade Next.js from version 12 to 14 (combines 12→13 and 13→14 changes)",
+  "breakingChanges": [
+    {
+      "id": "nextjs-12-14-swc-required",
+      "description": "SWC compiler is now required, Babel support deprecated",
+      "affectedAPIs": [".babelrc", "babel.config.js"],
+      "migrationPath": "Remove Babel config or migrate to SWC",
+      "autoFixable": true,
+      "severity": "warning",
+      "detection": {
+        "filePatterns": [".babelrc", "babel.config.js", ".babelrc.js"],
+        "codePatterns": []
+      },
+      "autoFix": {
+        "action": "remove-file",
+        "files": [".babelrc", "babel.config.js", ".babelrc.js"],
+        "message": "Babel config removed. Next.js 14 uses SWC by default."
+      }
+    },
+    {
+      "id": "nextjs-12-14-minimum-node",
+      "description": "Minimum Node.js version is 18.17",
+      "affectedAPIs": ["Node.js runtime"],
+      "migrationPath": "Upgrade Node.js to 18.17 or higher",
+      "autoFixable": false,
+      "severity": "error",
+      "detection": {
+        "filePatterns": [".nvmrc", "package.json"],
+        "codePatterns": ["\"node\":\\s*\"[^\"]*\""],
+        "runtimeCheck": "process.version"
+      },
+      "manualSteps": [
+        "Check Node.js version: node --version",
+        "Upgrade Node.js to 18.17 or higher",
+        "Update .nvmrc if present"
+      ]
+    },
+    {
+      "id": "nextjs-12-14-image-component",
+      "description": "next/image has new required props and behavior",
+      "affectedAPIs": ["next/image"],
+      "migrationPath": "Update Image component usage or use next/legacy/image temporarily",
+      "autoFixable": true,
+      "severity": "error",
+      "detection": {
+        "filePatterns": ["**/*.tsx", "**/*.jsx"],
+        "codePatterns": [
+          "import.*Image.*from ['\"]next/image['\"]",
+          "<Image(?!.*alt=)"
+        ]
+      },
+      "autoFix": {
+        "action": "add-prop",
+        "component": "Image",
+        "prop": "alt",
+        "defaultValue": "\"\"",
+        "message": "Added required alt prop to Image component"
+      }
+    },
+    {
+      "id": "nextjs-12-14-link-no-anchor",
+      "description": "Link component no longer requires <a> child",
+      "affectedAPIs": ["next/link"],
+      "migrationPath": "Remove <a> tag from Link children",
+      "autoFixable": true,
+      "severity": "warning",
+      "detection": {
+        "filePatterns": ["**/*.tsx", "**/*.jsx"],
+        "codePatterns": [
+          "<Link[^>]*>\\s*<a[^>]*>"
+        ]
+      },
+      "autoFix": {
+        "action": "transform-jsx",
+        "pattern": "<Link><a>",
+        "replacement": "<Link>",
+        "message": "Removed unnecessary <a> tag from Link component"
+      }
+    },
+    {
+      "id": "nextjs-12-14-target-removed",
+      "description": "target option in next.config.js is removed",
+      "affectedAPIs": ["next.config.js"],
+      "migrationPath": "Remove target option from next.config.js",
+      "autoFixable": true,
+      "severity": "error",
+      "detection": {
+        "filePatterns": ["next.config.js", "next.config.mjs"],
+        "codePatterns": ["target:\\s*['\"]"]
+      },
+      "autoFix": {
+        "action": "remove-config-key",
+        "file": "next.config.js",
+        "key": "target",
+        "message": "Removed deprecated target option from next.config.js"
+      }
+    }
+  ],
+  "deprecations": [
+    {
+      "id": "nextjs-12-14-legacy-image",
+      "deprecated": "next/legacy/image",
+      "replacement": "next/image",
+      "version": "13.0.0",
+      "removalVersion": "15.0.0",
+      "severity": "warning",
+      "detection": {
+        "filePatterns": ["**/*.tsx", "**/*.jsx"],
+        "codePatterns": ["import.*from ['\"]next/legacy/image['\"]"]
+      },
+      "autoFix": {
+        "action": "replace-import",
+        "from": "next/legacy/image",
+        "to": "next/image",
+        "message": "Migrated from next/legacy/image to next/image"
+      }
+    },
+    {
+      "id": "nextjs-12-14-swc-minify",
+      "deprecated": "swcMinify: true",
+      "replacement": "Default behavior (SWC minification is default)",
+      "version": "13.0.0",
+      "removalVersion": "14.0.0",
+      "severity": "info",
+      "detection": {
+        "filePatterns": ["next.config.js", "next.config.mjs"],
+        "codePatterns": ["swcMinify:\\s*true"]
+      },
+      "autoFix": {
+        "action": "remove-config-key",
+        "file": "next.config.js",
+        "key": "swcMinify",
+        "message": "Removed swcMinify option (now default behavior)"
+      }
+    }
+  ],
+  "newFeatures": [
+    {
+      "id": "nextjs-12-14-app-directory",
+      "name": "App Directory (Stable in 14)",
+      "description": "New routing system with layouts, server components, and streaming",
+      "optional": true,
+      "examples": [
+        "app/page.tsx",
+        "app/layout.tsx",
+        "app/loading.tsx",
+        "app/error.tsx"
+      ],
+      "migrationSteps": [
+        "Create app directory",
+        "Add app/layout.tsx root layout",
+        "Gradually migrate pages to app directory",
+        "Use Server Components by default"
+      ]
+    },
+    {
+      "id": "nextjs-12-14-server-actions",
+      "name": "Server Actions (Stable)",
+      "description": "Server-side mutations with progressive enhancement",
+      "optional": false,
+      "examples": [
+        "'use server'",
+        "async function createUser(formData: FormData) { 'use server'; ... }",
+        "<form action={createUser}>"
+      ],
+      "migrationSteps": [
+        "Use Server Actions for form submissions",
+        "Replace API routes with Server Actions where appropriate"
+      ]
+    },
+    {
+      "id": "nextjs-12-14-turbopack",
+      "name": "Turbopack for Development (Stable)",
+      "description": "Faster development with Turbopack",
+      "optional": true,
+      "examples": [
+        "next dev --turbo"
+      ],
+      "migrationSteps": [
+        "Run 'next dev --turbo' for development",
+        "Update package.json scripts if desired"
+      ]
+    }
+  ],
+  "dependencyUpdates": {
+    "required": {
+      "next": "^14.0.0",
+      "react": "^18.2.0",
+      "react-dom": "^18.2.0"
+    },
+    "optional": {
+      "@next/bundle-analyzer": "^14.0.0",
+      "@next/mdx": "^14.0.0"
+    },
+    "remove": []
+  },
+  "configChanges": {
+    "next.config.js": {
+      "add": {},
+      "remove": ["target", "swcMinify", "experimental.serverActions", "experimental.appDir"],
+      "modify": {}
+    }
+  },
+  "migrationGuide": "https://nextjs.org/docs/app/building-your-application/upgrading",
+  "automationLevel": "medium",
+  "manualReviewRequired": [
+    "Node.js version compatibility",
+    "Image component usage",
+    "Custom Babel plugins",
+    "App Directory migration decision",
+    "Server Actions migration from API routes"
+  ],
+  "recommendedApproach": "incremental",
+  "incrementalSteps": [
+    "Step 1: Upgrade to Next.js 13 first",
+    "Step 2: Test thoroughly",
+    "Step 3: Upgrade to Next.js 14",
+    "Step 4: Consider App Router migration"
+  ],
+  "codemodAvailable": true,
+  "codemodCommand": "npx @next/codemod@latest upgrade latest"
+}

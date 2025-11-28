@@ -1,0 +1,15 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2024-01-15T00:00:00Z",
+  "frameworks": {
+    "react": "frameworks/react.json",
+    "nextjs": "frameworks/nextjs.json",
+    "flask": "frameworks/flask.json",
+    "fastapi": "frameworks/fastapi.json"
+  },
+  "migrationPaths": {
+    "react-to-nextjs-pages": "migration-paths/react-to-nextjs-pages.json",
+    "react-to-nextjs-app": "migration-paths/react-to-nextjs-app.json",
+    "flask-to-fastapi": "migration-paths/flask-to-fastapi.json"
+  }
+}
