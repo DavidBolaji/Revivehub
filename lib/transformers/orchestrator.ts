@@ -47,6 +47,7 @@ import { TransformationPipeline } from './transformation-pipeline'
 import { transformerRegistry, type TransformerRegistry } from './transformer-registry'
 import { GitHubContentService } from '@/lib/github/content-service'
 import { progressEmitter as globalProgressEmitter, type ProgressEmitter } from '@/lib/sse/progress-emitter'
+import { DiffGenerator } from './diff-generator'
 
 /**
  * Orchestrates transformation execution across multiple tasks and phases
@@ -56,6 +57,7 @@ export class TransformationOrchestrator {
   private registry: TransformerRegistry
   private githubService: GitHubContentService
   private progressEmitter: ProgressEmitter
+  private diffGenerator: DiffGenerator
 
   /**
    * Creates a new TransformationOrchestrator instance
@@ -73,6 +75,7 @@ export class TransformationOrchestrator {
     this.registry = registry || transformerRegistry
     this.githubService = new GitHubContentService(octokit)
     this.progressEmitter = emitter || globalProgressEmitter
+    this.diffGenerator = new DiffGenerator()
     
     console.log(`[ORCHESTRATOR] Using progressEmitter instance:`, this.progressEmitter === globalProgressEmitter ? 'singleton' : 'different instance')
     console.log(`[ORCHESTRATOR] ProgressEmitter instance ID:`, (this.progressEmitter as any).instanceId)
@@ -353,6 +356,11 @@ export class TransformationOrchestrator {
                   // Update file contents map for subsequent transformations
                   fileContentsMap.set(filePath, result.code)
 
+                  // Generate diff if not already present
+                  if (!result.diff) {
+                    result.diff = this.diffGenerator.generate(fileContent, result.code)
+                  }
+
                   // Handle additional files from transformation (e.g., Vite config, generated files)
                   if (result.metadata.additionalFiles) {
                     for (const [additionalPath, additionalContent] of result.metadata.additionalFiles) {
@@ -367,11 +375,24 @@ export class TransformationOrchestrator {
 
                   // Handle JS to JSX conversions
                   if (result.metadata.jsToJsxConversions) {
+                    console.log(`[ORCHESTRATOR] Processing ${result.metadata.jsToJsxConversions.length} JS to JSX conversions`)
                     for (const conversion of result.metadata.jsToJsxConversions) {
-                      // Remove the old .js file and add the new .jsx file
-                      transformedFiles.delete(conversion.originalPath)
+                      console.log(`[ORCHESTRATOR] Converting: ${conversion.originalPath} → ${conversion.newPath}`)
+                      
+                      // Add the original .js file to transformedFiles if not already there
+                      // This ensures it shows in the UI as "to be renamed"
+                      if (!transformedFiles.has(conversion.originalPath)) {
+                        const originalContent = fileContentsMap.get(conversion.originalPath) || conversion.content
+                        transformedFiles.set(conversion.originalPath, originalContent)
+                        console.log(`[ORCHESTRATOR] Added original file to transformedFiles: ${conversion.originalPath}`)
+                      } else {
+                        console.log(`[ORCHESTRATOR] Original file already in transformedFiles: ${conversion.originalPath}`)
+                      }
+                      
+                      // Add the new .jsx file so it shows as a new file
                       transformedFiles.set(conversion.newPath, conversion.content)
                       fileContentsMap.set(conversion.newPath, conversion.content)
+                      console.log(`[ORCHESTRATOR] Added new JSX file to transformedFiles: ${conversion.newPath}`)
                       
                       this.progressEmitter.emit(
                         jobId,
@@ -386,6 +407,15 @@ export class TransformationOrchestrator {
                         result: {
                           ...result,
                           code: conversion.content,
+                          errors: [],
+                          warnings: [],
+                          diff: {
+                            original: conversion.content,
+                            transformed: conversion.content,
+                            unified: `--- ${conversion.originalPath}\n+++ ${conversion.newPath}\n@@ File renamed from .js to .jsx @@\n${conversion.content}`,
+                            visual: [],
+                            characterLevel: []
+                          },
                           metadata: {
                             ...result.metadata,
                             transformationType: 'js-to-jsx-conversion',
@@ -493,7 +523,68 @@ export class TransformationOrchestrator {
         )
       }
 
-      // Step 7: Calculate summary metrics
+      // Step 7: Post-process JS to JSX conversions for all transformed files
+      console.log(`[ORCHESTRATOR] Step 7: Post-processing JS to JSX conversions...`)
+      this.progressEmitter.emit(jobId, '\n🔄 Checking for JS to JSX conversions...')
+      
+      const jsToJsxConversions = this.detectAndConvertJsToJsx(transformedFiles)
+      
+      if (jsToJsxConversions.length > 0) {
+        console.log(`[ORCHESTRATOR] Found ${jsToJsxConversions.length} JS files to convert to JSX`)
+        
+        for (const conversion of jsToJsxConversions) {
+          // Keep the old .js file in transformedFiles so it shows as "to be deleted"
+          // Add the new .jsx file so it shows as "to be created"
+          // The apply logic will handle the actual rename on GitHub
+          transformedFiles.set(conversion.newPath, conversion.content)
+          
+          this.progressEmitter.emit(
+            jobId,
+            `   🔄 Converted: ${conversion.originalPath} → ${conversion.newPath}`
+          )
+          
+          // Add a result entry for the NEW .jsx file
+          results.push({
+            taskId: 'js-to-jsx-conversion',
+            filePath: conversion.newPath,
+            success: true,
+            result: {
+              success: true,
+              code: conversion.content,
+              errors: [],
+              warnings: [],
+              metadata: {
+                transformationType: 'js-to-jsx-conversion',
+                linesAdded: 0,
+                linesRemoved: 0,
+                filesModified: [conversion.originalPath, conversion.newPath],
+                estimatedTimeSaved: '< 1 minute',
+                requiresManualReview: false,
+                riskScore: 0,
+                confidenceScore: 100,
+                transformationsApplied: ['JS to JSX file extension conversion'],
+                notes: [`Renamed from ${conversion.originalPath} (contains JSX)`],
+                fileStructureChange: {
+                  action: 'rename',
+                  originalPath: conversion.originalPath,
+                  isRouteFile: false
+                },
+                newFilePath: conversion.newPath
+              }
+            },
+            duration: 0,
+          })
+        }
+        
+        this.progressEmitter.emit(
+          jobId,
+          `✓ Converted ${jsToJsxConversions.length} JS files to JSX`
+        )
+      } else {
+        console.log(`[ORCHESTRATOR] No JS to JSX conversions needed`)
+      }
+
+      // Step 8: Calculate summary metrics
       const summary = this.calculateSummary(
         results,
         transformedFiles,
@@ -667,6 +758,81 @@ export class TransformationOrchestrator {
           if (result.success && result.code) {
             transformedFiles.set(filePath, result.code)
             fileContentsMap.set(filePath, result.code)
+
+            // Generate diff if not already present
+            if (!result.diff) {
+              const originalContent = fileContent || ''
+              result.diff = this.diffGenerator.generate(originalContent, result.code)
+            }
+
+            // Handle additional files from transformation (e.g., Vite config, generated files)
+            if (result.metadata.additionalFiles) {
+              for (const [additionalPath, additionalContent] of result.metadata.additionalFiles) {
+                transformedFiles.set(additionalPath, additionalContent)
+                fileContentsMap.set(additionalPath, additionalContent)
+                this.progressEmitter.emit(
+                  jobId,
+                  `   ✨ Generated: ${additionalPath}`
+                )
+              }
+            }
+
+            // Handle JS to JSX conversions
+            if (result.metadata.jsToJsxConversions) {
+              console.log(`[ORCHESTRATOR] Processing ${result.metadata.jsToJsxConversions.length} JS to JSX conversions in executeTask`)
+              for (const conversion of result.metadata.jsToJsxConversions) {
+                console.log(`[ORCHESTRATOR] Converting: ${conversion.originalPath} → ${conversion.newPath}`)
+                
+                // Add the original .js file to transformedFiles if not already there
+                if (!transformedFiles.has(conversion.originalPath)) {
+                  const originalContent = fileContentsMap.get(conversion.originalPath) || conversion.content
+                  transformedFiles.set(conversion.originalPath, originalContent)
+                  console.log(`[ORCHESTRATOR] Added original file to transformedFiles: ${conversion.originalPath}`)
+                }
+                
+                // Add the new .jsx file
+                transformedFiles.set(conversion.newPath, conversion.content)
+                fileContentsMap.set(conversion.newPath, conversion.content)
+                console.log(`[ORCHESTRATOR] Added new JSX file to transformedFiles: ${conversion.newPath}`)
+                
+                this.progressEmitter.emit(
+                  jobId,
+                  `   🔄 Converted: ${conversion.originalPath} → ${conversion.newPath}`
+                )
+
+                // Add a separate result entry for the conversion
+                results.push({
+                  taskId: task.id,
+                  filePath: conversion.newPath,
+                  success: true,
+                  result: {
+                    ...result,
+                    code: conversion.content,
+                    errors: [],
+                    warnings: [],
+                    diff: {
+                      original: conversion.content,
+                      transformed: conversion.content,
+                      unified: `--- ${conversion.originalPath}\n+++ ${conversion.newPath}\n@@ File renamed from .js to .jsx @@\n${conversion.content}`,
+                      visual: [],
+                      characterLevel: []
+                    },
+                    metadata: {
+                      ...result.metadata,
+                      transformationType: 'js-to-jsx-conversion',
+                      filesModified: [conversion.originalPath, conversion.newPath],
+                      fileStructureChange: {
+                        action: 'rename',
+                        originalPath: conversion.originalPath,
+                        isRouteFile: false
+                      },
+                      newFilePath: conversion.newPath
+                    }
+                  },
+                  duration: Date.now() - taskStartTime,
+                })
+              }
+            }
 
             this.progressEmitter.emit(jobId, `   ✓ ${filePath} transformed (+${result.metadata.linesAdded} -${result.metadata.linesRemoved} lines)`)
 
@@ -1192,5 +1358,63 @@ export class TransformationOrchestrator {
     } else {
       return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
     }
+  }
+
+  /**
+   * Detects and converts JS files to JSX if they contain JSX syntax
+   * 
+   * Scans all transformed files for .js files that contain JSX syntax
+   * and converts them to .jsx files. This is a post-processing step
+   * that ensures proper file extensions for JSX content.
+   * 
+   * @param transformedFiles - Map of file paths to transformed content
+   * @returns Array of conversion records
+   */
+  private detectAndConvertJsToJsx(
+    transformedFiles: Map<string, string>
+  ): Array<{ originalPath: string; newPath: string; content: string }> {
+    const conversions: Array<{ originalPath: string; newPath: string; content: string }> = []
+    
+    for (const [filePath, content] of transformedFiles.entries()) {
+      // Only process .js files (not .jsx, .ts, .tsx, etc.)
+      if (filePath.endsWith('.js') && this.containsJsx(content)) {
+        const newPath = filePath.replace(/\.js$/, '.jsx')
+        conversions.push({
+          originalPath: filePath,
+          newPath,
+          content
+        })
+      }
+    }
+    
+    return conversions
+  }
+
+  /**
+   * Checks if file content contains JSX syntax
+   * 
+   * Uses multiple patterns to detect JSX:
+   * - Component tags (e.g., <MyComponent>)
+   * - HTML-like tags (e.g., <div>)
+   * - React.createElement calls
+   * - jsx() function calls
+   * - Return statements with JSX
+   * - JSX assignments
+   * 
+   * @param content - File content to check
+   * @returns True if JSX syntax is detected
+   */
+  private containsJsx(content: string): boolean {
+    // Simple JSX detection patterns
+    const jsxPatterns = [
+      /<[A-Z][a-zA-Z0-9]*/, // Component tags like <MyComponent
+      /<[a-z]+[^>]*>/, // HTML-like tags
+      /React\.createElement/, // React.createElement calls
+      /jsx\s*\(/, // jsx() calls
+      /return\s*\([\s\n]*</, // return statements with JSX
+      /=\s*<[A-Za-z]/, // JSX assignments
+    ]
+    
+    return jsxPatterns.some(pattern => pattern.test(content))
   }
 }

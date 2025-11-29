@@ -411,8 +411,17 @@ yarn.lock
       let repositoryFiles: Map<string, string> = new Map()
       let jsToJsxConversions: Array<{originalPath: string, newPath: string, content: string}> = []
       
+      console.log(`[ViteSetupTransformer] handlePackageJson called`)
+      console.log(`[ViteSetupTransformer] options.repositoryFiles exists:`, !!options.repositoryFiles)
+      console.log(`[ViteSetupTransformer] options.repositoryFiles length:`, options.repositoryFiles?.length || 0)
+      
       if (options.repositoryFiles) {
         console.log(`[ViteSetupTransformer] Processing ${options.repositoryFiles.length} repository files for JS to JSX conversion`)
+        
+        // Log all .js files found
+        const allJsFiles = options.repositoryFiles.filter(f => f.path.endsWith('.js'))
+        console.log(`[ViteSetupTransformer] Total .js files in repository: ${allJsFiles.length}`)
+        console.log(`[ViteSetupTransformer] Sample .js files:`, allJsFiles.slice(0, 10).map(f => f.path))
         
         // Convert array to Map and filter for JS files
         for (const file of options.repositoryFiles) {
@@ -421,12 +430,18 @@ yarn.lock
               !file.path.includes('node_modules') &&
               (file.path.includes('src/') || file.path.includes('components/') || file.path.includes('pages/'))) {
             repositoryFiles.set(file.path, file.content)
+            console.log(`[ViteSetupTransformer] Added JS file for analysis: ${file.path}`)
           }
         }
         
-        console.log(`[ViteSetupTransformer] Found ${repositoryFiles.size} JS files to analyze`)
+        console.log(`[ViteSetupTransformer] Found ${repositoryFiles.size} JS files to analyze for JSX`)
         jsToJsxConversions = await this.convertJsFilesToJsx(repositoryFiles)
         console.log(`[ViteSetupTransformer] Converted ${jsToJsxConversions.length} JS files to JSX`)
+        if (jsToJsxConversions.length > 0) {
+          console.log(`[ViteSetupTransformer] Conversions:`, jsToJsxConversions.map(c => `${c.originalPath} → ${c.newPath}`))
+        }
+      } else {
+        console.log(`[ViteSetupTransformer] No repository files provided - skipping JS to JSX conversion`)
       }
 
       // Generate all necessary files
