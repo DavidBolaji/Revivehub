@@ -187,7 +187,75 @@ export async function POST(request: NextRequest) {
       console.log(`[GitHub Apply API] PR: ${result.pullRequest.htmlUrl}`)
     }
 
-    // Return the complete result
+    // Store migration details for later retrieval
+    if (result.status === 'success' || result.status === 'partial') {
+      try {
+        console.log(`[GitHub Apply API] Preparing to store migration data for ${body.migrationJobId}`)
+        
+        const migrationData = {
+          id: body.migrationJobId,
+          status: 'completed' as const,
+          repository: {
+            owner: body.repository.owner,
+            name: body.repository.name,
+          },
+          sourceFramework: {
+            name: body.migrationSpec.sourceFramework.name,
+            version: body.migrationSpec.sourceFramework.version,
+          },
+          targetFramework: {
+            name: body.migrationSpec.targetFramework.name,
+            version: body.migrationSpec.targetFramework.version,
+          },
+          createdAt: new Date().toISOString(),
+          completedAt: new Date().toISOString(),
+          pullRequest: result.pullRequest ? {
+            number: result.pullRequest.number,
+            url: result.pullRequest.url,
+            htmlUrl: result.pullRequest.htmlUrl,
+          } : undefined,
+          summary: {
+            filesChanged: body.acceptedFiles.length,
+            linesAdded: Object.values(body.transformations).reduce((sum: number, t: any) => 
+              sum + (t.code?.split('\n').length || t.transformedCode?.split('\n').length || 0), 0),
+            linesRemoved: Object.values(body.transformations).reduce((sum: number, t: any) => 
+              sum + (t.originalCode?.split('\n').length || 0), 0),
+            errors: result.errors?.filter(e => e.step === 'fatal').map(e => e.message) || [],
+            warnings: result.errors?.filter(e => e.step !== 'fatal').map(e => e.message) || [],
+          },
+        }
+
+        console.log(`[GitHub Apply API] Migration data prepared:`, {
+          id: migrationData.id,
+          status: migrationData.status,
+          filesChanged: migrationData.summary.filesChanged,
+          prNumber: migrationData.pullRequest?.number
+        })
+
+        // Store migration data using internal API
+        const storeResponse = await fetch(`${request.nextUrl.origin}/api/migration/details/${body.migrationJobId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Cookie': request.headers.get('cookie') || '',
+          },
+          body: JSON.stringify(migrationData),
+        })
+
+        if (storeResponse.ok) {
+          const storeResult = await storeResponse.json()
+          console.log(`[GitHub Apply API] Migration data stored successfully:`, storeResult)
+        } else {
+          const errorText = await storeResponse.text()
+          console.error(`[GitHub Apply API] Failed to store migration data (${storeResponse.status}):`, errorText)
+        }
+      } catch (storageError) {
+        console.error('[GitHub Apply API] Failed to store migration data:', storageError)
+        // Don't fail the request if storage fails
+      }
+    }
+
+    // Return the complete result with migration link
     return Response.json({
       operationId: result.operationId,
       status: result.status,
@@ -202,6 +270,7 @@ export async function POST(request: NextRequest) {
         url: result.pullRequest.htmlUrl,
         htmlUrl: result.pullRequest.htmlUrl, // For UI compatibility
       } : undefined,
+      migrationUrl: `${request.nextUrl.origin}/migrations/${body.migrationJobId}`,
       commits: result.commits?.map(c => ({
         sha: c.sha.substring(0, 7),
         message: c.message,

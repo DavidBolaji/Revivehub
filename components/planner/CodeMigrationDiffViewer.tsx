@@ -17,6 +17,9 @@ interface CodeMigrationDiffViewerProps {
   onAccept: (modifiedCode?: string) => void
   onReject: () => void
   diff: Diff
+  allFiles?: string[]
+  currentFileIndex?: number
+  onNavigateFile?: (direction: 'prev' | 'next') => void
 }
 
 export function CodeMigrationDiffViewer({
@@ -26,6 +29,9 @@ export function CodeMigrationDiffViewer({
   onAccept,
   onReject,
   diff,
+  allFiles = [],
+  currentFileIndex = 0,
+  onNavigateFile,
 }: CodeMigrationDiffViewerProps) {
   const [showMetadata, setShowMetadata] = useState(true)
 
@@ -256,6 +262,9 @@ export function CodeMigrationDiffViewer({
         onAccept={onAccept}
         onReject={onReject}
         initialContent={transformedCode}
+        allFiles={allFiles}
+        currentFileIndex={currentFileIndex}
+        onNavigateFile={onNavigateFile}
       />
     </div>
   )

@@ -57,6 +57,13 @@ export function Phase3Card({
   const [viewingFilePath, setViewingFilePath] = useState<string | null>(null)
   const [acceptedFiles, setAcceptedFiles] = useState<Set<string>>(new Set())
   const [rejectedFiles, setRejectedFiles] = useState<Set<string>>(new Set())
+  
+  // File navigation state
+  const allFiles = migrationResult?.transformations instanceof Map
+    ? Array.from(migrationResult.transformations.keys())
+    : migrationResult?.transformations ? Object.keys(migrationResult.transformations as any) : []
+  
+  const currentFileIndex = viewingFilePath ? allFiles.indexOf(viewingFilePath) : -1
   const [isStarting, setIsStarting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isApplying, setIsApplying] = useState(false)
@@ -68,14 +75,16 @@ export function Phase3Card({
   const [rollbackError, setRollbackError] = useState<string | null>(null)
   const [rollbackSuccess, setRollbackSuccess] = useState(false)
   const [showMigrationSuccessModal, setShowMigrationSuccessModal] = useState(false)
+  const [hasShownMigrationSuccessModal, setHasShownMigrationSuccessModal] = useState(false)
   const { shouldShow } = useSuccessModal()
 
-  // Show success modal when migration is applied successfully
+  // Show success modal when migration is applied successfully (only once)
   useEffect(() => {
-    if (applyResult && applyResult.pullRequest?.htmlUrl && shouldShow('migration')) {
+    if (applyResult && applyResult.pullRequest?.htmlUrl && shouldShow('migration') && !hasShownMigrationSuccessModal) {
       setShowMigrationSuccessModal(true)
+      setHasShownMigrationSuccessModal(true)
     }
-  }, [applyResult, shouldShow])
+  }, [applyResult, shouldShow, hasShownMigrationSuccessModal])
 
   const expanded = onToggle ? isExpanded : localExpanded
   const handleToggle = () => {
@@ -273,14 +282,72 @@ export function Phase3Card({
     setViewingFilePath(null)
   }
 
-  // Handle accept file
-  const handleAcceptFile = (filePath: string) => {
+  // Handle accept file with optional modified content
+  const handleAcceptFile = (filePath: string, modifiedContent?: string, callback?: () => void) => {
+    console.log(`[Phase3Card] handleAcceptFile called for ${filePath}`)
+    console.log(`[Phase3Card] modifiedContent provided:`, !!modifiedContent)
+    if (modifiedContent) {
+      console.log(`[Phase3Card] Modified content preview:`, modifiedContent.substring(0, 200))
+    }
+    
     setAcceptedFiles((prev) => new Set(prev).add(filePath))
     setRejectedFiles((prev) => {
       const next = new Set(prev)
       next.delete(filePath)
       return next
     })
+    
+    // If content was modified, update it in the migration result
+    if (modifiedContent && migrationResult) {
+      console.log(`[Phase3Card] Updating migration result with edited content`)
+      console.log(`[Phase3Card] Modified content length:`, modifiedContent.length)
+      
+      setMigrationResult((prevResult) => {
+        if (!prevResult) return prevResult
+        
+        // Update the transformations Map
+        const updatedTransformations = new Map(prevResult.transformations)
+        const existingTransform = updatedTransformations.get(filePath)
+        
+        if (existingTransform) {
+          console.log(`[Phase3Card] Found existing transform, updating code`)
+          console.log(`[Phase3Card] Old code length:`, existingTransform.code.length)
+          console.log(`[Phase3Card] New code length:`, modifiedContent.length)
+          console.log(`[Phase3Card] Old code preview:`, existingTransform.code.substring(0, 100))
+          console.log(`[Phase3Card] New code preview:`, modifiedContent.substring(0, 100))
+          
+          updatedTransformations.set(filePath, {
+            ...existingTransform,
+            code: modifiedContent, // This is the edited content
+          })
+          
+          console.log(`[Phase3Card] ✅ Transform updated in Map`)
+        } else {
+          console.warn(`[Phase3Card] ⚠️ No existing transform found for ${filePath}`)
+        }
+        
+        const newResult = {
+          ...prevResult,
+          transformations: updatedTransformations,
+        }
+        
+        console.log(`[Phase3Card] ✅ New migration result created`)
+        
+        // Call callback after state update
+        if (callback) {
+          setTimeout(callback, 0)
+        }
+        
+        return newResult
+      })
+      
+      console.log(`[Phase3Card] ✅ setMigrationResult called for ${filePath}`)
+    } else {
+      console.log(`[Phase3Card] No modified content provided, accepting original transformation`)
+      if (callback) {
+        callback()
+      }
+    }
   }
 
   // Handle reject file
@@ -400,48 +467,10 @@ export function Phase3Card({
         // Operation completed successfully
         setApplyResult(data)
         console.log('PR created:', data.pullRequest?.url)
+        console.log('Migration URL:', data.migrationUrl)
         
-        // Store migration details for the migration route
-        if (data.pullRequest?.htmlUrl && migrationJobId) {
-          try {
-            await fetch(`/api/migration/details/${migrationJobId}`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                status: 'completed',
-                repository: {
-                  owner: repositoryName.split('/')[0],
-                  name: repositoryName.split('/')[1],
-                },
-                sourceFramework: {
-                  name: migrationSpec.source.framework,
-                  version: migrationSpec.source.version,
-                },
-                targetFramework: {
-                  name: migrationSpec.target.framework,
-                  version: migrationSpec.target.version,
-                },
-                completedAt: new Date().toISOString(),
-                pullRequest: {
-                  number: data.pullRequest.number,
-                  url: data.pullRequest.url,
-                  htmlUrl: data.pullRequest.htmlUrl,
-                },
-                summary: {
-                  filesChanged: data.summary?.filesChanged || 0,
-                  linesAdded: data.summary?.linesAdded || 0,
-                  linesRemoved: data.summary?.linesRemoved || 0,
-                  errors: data.summary?.errors || [],
-                  warnings: data.summary?.warnings || [],
-                },
-              }),
-            })
-          } catch (error) {
-            console.warn('Failed to store migration details:', error)
-          }
-        }
+        // Note: Migration details are automatically stored by the GitHub Apply API
+        // No need to store again here to avoid duplicate storage
       } else {
         // Operation failed
         throw new Error(data.message || 'Failed to apply changes')
@@ -562,19 +591,32 @@ export function Phase3Card({
     }
   }
 
+  // Handle file navigation in diff viewer
+  const handleNavigateFile = (direction: 'prev' | 'next') => {
+    if (direction === 'prev' && currentFileIndex > 0) {
+      setViewingFilePath(allFiles[currentFileIndex - 1])
+    } else if (direction === 'next' && currentFileIndex < allFiles.length - 1) {
+      setViewingFilePath(allFiles[currentFileIndex + 1])
+    }
+  }
+
   return (
     <>
       {/* Migration Success Modal */}
-      <SuccessModal
-        isOpen={showMigrationSuccessModal}
-        onClose={() => setShowMigrationSuccessModal(false)}
-        title="Migration Complete!"
-        message="Your code migration has been successfully applied to GitHub. A pull request has been created with all your accepted changes."
-        pullRequestUrl={applyResult?.pullRequest?.htmlUrl}
-        pullRequestNumber={applyResult?.pullRequest?.number}
-        type="migration"
-        showViewPullRequest={true}
-      />
+      {showMigrationSuccessModal && (
+        <SuccessModal
+          isOpen={showMigrationSuccessModal}
+          onClose={() => {
+            setShowMigrationSuccessModal(false)
+          }}
+          title="Migration Complete!"
+          message="Your code migration has been successfully applied to GitHub. A pull request has been created with all your accepted changes."
+          pullRequestUrl={applyResult?.pullRequest?.htmlUrl}
+          pullRequestNumber={applyResult?.pullRequest?.number}
+          type="migration"
+          showViewPullRequest={true}
+        />
+      )}
 
       <Card
         className={cn(
@@ -896,10 +938,15 @@ export function Phase3Card({
               <h2 className="text-xl font-bold text-white flex items-center gap-2">
                 <FileCode className="h-5 w-5 text-purple-400" />
                 Viewing Diff: {viewingFilePath}
+                {allFiles.length > 0 && (
+                  <Badge variant="secondary" className="text-xs ml-2">
+                    {currentFileIndex + 1} of {allFiles.length}
+                  </Badge>
+                )}
               </h2>
               <button
                 onClick={handleCloseDiffViewer}
-                className="text-purple-300 hover:text-white transition-colors p-2 rounded-lg hover:bg-white/10"
+                className="text-white hover:text-white transition-colors p-2 rounded-lg hover:bg-white/20 bg-white/10 border border-white/30"
               >
                 <X className="h-6 w-6" />
               </button>
@@ -922,10 +969,13 @@ export function Phase3Card({
                   }
 
                   // Debug logging
-                  console.log('[Phase3Card] transform for', viewingFilePath, ':', transform)
-                  console.log('[Phase3Card] originalCode length:', transform.originalCode?.length || 0)
-                  console.log('[Phase3Card] code length:', transform.code?.length || 0)
-                  console.log('[Phase3Card] diff length:', transform.diff?.length || 0)
+                  console.log('[Phase3Card] ========== VIEWING FILE ==========')
+                  console.log('[Phase3Card] File:', viewingFilePath)
+                  console.log('[Phase3Card] transform.originalCode length:', transform.originalCode?.length || 0)
+                  console.log('[Phase3Card] transform.code length:', transform.code?.length || 0)
+                  console.log('[Phase3Card] transform.code preview:', transform.code?.substring(0, 200))
+                  console.log('[Phase3Card] transform.diff length:', transform.diff?.length || 0)
+                  console.log('[Phase3Card] =====================================')
 
                   // Generate visual diff from original and transformed code
                   const generateVisualDiff = (original: string, transformed: string) => {
@@ -984,8 +1034,10 @@ export function Phase3Card({
                     return visual
                   }
 
+                  // Use the current transform.code which may have been updated by edits
                   const visualDiff = generateVisualDiff(transform.originalCode || '', transform.code)
                   console.log('[Phase3Card] Generated visual diff with', visualDiff.length, 'lines')
+                  console.log('[Phase3Card] Using transform.code (may be edited):', transform.code.substring(0, 100) + '...')
 
                   return (
                     <Suspense fallback={<div className="py-8 text-center text-gray-400">Loading diff viewer...</div>}>
@@ -995,23 +1047,27 @@ export function Phase3Card({
                         metadata={transform.metadata}
                         diff={{
                           original: transform.originalCode || '',
-                          transformed: transform.code,
+                          transformed: transform.code, // This is the current code (may be edited)
                           unified: transform.diff || '',
                           visual: visualDiff,
                           characterLevel: [],
                         }}
                         onAccept={(modifiedCode?: string) => {
-                          handleAcceptFile(viewingFilePath)
-                          if (modifiedCode) {
-                            // Handle modified code
-                            console.log('Modified code:', modifiedCode)
-                          }
-                          handleCloseDiffViewer()
+                          console.log('[Phase3Card] onAccept called with modifiedCode:', !!modifiedCode)
+                          // Pass the modified content to handleAcceptFile
+                          // If modifiedCode is provided, it means the user edited the content
+                          handleAcceptFile(viewingFilePath, modifiedCode, () => {
+                            console.log('[Phase3Card] Closing diff viewer after state update')
+                            handleCloseDiffViewer()
+                          })
                         }}
                         onReject={() => {
                           handleRejectFile(viewingFilePath)
                           handleCloseDiffViewer()
                         }}
+                        allFiles={allFiles}
+                        currentFileIndex={currentFileIndex}
+                        onNavigateFile={handleNavigateFile}
                       />
                     </Suspense>
                   )

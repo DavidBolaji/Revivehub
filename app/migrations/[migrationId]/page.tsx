@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Breadcrumb } from '@/components/ui/breadcrumb'
 import { 
   CheckCircle, 
   XCircle, 
@@ -92,13 +93,15 @@ export default function MigrationDetailsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-center py-20">
-            <div className="text-center">
-              <Loader2 className="h-12 w-12 animate-spin text-purple-400 mx-auto mb-4" />
-              <p className="text-purple-200">Loading migration details...</p>
-            </div>
+      <div className="space-y-6">
+        <Breadcrumb items={[
+          { label: 'Migrations', href: '/migrations' },
+          { label: 'Loading...' }
+        ]} />
+        <div className="flex items-center justify-center py-20">
+          <div className="text-center">
+            <Loader2 className="h-12 w-12 animate-spin text-purple-400 mx-auto mb-4" />
+            <p className="text-purple-200">Loading migration details...</p>
           </div>
         </div>
       </div>
@@ -107,25 +110,27 @@ export default function MigrationDetailsPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4">
-        <div className="max-w-4xl mx-auto">
-          <Card className="border-red-500/20 bg-red-900/20">
-            <CardContent className="pt-6">
-              <div className="text-center">
-                <XCircle className="h-12 w-12 text-red-400 mx-auto mb-4" />
-                <h2 className="text-xl font-semibold text-white mb-2">Migration Not Found</h2>
-                <p className="text-red-200 mb-4">{error}</p>
-                <Button 
-                  onClick={() => window.history.back()}
-                  variant="outline"
-                  className="border-red-500/50 text-red-200 hover:bg-red-500/10"
-                >
-                  Go Back
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+      <div className="space-y-6">
+        <Breadcrumb items={[
+          { label: 'Migrations', href: '/migrations' },
+          { label: 'Error' }
+        ]} />
+        <Card className="border-red-500/20 bg-red-900/20">
+          <CardContent className="pt-6">
+            <div className="text-center">
+              <XCircle className="h-12 w-12 text-red-400 mx-auto mb-4" />
+              <h2 className="text-xl font-semibold text-white mb-2">Migration Not Found</h2>
+              <p className="text-red-200 mb-4">{error}</p>
+              <Button 
+                onClick={() => window.history.back()}
+                variant="outline"
+                className="border-slate-400 text-white bg-slate-700 hover:bg-slate-600"
+              >
+                Go Back
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     )
   }
@@ -163,10 +168,15 @@ export default function MigrationDetailsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4">
-      <div className="max-w-4xl mx-auto space-y-6">
-        {/* Header */}
-        <Card className="border-purple-500/20 bg-gradient-to-br from-purple-900/40 to-slate-900">
+    <div className="space-y-6">
+      {/* Breadcrumb */}
+      <Breadcrumb items={[
+        { label: 'Migrations', href: '/migrations' },
+        { label: migration.id.substring(0, 20) + '...' }
+      ]} />
+
+      {/* Header */}
+      <Card className="border-purple-500/20 bg-gradient-to-br from-purple-900/40 to-slate-900">
           <CardHeader>
             <div className="flex items-start justify-between">
               <div>
@@ -356,7 +366,7 @@ export default function MigrationDetailsPage() {
               <Button 
                 onClick={() => window.history.back()}
                 variant="outline"
-                className="border-slate-500/50 text-slate-200 hover:bg-slate-500/10"
+                className="border-slate-400 text-white bg-slate-700 hover:bg-slate-600"
               >
                 Go Back
               </Button>
@@ -376,7 +386,6 @@ export default function MigrationDetailsPage() {
             </div>
           </CardContent>
         </Card>
-      </div>
     </div>
   )
 }

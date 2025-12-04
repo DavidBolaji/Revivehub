@@ -62,7 +62,7 @@ export function SuccessModal({
 
   return (
     <div 
-      className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+      className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
       onClick={(e) => {
         // Close modal when clicking backdrop
         if (e.target === e.currentTarget) {
@@ -86,7 +86,7 @@ export function SuccessModal({
             </div>
             <button
               onClick={handleClose}
-              className="text-gray-300 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/10 bg-black/20"
+              className="text-white hover:text-white transition-colors p-1 rounded-lg hover:bg-white/20 bg-white/10 border border-white/30"
               aria-label="Close modal"
             >
               <X className="h-5 w-5" />
@@ -164,7 +164,7 @@ export function SuccessModal({
             {pullRequestUrl && showViewPullRequest && (
               <Button
                 asChild
-                className="flex-1 bg-white/20 hover:bg-white/30 text-white border-white/30"
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white border-green-500"
               >
                 <a
                   href={pullRequestUrl}
@@ -180,7 +180,7 @@ export function SuccessModal({
             <Button
               onClick={handleClose}
               variant="outline"
-              className="flex-1 border-white/30 text-white hover:bg-white/10"
+              className="flex-1 border-white/50 text-white hover:bg-white/20 bg-white/10"
             >
               Close
             </Button>

@@ -30,6 +30,8 @@ interface TransformationResultsProps {
   isApplying?: boolean
   acceptedFiles?: Set<string>
   applySuccess?: { prUrl: string; prNumber: number } | null
+  onAcceptAll?: () => void
+  onReset?: () => void
 }
 
 interface FileChange {
@@ -430,133 +432,6 @@ const IssuesSummarySection: React.FC<{
   )
 }
 
-// Warnings section (kept for backward compatibility, but now integrated into IssuesSummarySection)
-const WarningsSection: React.FC<{ warnings: string[] }> = ({ warnings }) => {
-  const [isExpanded, setIsExpanded] = useState(false)
-
-  if (warnings.length === 0) return null
-
-  return (
-    <Card className="border-yellow-200 bg-yellow-50">
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <AlertTriangle className="h-5 w-5 text-yellow-600" />
-            <CardTitle className="text-base">
-              Warnings ({warnings.length})
-            </CardTitle>
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsExpanded(!isExpanded)}
-          >
-            {isExpanded ? (
-              <ChevronDown className="h-4 w-4" />
-            ) : (
-              <ChevronRight className="h-4 w-4" />
-            )}
-          </Button>
-        </div>
-      </CardHeader>
-      {isExpanded && (
-        <CardContent className="pt-0">
-          <ul className="space-y-2">
-            {warnings.map((warning, index) => (
-              <li
-                key={index}
-                className="flex items-start space-x-2 text-sm text-yellow-800"
-              >
-                <span className="font-mono text-yellow-600 mt-0.5">•</span>
-                <span>{warning}</span>
-              </li>
-            ))}
-          </ul>
-        </CardContent>
-      )}
-    </Card>
-  )
-}
-
-// Manual review section
-const ManualReviewSection: React.FC<{ 
-  manualReviewNeeded: string[]
-  results: TaskResult[]
-}> = ({ manualReviewNeeded, results }) => {
-  const [isExpanded, setIsExpanded] = useState(true)
-
-  if (manualReviewNeeded.length === 0) return null
-
-  // Get reasons for manual review from task results
-  const reviewItems = manualReviewNeeded.map(filePath => {
-    const taskResult = results.find(r => r.filePath === filePath)
-    return {
-      filePath,
-      reason: taskResult?.result?.metadata.requiresManualReview
-        ? 'High risk score - requires manual review'
-        : taskResult?.error || 'Transformation requires manual attention',
-      riskScore: taskResult?.result?.metadata.riskScore,
-    }
-  })
-
-  return (
-    <Card className="border-orange-200 bg-orange-50">
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <AlertTriangle className="h-5 w-5 text-orange-600" />
-            <CardTitle className="text-base">
-              Manual Review Required ({manualReviewNeeded.length} files)
-            </CardTitle>
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsExpanded(!isExpanded)}
-          >
-            {isExpanded ? (
-              <ChevronDown className="h-4 w-4" />
-            ) : (
-              <ChevronRight className="h-4 w-4" />
-            )}
-          </Button>
-        </div>
-      </CardHeader>
-      {isExpanded && (
-        <CardContent className="pt-0">
-          <div className="space-y-3">
-            {reviewItems.map((item, index) => (
-              <div
-                key={index}
-                className="p-3 bg-white border border-orange-200 rounded-lg"
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-2">
-                      <FileText className="h-4 w-4 text-orange-600" />
-                      <span className="font-mono text-sm font-medium text-gray-900">
-                        {item.filePath}
-                      </span>
-                      {item.riskScore !== undefined && (
-                        <Badge variant="destructive" className="text-xs">
-                          Risk: {item.riskScore}
-                        </Badge>
-                      )}
-                    </div>
-                    <p className="text-sm text-orange-700 mt-1 ml-6">
-                      {item.reason}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      )}
-    </Card>
-  )
-}
-
 // File list grouped by phase
 const FileListByPhase: React.FC<{
   groupedFiles: GroupedFiles
@@ -711,41 +586,91 @@ const ActionButtons: React.FC<{
   onReject: () => void
   onDownload: () => void
   onRestart: () => void
+  onReset: () => void
+  onAcceptAll?: () => void
   hasErrors: boolean
   isApplying?: boolean
   acceptedCount: number
   totalCount: number
   applySuccess?: { prUrl: string; prNumber: number } | null
-}> = ({ onAccept, onReject, onDownload, onRestart, hasErrors, isApplying, acceptedCount, totalCount, applySuccess }) => {
+}> = ({ onAccept, onReject, onDownload, onRestart, onReset, onAcceptAll, hasErrors, isApplying, acceptedCount, totalCount, applySuccess }) => {
+  
+  const handleRestart = () => {
+    if (confirm('Are you sure you want to restart the transformation? All progress will be lost.')) {
+      onRestart()
+    }
+  }
+
+  const handleReject = () => {
+    if (confirm('Are you sure you want to reject all changes? This cannot be undone.')) {
+      onReject()
+    }
+  }
+
+  const handleReset = () => {
+    if (confirm('Are you sure you want to reset accepted files? You will need to review them again.')) {
+      onReset()
+    }
+  }
+
+  const handleAcceptAll = () => {
+    if (onAcceptAll && confirm(`Accept all ${totalCount} files without reviewing?`)) {
+      onAcceptAll()
+    }
+  }
+
   return (
     <Card>
       <CardContent className="pt-6">
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           {!applySuccess && (
-            <Button
-              size="lg"
-              onClick={onAccept}
-              className="w-full sm:w-auto min-w-[200px]"
-              disabled={hasErrors || isApplying || acceptedCount === 0}
-            >
-              {isApplying ? (
-                <>
-                  <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                  Applying to GitHub...
-                </>
-              ) : (
-                <>
+            <>
+              <Button
+                size="lg"
+                onClick={onAccept}
+                className="w-full sm:w-auto min-w-[200px] bg-green-600 hover:bg-green-700 text-white"
+                disabled={hasErrors || isApplying || acceptedCount === 0}
+              >
+                {isApplying ? (
+                  <>
+                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                    Applying to GitHub...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="h-5 w-5 mr-2" />
+                    Apply to GitHub ({acceptedCount}/{totalCount})
+                  </>
+                )}
+              </Button>
+              {onAcceptAll && acceptedCount < totalCount && (
+                <Button
+                  size="lg"
+                  onClick={handleAcceptAll}
+                  className="w-full sm:w-auto min-w-[160px] bg-blue-600 hover:bg-blue-700 text-white"
+                  disabled={isApplying}
+                >
                   <CheckCircle className="h-5 w-5 mr-2" />
-                  Apply to GitHub ({acceptedCount}/{totalCount})
-                </>
+                  Accept All
+                </Button>
               )}
-            </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={handleReset}
+                className="w-full sm:w-auto min-w-[160px] border-gray-300 hover:bg-gray-100"
+                disabled={isApplying || acceptedCount === 0}
+              >
+                <RotateCcw className="h-5 w-5 mr-2" />
+                Reset Accepted
+              </Button>
+            </>
           )}
           <Button
             size="lg"
             variant="outline"
             onClick={onDownload}
-            className="w-full sm:w-auto min-w-[160px]"
+            className="w-full sm:w-auto min-w-[160px] border-gray-300 hover:bg-gray-100"
             disabled={isApplying}
           >
             <Download className="h-5 w-5 mr-2" />
@@ -754,8 +679,8 @@ const ActionButtons: React.FC<{
           <Button
             size="lg"
             variant="outline"
-            onClick={onRestart}
-            className="w-full sm:w-auto min-w-[160px]"
+            onClick={handleRestart}
+            className="w-full sm:w-auto min-w-[160px] border-gray-300 hover:bg-gray-100"
             disabled={isApplying}
           >
             <RotateCcw className="h-5 w-5 mr-2" />
@@ -764,12 +689,12 @@ const ActionButtons: React.FC<{
           <Button
             size="lg"
             variant="destructive"
-            onClick={onReject}
-            className="w-full sm:w-auto min-w-[160px]"
+            onClick={handleReject}
+            className="w-full sm:w-auto min-w-[160px] bg-red-600 hover:bg-red-700 text-white"
             disabled={isApplying}
           >
             <XCircle className="h-5 w-5 mr-2" />
-            Reject Changes
+            Reject All
           </Button>
         </div>
         {hasErrors && (
@@ -800,16 +725,39 @@ export const TransformationResults: React.FC<TransformationResultsProps> = ({
   isApplying = false,
   acceptedFiles = new Set(),
   applySuccess = null,
+  onAcceptAll,
+  onReset,
 }) => {
   const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const [hasShownSuccessModal, setHasShownSuccessModal] = useState(false)
   const { shouldShow } = useSuccessModal()
 
-  // Show success modal when applySuccess changes
+  // Show success modal when applySuccess changes (only once)
   useEffect(() => {
-    if (applySuccess && shouldShow('transformation')) {
+    if (applySuccess && shouldShow('transformation') && !hasShownSuccessModal) {
       setShowSuccessModal(true)
+      setHasShownSuccessModal(true)
     }
-  }, [applySuccess, shouldShow])
+  }, [applySuccess, shouldShow, hasShownSuccessModal])
+
+  const handleReset = () => {
+    if (onReset) {
+      onReset()
+    } else {
+      // Fallback: Clear accepted files by reloading
+      window.location.reload()
+    }
+  }
+
+  const handleAcceptAll = () => {
+    if (onAcceptAll) {
+      onAcceptAll()
+    }
+  }
+
+  const handleCloseSuccessModal = () => {
+    setShowSuccessModal(false)
+  }
   // Group files by phase and merge duplicate files (like package.json)
   // NOTE: acceptedFiles is intentionally NOT in the dependency array
   // We want to keep all files visible, just mark which ones are accepted
@@ -1004,12 +952,6 @@ export const TransformationResults: React.FC<TransformationResultsProps> = ({
     URL.revokeObjectURL(url)
   }
 
-  const handleRestart = () => {
-    if (confirm('Are you sure you want to restart the transformation?')) {
-      window.location.reload()
-    }
-  }
-
   const hasErrors = result.summary.errors.length > 0 || result.summary.tasksFailed > 0
 
   return (
@@ -1017,7 +959,7 @@ export const TransformationResults: React.FC<TransformationResultsProps> = ({
       {/* Success Modal */}
       <SuccessModal
         isOpen={showSuccessModal}
-        onClose={() => setShowSuccessModal(false)}
+        onClose={handleCloseSuccessModal}
         title="Transformation Complete!"
         message="Your code transformation has been successfully applied to GitHub. A pull request has been created with all your accepted changes."
         pullRequestUrl={applySuccess?.prUrl}
@@ -1086,7 +1028,9 @@ export const TransformationResults: React.FC<TransformationResultsProps> = ({
         onAccept={onAccept}
         onReject={onReject}
         onDownload={handleDownload}
-        onRestart={handleRestart}
+        onReset={handleReset}
+        onRestart={() => window.location.reload()}
+        onAcceptAll={handleAcceptAll}
         hasErrors={hasErrors}
         isApplying={isApplying}
         acceptedCount={acceptedFiles.size}

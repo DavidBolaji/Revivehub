@@ -12,6 +12,12 @@ const navigation = [
     icon: '🎃',
     description: 'Overview',
   },
+  {
+    name: 'Migrations',
+    href: '/migrations',
+    icon: '🔄',
+    description: 'History',
+  },
 ]
 
 export function Sidebar() {

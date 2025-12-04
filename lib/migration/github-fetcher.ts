@@ -5,7 +5,7 @@
  */
 
 import { Octokit } from '@octokit/rest'
-import { createOctokit, checkRateLimit } from '@/lib/github/client'
+import { createOctokit, checkRateLimit } from '@/lib/github/octokit'
 import { handleGitHubError, GitHubAPIError, withExponentialBackoff } from '@/lib/github/errors'
 import { cachedGitHubRequest, CacheKeys, CacheTTL } from '@/lib/github/cache'
 import type {

@@ -10,6 +10,7 @@ import { ComponentLoadingSkeleton } from './ComponentLoadingSkeleton'
 import type { OrchestrationResult, TransformationRequest } from '@/types/transformer'
 import { Phase3Card } from './Phase3Card'
 import { SuccessModal, useSuccessModal } from '@/components/ui/success-modal'
+import { Badge } from '@/components/ui/badge'
 import { recordTransformation } from '@/lib/stats/statistics-service'
 
 
@@ -296,7 +297,7 @@ export function MigrationPlanView({
       )
 
       if (transformationTaskIds.length === 0) {
-        setError('No transformation tasks selected. Phase 3 migration tasks cannot be run through transformations.')
+        setError('No transformation tasks selected. Transformation tasks cannot be run on empty selection.')
         setIsLoading(false)
         return
       }
@@ -474,12 +475,12 @@ export function MigrationPlanView({
           transformations,
           migrationSpec: {
             sourceFramework: {
-              name: 'Legacy',
-              version: '1.0.0',
+              name: plan.sourceStack?.framework || 'Legacy',
+              version: plan.sourceStack?.version || '1.0.0',
             },
             targetFramework: {
-              name: 'Modern',
-              version: '2.0.0',
+              name: plan.targetStack?.framework || 'Modern',
+              version: plan.targetStack?.version || '2.0.0',
             },
             options: {},
           },
@@ -529,6 +530,44 @@ export function MigrationPlanView({
   const handleRejectChanges = () => {
     if (confirm('Are you sure you want to reject all changes?')) {
       setTransformationFlow({ stage: 'idle' })
+    }
+  }
+
+  const handleAcceptAll = () => {
+    if (transformationFlow.stage === 'results') {
+      const allFiles = Array.from(transformationFlow.result.transformedFiles.keys())
+      console.log('[MigrationPlanView] Accepting all files:', allFiles.length)
+      setAcceptedFiles(new Set(allFiles))
+    }
+  }
+
+  const handleResetAccepted = () => {
+    console.log('[MigrationPlanView] Resetting accepted files')
+    setAcceptedFiles(new Set())
+  }
+
+  // File navigation state for diff viewer
+  const diffViewerAllFiles = transformationFlow.stage === 'viewing-diff' 
+    ? Array.from(transformationFlow.result.transformedFiles.keys())
+    : []
+  
+  const diffViewerCurrentFileIndex = transformationFlow.stage === 'viewing-diff'
+    ? diffViewerAllFiles.indexOf(transformationFlow.filePath)
+    : -1
+
+  const handleDiffNavigateFile = (direction: 'prev' | 'next') => {
+    if (transformationFlow.stage === 'viewing-diff') {
+      if (direction === 'prev' && diffViewerCurrentFileIndex > 0) {
+        setTransformationFlow({
+          ...transformationFlow,
+          filePath: diffViewerAllFiles[diffViewerCurrentFileIndex - 1]
+        })
+      } else if (direction === 'next' && diffViewerCurrentFileIndex < diffViewerAllFiles.length - 1) {
+        setTransformationFlow({
+          ...transformationFlow,
+          filePath: diffViewerAllFiles[diffViewerCurrentFileIndex + 1]
+        })
+      }
     }
   }
 
@@ -588,7 +627,90 @@ export function MigrationPlanView({
       : transformationFlow.result
 
     const taskResult = result.results.find(r => r.filePath === filePath)
-    return taskResult?.result?.diff
+    const originalDiff = taskResult?.result?.diff
+    
+    if (!originalDiff) {
+      return undefined
+    }
+
+    // Check if this file has been modified (exists in transformedFiles Map)
+    const modifiedContent = result.transformedFiles.get(filePath)
+    
+    if (modifiedContent && modifiedContent !== originalDiff.transformed) {
+      console.log('[MigrationPlanView] getDiffForFile: File has been modified, regenerating diff')
+      console.log('[MigrationPlanView] Original transformed length:', originalDiff.transformed?.length || 0)
+      console.log('[MigrationPlanView] Modified content length:', modifiedContent.length)
+      
+      // Regenerate the visual diff comparing original vs modified content
+      const generateVisualDiff = (original: string, modified: string) => {
+        const originalLines = original.split('\n')
+        const modifiedLines = modified.split('\n')
+        const visual: any[] = []
+        
+        const maxLines = Math.max(originalLines.length, modifiedLines.length)
+        
+        for (let i = 0; i < maxLines; i++) {
+          const origLine = originalLines[i]
+          const modLine = modifiedLines[i]
+          
+          if (origLine === modLine) {
+            // Unchanged line
+            visual.push({
+              type: 'unchanged',
+              lineNumber: i + 1,
+              content: origLine || '',
+              oldLineNumber: i + 1,
+              newLineNumber: i + 1,
+            })
+          } else if (origLine !== undefined && modLine !== undefined) {
+            // Modified line - show both
+            visual.push({
+              type: 'removed',
+              lineNumber: i + 1,
+              content: origLine,
+              oldLineNumber: i + 1,
+            })
+            visual.push({
+              type: 'added',
+              lineNumber: i + 1,
+              content: modLine,
+              newLineNumber: i + 1,
+            })
+          } else if (origLine !== undefined) {
+            // Removed line
+            visual.push({
+              type: 'removed',
+              lineNumber: i + 1,
+              content: origLine,
+              oldLineNumber: i + 1,
+            })
+          } else if (modLine !== undefined) {
+            // Added line
+            visual.push({
+              type: 'added',
+              lineNumber: i + 1,
+              content: modLine,
+              newLineNumber: i + 1,
+            })
+          }
+        }
+        
+        return visual
+      }
+      
+      const newVisual = generateVisualDiff(originalDiff.original || '', modifiedContent)
+      
+      console.log('[MigrationPlanView] Regenerated visual diff with', newVisual.length, 'lines')
+      
+      // Return diff with modified content and regenerated visual
+      return {
+        ...originalDiff,
+        transformed: modifiedContent, // Use the modified content
+        visual: newVisual, // Use regenerated visual diff
+      }
+    }
+    
+    return originalDiff
   }
 
   return (
@@ -726,6 +848,8 @@ export function MigrationPlanView({
                   isApplying={isLoading}
                   acceptedFiles={acceptedFiles}
                   applySuccess={applySuccess}
+                  onAcceptAll={handleAcceptAll}
+                  onReset={handleResetAccepted}
                 />
               </div>
             </div>
@@ -745,10 +869,15 @@ export function MigrationPlanView({
               <h2 className="text-xl font-bold text-white flex items-center gap-2">
                 <FileText className="h-5 w-5 text-purple-400" />
                 Viewing Diff: {transformationFlow.filePath}
+                {diffViewerAllFiles.length > 0 && (
+                  <Badge variant="secondary" className="text-xs ml-2">
+                    {diffViewerCurrentFileIndex + 1} of {diffViewerAllFiles.length}
+                  </Badge>
+                )}
               </h2>
               <button
                 onClick={handleCloseDiff}
-                className="text-purple-300 hover:text-white transition-colors p-2 rounded-lg hover:bg-white/10"
+                className="text-white hover:text-white transition-colors p-2 rounded-lg hover:bg-white/20 bg-white/10 border border-white/30"
               >
                 <X className="h-6 w-6" />
               </button>
@@ -759,6 +888,9 @@ export function MigrationPlanView({
                   <EditableDiffViewer
                     diff={getDiffForFile(transformationFlow.filePath)!}
                     filePath={transformationFlow.filePath}
+                    allFiles={diffViewerAllFiles}
+                    currentFileIndex={diffViewerCurrentFileIndex}
+                    onNavigateFile={handleDiffNavigateFile}
                     onAccept={(modifiedContent) => {
                       if (transformationFlow.stage === 'viewing-diff') {
                         const currentFilePath = transformationFlow.filePath

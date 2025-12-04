@@ -88,6 +88,9 @@ interface EditableDiffViewerProps {
   onAccept: (modifiedContent?: string) => void
   onReject: () => void
   initialContent?: string
+  allFiles?: string[]
+  currentFileIndex?: number
+  onNavigateFile?: (direction: 'prev' | 'next') => void
 }
 
 interface Change {
@@ -133,6 +136,9 @@ export const EditableDiffViewer: React.FC<EditableDiffViewerProps> = ({
   onAccept,
   onReject,
   initialContent,
+  allFiles = [],
+  currentFileIndex = 0,
+  onNavigateFile,
 }) => {
   const [currentChangeIndex, setCurrentChangeIndex] = useState(0)
   const [isEditing, setIsEditing] = useState(false)
@@ -144,6 +150,7 @@ export const EditableDiffViewer: React.FC<EditableDiffViewerProps> = ({
   const [viewMode, setViewMode] = useState<'split' | 'inline'>('split')
   const [acceptedChanges, setAcceptedChanges] = useState<Set<number>>(new Set())
   const [rejectedChanges, setRejectedChanges] = useState<Set<number>>(new Set())
+  const [hasBeenEdited, setHasBeenEdited] = useState(false)
   
   const changeRefs = useRef<Map<number, HTMLDivElement>>(new Map())
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -153,28 +160,43 @@ export const EditableDiffViewer: React.FC<EditableDiffViewerProps> = ({
 
   // Initialize edited content with the transformed content
   useEffect(() => {
+    console.log('[EditableDiffViewer] ========== INITIALIZATION ==========')
+    console.log('[EditableDiffViewer] initialContent provided:', !!initialContent)
+    console.log('[EditableDiffViewer] initialContent length:', initialContent?.length || 0)
+    console.log('[EditableDiffViewer] diff.transformed length:', diff.transformed?.length || 0)
+    console.log('[EditableDiffViewer] Current editedContent length:', editedContent.length)
+    console.log('[EditableDiffViewer] hasBeenEdited:', hasBeenEdited)
+    
     if (initialContent) {
+      console.log('[EditableDiffViewer] ✅ Using initialContent')
+      console.log('[EditableDiffViewer] initialContent preview:', initialContent.substring(0, 200))
       setEditedContent(initialContent)
+    } else if (diff.transformed) {
+      console.log('[EditableDiffViewer] ✅ Using diff.transformed')
+      console.log('[EditableDiffViewer] diff.transformed preview:', diff.transformed.substring(0, 200))
+      setEditedContent(diff.transformed)
     } else {
+      console.log('[EditableDiffViewer] ⚠️ Reconstructing from diff.visual')
       // Reconstruct the transformed content from diff
       const transformedLines = diff.visual
         .filter(line => line.type !== 'removed')
         .map(line => line.content)
       setEditedContent(transformedLines.join('\n'))
     }
-  }, [diff, initialContent])
+    console.log('[EditableDiffViewer] ==========================================')
+  }, [diff.transformed, initialContent])
 
   // Create a modified diff that shows the edited content in the "After" column
   const modifiedDiff = useMemo(() => {
-    if (!hasUnsavedChanges && !isEditing) {
+    // If content has been edited (even if saved), show the updated diff
+    if (!hasBeenEdited && !hasUnsavedChanges && !isEditing) {
       return diff // Return original diff if no changes
     }
 
     // Create a new diff that shows the edited content
     const editedLines = editedContent.split('\n')
-    const originalLines = diff.visual
-      .filter(line => line.type !== 'added')
-      .map(line => line.content)
+    // Extract original lines from the diff.original, not from diff.visual
+    const originalLines = (diff.original || '').split('\n')
 
     // Simple diff generation - in a real implementation, you'd use a proper diff algorithm
     const newVisual = []
@@ -232,7 +254,7 @@ export const EditableDiffViewer: React.FC<EditableDiffViewerProps> = ({
       ...diff,
       visual: newVisual
     }
-  }, [diff, editedContent, hasUnsavedChanges, isEditing])
+  }, [diff, editedContent, hasUnsavedChanges, isEditing, hasBeenEdited])
 
   // Find all changes (added, removed, modified lines) using modified diff
   const changes = useMemo<Change[]>(() => {
@@ -258,6 +280,7 @@ export const EditableDiffViewer: React.FC<EditableDiffViewerProps> = ({
   const handleContentChange = useCallback((value: string) => {
     setEditedContent(value)
     setHasUnsavedChanges(true)
+    setHasBeenEdited(true)
   }, [])
 
   // Save changes
@@ -283,6 +306,7 @@ export const EditableDiffViewer: React.FC<EditableDiffViewerProps> = ({
       setEditedContent(transformedLines.join('\n'))
     }
     setHasUnsavedChanges(false)
+    setHasBeenEdited(false)
   }, [diff, initialContent])
 
   // Toggle editing mode
@@ -298,6 +322,25 @@ export const EditableDiffViewer: React.FC<EditableDiffViewerProps> = ({
 
   // Accept with modifications
   const handleAcceptWithChanges = useCallback(() => {
+    console.log('[EditableDiffViewer] ========== ACCEPT CLICKED ==========')
+    console.log('[EditableDiffViewer] hasBeenEdited:', hasBeenEdited)
+    console.log('[EditableDiffViewer] hasUnsavedChanges:', hasUnsavedChanges)
+    console.log('[EditableDiffViewer] isEditing:', isEditing)
+    console.log('[EditableDiffViewer] editedContent length:', editedContent.length)
+    console.log('[EditableDiffViewer] editedContent first 300 chars:', editedContent.substring(0, 300))
+    console.log('[EditableDiffViewer] diff.transformed length:', diff.transformed?.length || 0)
+    console.log('[EditableDiffViewer] diff.transformed first 300 chars:', diff.transformed?.substring(0, 300) || 'N/A')
+    console.log('[EditableDiffViewer] Passing edited content to onAccept')
+    console.log('[EditableDiffViewer] ==========================================')
+    onAccept(editedContent)
+  }, [onAccept, editedContent, hasBeenEdited, hasUnsavedChanges, isEditing, diff.transformed])
+
+  // Accept all changes
+  const handleAcceptAll = useCallback(() => {
+    console.log('[EditableDiffViewer] ========== ACCEPT ALL CLICKED ==========')
+    console.log('[EditableDiffViewer] editedContent length:', editedContent.length)
+    console.log('[EditableDiffViewer] editedContent first 300 chars:', editedContent.substring(0, 300))
+    console.log('[EditableDiffViewer] ==========================================')
     onAccept(editedContent)
   }, [onAccept, editedContent])
 
@@ -341,35 +384,7 @@ export const EditableDiffViewer: React.FC<EditableDiffViewerProps> = ({
     }
   }, [])
 
-  // Accept a specific change
-  const acceptChange = useCallback((index: number) => {
-    setAcceptedChanges(prev => {
-      const newSet = new Set(prev)
-      newSet.add(index)
-      return newSet
-    })
-    setRejectedChanges(prev => {
-      const newSet = new Set(prev)
-      newSet.delete(index)
-      return newSet
-    })
-    setHasUnsavedChanges(true)
-  }, [])
 
-  // Reject a specific change
-  const rejectChange = useCallback((index: number) => {
-    setRejectedChanges(prev => {
-      const newSet = new Set(prev)
-      newSet.add(index)
-      return newSet
-    })
-    setAcceptedChanges(prev => {
-      const newSet = new Set(prev)
-      newSet.delete(index)
-      return newSet
-    })
-    setHasUnsavedChanges(true)
-  }, [])
 
   // Apply accepted/rejected changes to generate final code
   const applyChangeSelections = useCallback(() => {
@@ -413,8 +428,7 @@ export const EditableDiffViewer: React.FC<EditableDiffViewerProps> = ({
     lineType: 'added' | 'removed' | 'unchanged' | 'modified',
     lineNumber: number | undefined,
     index: number,
-    oldLineNumber?: number,
-    showActions: boolean = false
+    oldLineNumber?: number
   ) => {
     const isChange = lineType !== 'unchanged'
     const isCurrentChange =
@@ -518,73 +532,7 @@ export const EditableDiffViewer: React.FC<EditableDiffViewerProps> = ({
           dangerouslySetInnerHTML={{ __html: highlightedContent }}
         />
 
-        {/* VS Code-style inline actions */}
-        {showActions && isChange && !isEditing && (
-          <div className="absolute right-2 top-0 bottom-0 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-            {/* Debug: Show what buttons should appear */}
-            {(() => {
-              if (lineType === 'removed' && isAccepted) {
-                console.log(`[DiffViewer] Line ${index}: removed + accepted, should show Remove button`)
-              }
-              return null
-            })()}
-            
-            {lineType === 'added' && !isRejected && (
-              <button
-                onClick={() => rejectChange(index)}
-                className="px-2 py-0.5 text-xs bg-red-500 hover:bg-red-600 text-white rounded shadow-sm"
-                title="Reject this change"
-              >
-                ✕
-              </button>
-            )}
-            {lineType === 'added' && isRejected && (
-              <button
-                onClick={() => {
-                  setRejectedChanges(prev => {
-                    const newSet = new Set(prev)
-                    newSet.delete(index)
-                    return newSet
-                  })
-                  setHasUnsavedChanges(true)
-                }}
-                className="px-2 py-0.5 text-xs bg-green-500 hover:bg-green-600 text-white rounded shadow-sm"
-                title="Accept this change"
-              >
-                ✓
-              </button>
-            )}
-            {lineType === 'removed' && !isAccepted && (
-              <button
-                onClick={() => {
-                  console.log(`[DiffViewer] Accepting (keeping) line ${index}`)
-                  acceptChange(index)
-                }}
-                className="px-2 py-0.5 text-xs bg-green-500 hover:bg-green-600 text-white rounded shadow-sm"
-                title="Keep original (reject removal)"
-              >
-                ✓ Keep
-              </button>
-            )}
-            {lineType === 'removed' && isAccepted && (
-              <button
-                onClick={() => {
-                  console.log(`[DiffViewer] Removing (un-accepting) line ${index}`)
-                  setAcceptedChanges(prev => {
-                    const newSet = new Set(prev)
-                    newSet.delete(index)
-                    return newSet
-                  })
-                  setHasUnsavedChanges(true)
-                }}
-                className="px-2 py-0.5 text-xs bg-red-500 hover:bg-red-600 text-white rounded shadow-sm"
-                title="Remove this line (undo keep)"
-              >
-                ✕ Remove
-              </button>
-            )}
-          </div>
-        )}
+
       </div>
     )
   }
@@ -631,6 +579,11 @@ export const EditableDiffViewer: React.FC<EditableDiffViewerProps> = ({
                 <CardTitle className="text-lg font-mono break-all">
                   {filePath}
                 </CardTitle>
+                {allFiles.length > 0 && (
+                  <Badge variant="secondary" className="text-xs">
+                    {currentFileIndex + 1} of {allFiles.length}
+                  </Badge>
+                )}
                 {hasUnsavedChanges && (
                   <Badge variant="outline" className="text-orange-600 border-orange-600">
                     Unsaved Changes
@@ -668,6 +621,30 @@ export const EditableDiffViewer: React.FC<EditableDiffViewerProps> = ({
             
             {/* Action buttons */}
             <div className="flex items-center space-x-2 ml-4">
+              {/* File navigation */}
+              {onNavigateFile && allFiles.length > 1 && (
+                <div className="flex items-center space-x-1 border-r pr-2 mr-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onNavigateFile('prev')}
+                    disabled={currentFileIndex === 0}
+                    className="h-8 px-2"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onNavigateFile('next')}
+                    disabled={currentFileIndex >= allFiles.length - 1}
+                    className="h-8 px-2"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+              
               {/* Edit mode toggle */}
               <Button
                 variant="outline"
@@ -682,22 +659,13 @@ export const EditableDiffViewer: React.FC<EditableDiffViewerProps> = ({
               </Button>
               
               <Button
-                variant="outline"
-                size="sm"
-                onClick={onReject}
-                className="text-red-600 hover:text-red-700"
-              >
-                <XCircle className="h-4 w-4 mr-1" />
-                Reject
-              </Button>
-              <Button
                 variant="default"
                 size="sm"
-                onClick={handleAcceptWithChanges}
-                className="bg-green-600 hover:bg-green-700"
+                onClick={handleAcceptAll}
+                className="bg-green-600 hover:bg-green-700 text-white"
               >
                 <CheckCircle className="h-4 w-4 mr-1" />
-                Accept{hasUnsavedChanges ? ' Changes' : ''}
+                Accept
               </Button>
             </div>
           </div>
@@ -824,14 +792,14 @@ export const EditableDiffViewer: React.FC<EditableDiffViewerProps> = ({
         <CardContent className="p-0">
           {isEditing ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 divide-x divide-gray-200 dark:divide-gray-700">
-              {/* Editor */}
+              {/* Editor - VSCode-like */}
               <div className="overflow-hidden">
                 <div className="bg-[#f6f8fa] dark:bg-[#161b22] px-4 py-2 border-b border-gray-200 dark:border-gray-700">
                   <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
                     Editor
                   </h3>
                 </div>
-                <div className="p-4 bg-white dark:bg-[#0d1117]">
+                <div className="p-0 bg-[#1e1e1e] dark:bg-[#0d1117]">
                   <Textarea
                     ref={textareaRef}
                     value={editedContent}
@@ -858,8 +826,7 @@ export const EditableDiffViewer: React.FC<EditableDiffViewerProps> = ({
                           line.type,
                           line.newLineNumber || line.oldLineNumber,
                           index,
-                          line.oldLineNumber,
-                          false
+                          line.oldLineNumber
                         )}
                       </div>
                     ))}
@@ -891,8 +858,7 @@ export const EditableDiffViewer: React.FC<EditableDiffViewerProps> = ({
                             line.type,
                             line.oldLineNumber,
                             index,
-                            line.oldLineNumber,
-                            true
+                            line.oldLineNumber
                           )}
                         </div>
                       )
@@ -942,8 +908,7 @@ export const EditableDiffViewer: React.FC<EditableDiffViewerProps> = ({
                             line.type,
                             line.newLineNumber,
                             index,
-                            line.oldLineNumber,
-                            true
+                            line.oldLineNumber
                           )}
                         </div>
                       )
@@ -957,8 +922,7 @@ export const EditableDiffViewer: React.FC<EditableDiffViewerProps> = ({
                             line.type,
                             line.oldLineNumber,
                             index,
-                            line.oldLineNumber,
-                            true
+                            line.oldLineNumber
                           )}
                         </div>
                       )
@@ -1001,8 +965,7 @@ export const EditableDiffViewer: React.FC<EditableDiffViewerProps> = ({
                       line.type,
                       line.newLineNumber || line.oldLineNumber,
                       index,
-                      line.oldLineNumber,
-                      true
+                      line.oldLineNumber
                     )}
                   </div>
                 ))}
@@ -1015,25 +978,59 @@ export const EditableDiffViewer: React.FC<EditableDiffViewerProps> = ({
       {/* Action buttons at bottom */}
       <Card>
         <CardContent className="py-4">
-          <div className="flex items-center justify-center space-x-3">
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={onReject}
-              className="min-w-[140px]"
-            >
-              <XCircle className="h-5 w-5 mr-2" />
-              Reject File
-            </Button>
-            <Button
-              variant="default"
-              size="lg"
-              onClick={handleAcceptWithChanges}
-              className="min-w-[140px] bg-green-600 hover:bg-green-700"
-            >
-              <CheckCircle className="h-5 w-5 mr-2" />
-              Accept{hasUnsavedChanges ? ' Changes' : ' File'}
-            </Button>
+          <div className="flex items-center justify-between">
+            {/* Left: Navigation */}
+            <div className="flex items-center space-x-2">
+              {onNavigateFile && allFiles.length > 1 && (
+                <>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={() => onNavigateFile('prev')}
+                    disabled={currentFileIndex === 0}
+                    className="min-w-[120px]"
+                  >
+                    <ChevronLeft className="h-5 w-5 mr-2" />
+                    Previous
+                  </Button>
+                  <span className="text-sm text-gray-600 px-2">
+                    {currentFileIndex + 1} / {allFiles.length}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={() => onNavigateFile('next')}
+                    disabled={currentFileIndex >= allFiles.length - 1}
+                    className="min-w-[120px]"
+                  >
+                    Next
+                    <ChevronRight className="h-5 w-5 ml-2" />
+                  </Button>
+                </>
+              )}
+            </div>
+
+            {/* Right: Accept/Reject */}
+            <div className="flex items-center space-x-3">
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={onReject}
+                className="min-w-[140px] border-red-300 text-red-600 hover:bg-red-50"
+              >
+                <XCircle className="h-5 w-5 mr-2" />
+                Reject File
+              </Button>
+              <Button
+                variant="default"
+                size="lg"
+                onClick={handleAcceptWithChanges}
+                className="min-w-[140px] bg-green-600 hover:bg-green-700 text-white"
+              >
+                <CheckCircle className="h-5 w-5 mr-2" />
+                Accept{hasUnsavedChanges ? ' Changes' : ' File'}
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>

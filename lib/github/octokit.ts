@@ -59,3 +59,6 @@ export async function checkRateLimit(octokit: Octokit) {
     },
   }
 }
+
+// Export types for better TypeScript support
+export type RateLimitInfo = Awaited<ReturnType<typeof checkRateLimit>>
