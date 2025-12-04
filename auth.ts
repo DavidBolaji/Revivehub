@@ -58,6 +58,8 @@ export const authConfig: NextAuthConfig = {
         token.refreshToken = account.refresh_token
         token.expiresAt = account.expires_at
         token.githubId = profile.id?.toString()
+        // Store GitHub username (login) for display
+        token.githubLogin = (profile as any).login
         return token
       }
 
@@ -125,6 +127,7 @@ export const authConfig: NextAuthConfig = {
       if (session.user) {
         session.user.id = token.githubId as string
         session.user.githubId = token.githubId as string
+        session.user.githubLogin = token.githubLogin as string
         session.accessToken = token.accessToken as string
         session.expiresAt = token.expiresAt as number
       }

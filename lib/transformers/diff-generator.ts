@@ -252,6 +252,61 @@ export class DiffGenerator {
   areIdentical(original: string, transformed: string): boolean {
     return original === transformed
   }
+
+  /**
+   * Generate a "rename" diff that shows full content for file renames
+   * 
+   * When a file is renamed (e.g., .js to .jsx) with identical content,
+   * this generates a diff that shows the content being "moved" from old to new file.
+   * Lines are shown as removed from the old file and added to the new file,
+   * making the rename visible in the diff viewer.
+   * 
+   * @param content - File content (same for both old and new)
+   * @param oldPath - Original file path
+   * @param newPath - New file path
+   * @returns Diff object showing rename as remove + add
+   */
+  generateRenameDiff(content: string, oldPath: string, newPath: string): DiffType {
+    const lines = content.split('\n')
+    const visual: DiffLine[] = []
+
+    // Show all lines as removed from old file
+    lines.forEach((line, index) => {
+      const lineNum = index + 1
+      visual.push({
+        type: 'removed',
+        lineNumber: lineNum,
+        content: line,
+        oldLineNumber: lineNum,
+      })
+    })
+
+    // Show all lines as added to new file
+    lines.forEach((line, index) => {
+      const lineNum = index + 1
+      visual.push({
+        type: 'added',
+        lineNumber: lineNum,
+        content: line,
+        newLineNumber: lineNum,
+      })
+    })
+
+    // Create a unified diff showing the rename
+    const unified = `--- ${oldPath}
++++ ${newPath}
+@@ -1,${lines.length} +1,${lines.length} @@
+${lines.map(line => `-${line}`).join('\n')}
+${lines.map(line => `+${line}`).join('\n')}`
+
+    return {
+      original: content,
+      transformed: content,
+      unified,
+      visual,
+      characterLevel: [], // No character changes for renames
+    }
+  }
 }
 
 // Export singleton instance for convenience

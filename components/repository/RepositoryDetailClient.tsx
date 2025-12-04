@@ -10,6 +10,7 @@ import { ScanResultsSkeleton } from './ScanResultsSkeleton'
 import { HealthScore } from '@/components/dashboard/HealthScore'
 import { MigrationPlanSkeleton } from '@/components/planner/MigrationPlanSkeleton'
 import { ClientCache, CacheKeys, CacheTTL } from '@/lib/cache/client-cache'
+import { recordAnalysis } from '@/lib/stats/statistics-service'
 import type { Repository } from '@/types/repository'
 import type { AnalysisReport, Issue } from '@/lib/scanner/types'
 import type { EnhancedMigrationPlan } from '@/lib/planner/ai-enhancer'
@@ -235,6 +236,16 @@ export function RepositoryDetailClient({
       results,
       CacheTTL.SCAN_RESULTS
     )
+    
+    // Record analysis statistics
+    recordAnalysis({
+      repositoryFullName: `${owner}/${repo}`,
+      patternsFound: results.patterns?.length || 0,
+      filesScanned: results.summary?.totalFiles || 0,
+    })
+    
+    // Dispatch custom event to update stats in dashboard
+    window.dispatchEvent(new Event('revivehub-stats-updated'))
     
     // Trigger animation by showing health score after a brief delay
     setTimeout(() => {

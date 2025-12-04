@@ -10,6 +10,7 @@ declare module "next-auth" {
     user: {
       id: string
       githubId?: string
+      githubLogin?: string
     } & DefaultSession["user"]
     accessToken?: string
     expiresAt?: number
@@ -21,6 +22,7 @@ declare module "next-auth" {
    */
   interface User {
     githubId?: string
+    githubLogin?: string
     linkedRepositoriesCount?: number
   }
 
@@ -33,6 +35,7 @@ declare module "next-auth" {
     refreshToken?: string
     expiresAt?: number
     githubId?: string
+    githubLogin?: string
   }
 }
 

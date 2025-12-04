@@ -1,6 +1,7 @@
 import { auth } from '@/auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { Breadcrumb } from '@/components/ui/breadcrumb'
 import { createOctokit } from '@/lib/github/octokit'
 import { getRepositoryDetails } from '@/lib/github/repositories'
 import { GitHubAPIError } from '@/lib/github/errors'
@@ -49,18 +50,13 @@ export default async function RepositoryDetailPage({
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Breadcrumb Navigation */}
-      <nav className="flex items-center gap-2 text-sm text-purple-300" aria-label="Breadcrumb">
-        <Link
-          href="/dashboard"
-          className="hover:text-purple-100 transition-colors"
-        >
-          Dashboard
-        </Link>
-        <span className="text-purple-500/50">/</span>
-        <span className="text-purple-100 font-medium">{params.owner}</span>
-        <span className="text-purple-500/50">/</span>
-        <span className="text-purple-100 font-medium truncate max-w-[200px] sm:max-w-none">{params.repo}</span>
-      </nav>
+      <Breadcrumb
+        items={[
+          { label: 'Dashboard', href: '/dashboard' },
+          { label: params.owner },
+          { label: params.repo },
+        ]}
+      />
 
       {/* Header with back button and repository name */}
       <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">

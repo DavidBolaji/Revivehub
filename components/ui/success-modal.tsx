@@ -61,8 +61,16 @@ export function SuccessModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className={`bg-gradient-to-br ${getGradient()} rounded-lg shadow-2xl max-w-md w-full border border-white/20 relative overflow-hidden`}>
+    <div 
+      className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+      onClick={(e) => {
+        // Close modal when clicking backdrop
+        if (e.target === e.currentTarget) {
+          handleClose()
+        }
+      }}
+    >
+      <div className={`bg-gradient-to-br ${getGradient()} rounded-lg shadow-2xl max-w-2xl w-full border border-white/20 relative overflow-hidden`}>
         {/* Animated background effects */}
         <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full blur-2xl animate-pulse delay-1000" />
@@ -78,7 +86,8 @@ export function SuccessModal({
             </div>
             <button
               onClick={handleClose}
-              className="text-white/60 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/10"
+              className="text-gray-300 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/10 bg-black/20"
+              aria-label="Close modal"
             >
               <X className="h-5 w-5" />
             </button>

@@ -193,7 +193,7 @@ export function RepositoryList({ repositories }: RepositoryListProps) {
       </div>
 
       {/* Repository grid - optimized for mobile */}
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {currentRepos.map((repo) => (
           <RepositoryCard key={repo.id} repository={repo} />
         ))}

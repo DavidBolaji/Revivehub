@@ -6,7 +6,7 @@
 
 import type { OctokitInstance } from '../client'
 import { handleGitHubError } from '../errors'
-import { cachedGitHubRequest, GitHubCacheKeys, GitHubCacheTTL } from '../cache'
+import { cachedGitHubRequest, CacheKeys as GitHubCacheKeys, CacheTTL as GitHubCacheTTL } from '../cache'
 import type { 
   RepositoryValidation, 
   CreateCommitParams, 

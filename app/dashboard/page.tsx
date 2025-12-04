@@ -2,6 +2,8 @@ import { auth } from '@/auth'
 import { redirect } from 'next/navigation'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { RepositoryList } from '@/components/dashboard/RepositoryList'
+import { DashboardStats } from '@/components/dashboard/DashboardStats'
+import { Breadcrumb } from '@/components/ui/breadcrumb'
 import { createOctokit } from '@/lib/github/octokit'
 import { getUserRepositories } from '@/lib/github/repositories'
 import type { Repository } from '@/types/repository'
@@ -31,58 +33,39 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-3 sm:space-y-4 lg:space-y-6">
+      {/* Breadcrumb */}
+      <Breadcrumb items={[{ label: 'Dashboard' }]} />
+
       {/* Welcome section */}
-      <div className="relative overflow-hidden rounded-lg border border-purple-500/20 bg-gradient-to-r from-purple-900 to-orange-900 p-4 sm:p-6">
+      <div className="relative overflow-hidden rounded-lg border border-purple-500/20 bg-gradient-to-r from-purple-900 to-orange-900 p-4 sm:p-5 lg:p-6">
         <div className="relative z-10">
-          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2 flex items-center gap-2 sm:gap-3">
-            <span className="text-3xl sm:text-4xl">🧟‍♂️</span>
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-1.5 sm:mb-2 flex items-center gap-2 sm:gap-3">
+            <span className="text-2xl sm:text-3xl lg:text-4xl">🧟‍♂️</span>
             <span>Welcome to ReviveHub</span>
           </h1>
-          <p className="text-sm sm:text-base text-purple-200">
+          <p className="text-xs sm:text-sm lg:text-base text-purple-200">
             Resurrect your legacy code with AI-powered modernization
           </p>
         </div>
         {/* Spooky glow effect - hidden on mobile for performance */}
-        <div className="hidden sm:block absolute top-0 right-0 w-64 h-64 bg-orange-500/20 rounded-full blur-3xl" />
+        <div className="hidden md:block absolute top-0 right-0 w-48 h-48 lg:w-64 lg:h-64 bg-orange-500/20 rounded-full blur-3xl" />
       </div>
 
       {/* Stats cards */}
-      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-3">
-        <StatCard
-          icon="🎃"
-          title="Repositories"
-          value={repositories.length.toString()}
-          description="Haunted codebases"
-          gradient="from-orange-900 to-orange-800"
-        />
-        <StatCard
-          icon="⚡"
-          title="Analyses"
-          value="0"
-          description="Spells cast"
-          gradient="from-purple-900 to-purple-800"
-        />
-        <StatCard
-          icon="🔮"
-          title="Transformations"
-          value="0"
-          description="Code revived"
-          gradient="from-violet-900 to-violet-800"
-        />
-      </div>
+      <DashboardStats repositoryCount={repositories.length} />
 
       {/* Repositories section */}
-      <div className="rounded-lg border border-purple-500/20 bg-slate-900">
-        <div className="border-b border-purple-500/20 p-3 sm:p-4">
-          <h2 className="text-lg sm:text-xl font-semibold text-white flex items-center gap-2">
+      <div className="rounded-lg border border-purple-500/20 bg-slate-900/50 backdrop-blur-sm">
+        <div className="border-b border-purple-500/20 p-3 sm:p-4 lg:p-5">
+          <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-white flex items-center gap-2">
             <span>👻</span>
             <span>Your Repositories</span>
           </h2>
         </div>
-        <div className="p-4 sm:p-6">
+        <div className="p-3 sm:p-4 lg:p-6">
           {error ? (
-            <div className="rounded-lg border border-orange-500/30 bg-orange-900/20 p-3 sm:p-4 text-sm sm:text-base text-orange-200">
+            <div className="rounded-lg border border-orange-500/30 bg-orange-900/20 p-3 sm:p-4 text-xs sm:text-sm lg:text-base text-orange-200">
               <p className="flex items-center gap-2">
                 <span>⚠️</span>
                 <span>{error}</span>
@@ -95,37 +78,6 @@ export default async function DashboardPage() {
           )}
         </div>
       </div>
-    </div>
-  )
-}
-
-function StatCard({
-  icon,
-  title,
-  value,
-  description,
-  gradient,
-}: {
-  icon: string
-  title: string
-  value: string
-  description: string
-  gradient: string
-}) {
-  return (
-    <div
-      className={`relative overflow-hidden rounded-lg border border-purple-500/20 bg-gradient-to-br ${gradient} p-6 backdrop-blur-sm transition-all hover:scale-105 hover:border-purple-500/40`}
-    >
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-sm text-purple-200">{title}</p>
-          <p className="text-3xl font-bold text-white mt-2">{value}</p>
-          <p className="text-xs text-purple-300 mt-1">{description}</p>
-        </div>
-        <span className="text-4xl opacity-50">{icon}</span>
-      </div>
-      {/* Hover glow effect */}
-      <div className="absolute inset-0 bg-gradient-to-t from-purple-500/0 to-purple-500/10 opacity-0 transition-opacity hover:opacity-100" />
     </div>
   )
 }

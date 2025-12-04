@@ -1,0 +1,3988 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "lastFullScan": "2025-12-04T06:41:19.008Z",
+    "totalFiles": 340,
+    "projectName": "ReviveHub",
+    "description": "AI-powered code modernization and migration platform",
+    "lastUpdate": "2025-12-04T09:36:28.951Z"
+  },
+  "components": {
+    "components/auth/LoginButton.tsx": {
+      "purpose": "Module for LoginButton",
+      "exports": [
+        "LoginButton"
+      ],
+      "dependencies": [
+        "@/components/ui/button"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/auth/SessionProvider.tsx": {
+      "purpose": "Refetch session every 5 minutes instead of constantly",
+      "exports": [
+        "SessionProvider"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "components/auth/UserNav.tsx": {
+      "purpose": "Module for UserNav",
+      "exports": [
+        "UserNav"
+      ],
+      "dependencies": [
+        "@/components/ui/button",
+        "@/components/ui/avatar"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/dashboard/HealthBreakdown.tsx": {
+      "purpose": "Module for HealthBreakdown",
+      "exports": [
+        "HealthBreakdown"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "components/dashboard/HealthScore.tsx": {
+      "purpose": "Determine color based on score",
+      "exports": [
+        "HealthScore"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "components/dashboard/HealthScoreSkeleton.tsx": {
+      "purpose": "Module for HealthScoreSkeleton",
+      "exports": [
+        "HealthScoreSkeleton"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "components/dashboard/index.ts": {
+      "purpose": "Module for index",
+      "exports": [],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "components/dashboard/RepositoryFilters.tsx": {
+      "purpose": "Module for RepositoryFilters",
+      "exports": [
+        "SortOption",
+        "SortDirection",
+        "ActivityStatus",
+        "RepositoryFilters"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "components/documentation/ReadmeGenerator.tsx": {
+      "purpose": "Module for ReadmeGenerator",
+      "exports": [],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "components/github/ApplyChangesModal.tsx": {
+      "purpose": "Connect to SSE endpoint for progress updates",
+      "exports": [
+        "ApplyChangesModal"
+      ],
+      "dependencies": [
+        "@/components/ui/progress",
+        "@/components/ui/button",
+        "@/components/ui/badge",
+        "@/lib/utils"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/Header.tsx": {
+      "purpose": "Module for Header",
+      "exports": [
+        "Header"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "components/planner/AIInsights.tsx": {
+      "purpose": "Module for AIInsights",
+      "exports": [
+        "AIInsights"
+      ],
+      "dependencies": [
+        "@/lib/planner/types",
+        "@/lib/utils"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/planner/CodeMigrationDiffViewer.tsx": {
+      "purpose": "Get file type icon",
+      "exports": [
+        "CodeMigrationDiffViewer"
+      ],
+      "dependencies": [
+        "@/components/ui/card",
+        "@/components/ui/badge",
+        "@/components/ui/separator",
+        "@/components/transformation/EditableDiffViewer",
+        "@/lib/utils",
+        "@/types/transformer",
+        "@/types/migration"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/planner/ComplexityBadge.tsx": {
+      "purpose": "Module for ComplexityBadge",
+      "exports": [
+        "ComplexityBadge"
+      ],
+      "dependencies": [
+        "@/components/ui/badge"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/planner/ComponentLoadingSkeleton.tsx": {
+      "purpose": "Reusable loading skeleton for lazy-loaded planner components",
+      "exports": [
+        "ComponentLoadingSkeleton"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "components/planner/MigrationConfigReview.tsx": {
+      "purpose": "Get framework display names",
+      "exports": [
+        "MigrationConfigReview"
+      ],
+      "dependencies": [
+        "@/components/ui/card",
+        "@/components/ui/button",
+        "@/components/ui/badge",
+        "@/components/ui/separator",
+        "@/lib/utils",
+        "@/types/migration"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/planner/MigrationPlanSkeleton.tsx": {
+      "purpose": "Skeleton loading component for migration plan",
+      "exports": [
+        "MigrationPlanSkeleton"
+      ],
+      "dependencies": [
+        "@/components/ui/skeleton"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/planner/MigrationProgressModal.tsx": {
+      "purpose": "Track if we've successfully connected",
+      "exports": [
+        "MigrationProgressModal"
+      ],
+      "dependencies": [
+        "@/components/ui/progress",
+        "@/components/ui/button",
+        "@/components/ui/badge",
+        "@/lib/utils",
+        "@/types/migration"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/planner/MigrationResultsSummary.tsx": {
+      "purpose": "Get status badge",
+      "exports": [
+        "MigrationResultsSummary"
+      ],
+      "dependencies": [
+        "@/components/ui/card",
+        "@/components/ui/button",
+        "@/components/ui/badge",
+        "@/components/ui/separator",
+        "@/lib/utils",
+        "@/types/migration"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/planner/Phase3Card.tsx": {
+      "purpose": "Lazy load heavy components",
+      "exports": [
+        "Phase3Card"
+      ],
+      "dependencies": [
+        "@/components/ui/card",
+        "@/components/ui/badge",
+        "@/components/ui/button",
+        "@/lib/utils",
+        "@/types/migration",
+        "./TargetFrameworkSelector",
+        "./FrameworkOptionsForm",
+        "./MigrationConfigReview",
+        "@/types/migration",
+        "@/components/ui/success-modal"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/planner/PhaseDetails.tsx": {
+      "purpose": "Module for PhaseDetails",
+      "exports": [
+        "PhaseDetails"
+      ],
+      "dependencies": [
+        "@/lib/planner/types",
+        "./TaskList",
+        "@/lib/utils"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/planner/PhaseTimeline.tsx": {
+      "purpose": "Module for PhaseTimeline",
+      "exports": [
+        "PhaseTimeline"
+      ],
+      "dependencies": [
+        "@/lib/planner/types",
+        "@/lib/utils"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/planner/PlanCustomizer.tsx": {
+      "purpose": "Module for PlanCustomizer",
+      "exports": [
+        "PlanCustomizer"
+      ],
+      "dependencies": [
+        "@/lib/planner/types",
+        "@/components/ui/switch",
+        "@/components/ui/label"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/planner/TaskDetailsModal.tsx": {
+      "purpose": "Module for TaskDetailsModal",
+      "exports": [
+        "TaskDetailsModal"
+      ],
+      "dependencies": [
+        "@/lib/planner/types",
+        "@/components/ui/badge",
+        "@/components/ui/button",
+        "@/components/ui/separator",
+        "@/lib/utils"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/planner/TaskList.tsx": {
+      "purpose": "Extract dependency list from description if it's a dependency update task",
+      "exports": [
+        "TaskList"
+      ],
+      "dependencies": [
+        "@/lib/planner/types",
+        "@/components/ui/checkbox",
+        "@/lib/utils",
+        "./TaskDetailsModal"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/planner/ViolationReportViewer.tsx": {
+      "purpose": "Get severity icon and color",
+      "exports": [
+        "ViolationReportViewer"
+      ],
+      "dependencies": [
+        "@/components/ui/card",
+        "@/components/ui/button",
+        "@/components/ui/badge",
+        "@/components/ui/separator",
+        "@/lib/utils",
+        "@/types/migration"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/repository/IssueCard.tsx": {
+      "purpose": "Module for IssueCard",
+      "exports": [
+        "IssueCard"
+      ],
+      "dependencies": [
+        "@/lib/scanner/types",
+        "@/components/ui/badge"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/repository/IssueKanban.tsx": {
+      "purpose": "Module for IssueKanban",
+      "exports": [
+        "IssueKanban"
+      ],
+      "dependencies": [
+        "@/lib/scanner/types",
+        "@/components/ui/badge",
+        "./IssueCard"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/repository/MetricCards.tsx": {
+      "purpose": "Animated count-up effect on mount",
+      "exports": [
+        "MetricCards"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "components/repository/MetricCardsSkeleton.tsx": {
+      "purpose": "Skeleton loading component for metric cards",
+      "exports": [
+        "MetricCardsSkeleton"
+      ],
+      "dependencies": [
+        "@/components/ui/skeleton"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/repository/MigrationPlanButton.tsx": {
+      "purpose": "Get default target framework based on source framework",
+      "exports": [
+        "MigrationPlanButton"
+      ],
+      "dependencies": [
+        "@/components/ui/button",
+        "@/lib/scanner/types",
+        "@/lib/planner/ai-enhancer",
+        "@/lib/planner/utils/stack-extractor",
+        "@/lib/planner/utils/pattern-converter"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/repository/ScanButton.tsx": {
+      "purpose": "Check cache on mount",
+      "exports": [
+        "ScanButton"
+      ],
+      "dependencies": [
+        "@/lib/cache/client-cache",
+        "@/lib/scanner/types"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/repository/ScanResultsSkeleton.tsx": {
+      "purpose": "Skeleton loading component for scan results",
+      "exports": [
+        "ScanResultsSkeleton"
+      ],
+      "dependencies": [
+        "@/components/ui/skeleton"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/RepositoryList.tsx": {
+      "purpose": "Example component demonstrating useRepositories hook",
+      "exports": [
+        "RepositoryList"
+      ],
+      "dependencies": [
+        "@/hooks/useRepositories",
+        "@/types/repository"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/RepositoryListExample.tsx": {
+      "purpose": "Example component demonstrating useRepositories hook usage",
+      "exports": [
+        "RepositoryListExample"
+      ],
+      "dependencies": [
+        "@/hooks/useRepositories",
+        "@/components/ui/button"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/transformation/DiffViewer.tsx": {
+      "purpose": "Detect language from file extension",
+      "exports": [
+        "DiffViewer",
+        "default: DiffViewer"
+      ],
+      "dependencies": [
+        "@/components/ui/card",
+        "@/components/ui/button",
+        "@/components/ui/badge",
+        "@/lib/utils",
+        "@/types/transformer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/transformation/EditableDiffViewer.tsx": {
+      "purpose": "Simple Textarea component",
+      "exports": [
+        "EditableDiffViewer",
+        "default: EditableDiffViewer"
+      ],
+      "dependencies": [
+        "@/components/ui/card",
+        "@/components/ui/button",
+        "@/components/ui/badge",
+        "@/lib/utils",
+        "@/types/transformer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/transformation/TaskSelector.tsx": {
+      "purpose": "Calculate summary statistics",
+      "exports": [
+        "TaskSelector",
+        "default: TaskSelector"
+      ],
+      "dependencies": [
+        "@/components/ui/card",
+        "@/components/ui/checkbox",
+        "@/components/ui/badge",
+        "@/components/ui/button",
+        "@/lib/utils",
+        "@/types/transformer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/transformation/TransformationProgress.tsx": {
+      "purpose": "Progress bar component with animation",
+      "exports": [
+        "TransformationProgress",
+        "default: TransformationProgress"
+      ],
+      "dependencies": [
+        "@/components/ui/card",
+        "@/components/ui/badge",
+        "@/components/ui/button",
+        "@/components/ui/progress",
+        "@/lib/utils",
+        "@/types/transformer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/transformation/TransformationResults.tsx": {
+      "purpose": "Summary metrics card",
+      "exports": [
+        "TransformationResults",
+        "default: TransformationResults"
+      ],
+      "dependencies": [
+        "@/components/ui/card",
+        "@/components/ui/badge",
+        "@/components/ui/button",
+        "@/components/ui/success-modal",
+        "@/types/transformer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/ui/avatar.tsx": {
+      "purpose": "Module for avatar",
+      "exports": [],
+      "dependencies": [
+        "@/lib/utils"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/ui/badge.tsx": {
+      "purpose": "Module for badge",
+      "exports": [
+        "BadgeProps"
+      ],
+      "dependencies": [
+        "@/lib/utils"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/ui/button.tsx": {
+      "purpose": "Module for button",
+      "exports": [
+        "ButtonProps"
+      ],
+      "dependencies": [
+        "@/lib/utils"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/ui/card.tsx": {
+      "purpose": "Module for card",
+      "exports": [],
+      "dependencies": [
+        "@/lib/utils"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/ui/dialog.tsx": {
+      "purpose": "Module for dialog",
+      "exports": [],
+      "dependencies": [
+        "@/lib/utils"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/ui/dropdown-menu.tsx": {
+      "purpose": "Module for dropdown-menu",
+      "exports": [],
+      "dependencies": [
+        "@/lib/utils"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/ui/EmptyState.tsx": {
+      "purpose": "Module for EmptyState",
+      "exports": [
+        "EmptyState"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "components/ui/label.tsx": {
+      "purpose": "Module for label",
+      "exports": [],
+      "dependencies": [
+        "@/lib/utils"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/ui/progress.tsx": {
+      "purpose": "Module for progress",
+      "exports": [],
+      "dependencies": [
+        "@/lib/utils"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/ui/separator.tsx": {
+      "purpose": "Module for separator",
+      "exports": [],
+      "dependencies": [
+        "@/lib/utils"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/ui/skeleton.tsx": {
+      "purpose": "Skeleton loading component with shimmer effect",
+      "exports": [
+        "Skeleton",
+        "ShimmerSkeleton"
+      ],
+      "dependencies": [
+        "@/lib/utils"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/ui/success-modal.tsx": {
+      "purpose": "Store preference in localStorage",
+      "exports": [
+        "SuccessModal",
+        "useSuccessModal"
+      ],
+      "dependencies": [
+        "./button",
+        "./card"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/ui/switch.tsx": {
+      "purpose": "Module for switch",
+      "exports": [],
+      "dependencies": [
+        "@/lib/utils"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/dashboard/RepositoryCard.tsx": {
+      "purpose": "React component for repositorycard",
+      "exports": [
+        "RepositoryCard"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "components/dashboard/RepositoryList.tsx": {
+      "purpose": "React component for repositorylist",
+      "exports": [
+        "RepositoryList"
+      ],
+      "dependencies": [
+        "./RepositoryCard"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/layout/Header.tsx": {
+      "purpose": "React component for header",
+      "exports": [
+        "DashboardHeader"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "components/layout/Sidebar.tsx": {
+      "purpose": "React component for sidebar",
+      "exports": [
+        "Sidebar"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "components/ui/checkbox.tsx": {
+      "purpose": "checkbox module",
+      "exports": [],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "components/dashboard/DashboardStats.tsx": {
+      "purpose": "React component for dashboardstats",
+      "exports": [
+        "DashboardStats"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "components/repository/RepositoryDetailClient.tsx": {
+      "purpose": "React component for repositorydetailclient",
+      "exports": [
+        "RepositoryDetailClient"
+      ],
+      "dependencies": [
+        "./MetricCards",
+        "./ScanButton",
+        "./MigrationPlanButton",
+        "./ScanResultsSkeleton"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/planner/MigrationPlanView.tsx": {
+      "purpose": "React component for migrationplanview",
+      "exports": [
+        "MigrationPlanView"
+      ],
+      "dependencies": [
+        "./ComponentLoadingSkeleton",
+        "./Phase3Card"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "components/planner/TargetFrameworkSelector.tsx": {
+      "purpose": "React component for targetframeworkselector",
+      "exports": [
+        "TargetFrameworkSelector"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "components/planner/FrameworkOptionsForm.tsx": {
+      "purpose": "React component for frameworkoptionsform",
+      "exports": [
+        "FrameworkOptionsForm"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    }
+  },
+  "services": {
+    "services/ai.ts": {
+      "purpose": "api.anthropic.com/v1/messages', {",
+      "exports": [
+        "AIService"
+      ],
+      "dependencies": [
+        "@/types"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "services/github.ts": {
+      "purpose": "GitHub Service",
+      "exports": [
+        "GitHubService"
+      ],
+      "dependencies": [
+        "@/types",
+        "@/lib/auth"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app\\dashboard\\page.tsx": {
+      "purpose": "React component for page",
+      "exports": [
+        "async"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "auth.ts": {
+      "purpose": "Service for API calls and auth operations",
+      "exports": [
+        "authConfig"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    }
+  },
+  "hooks": {
+    "hooks/useAnalysis.ts": {
+      "purpose": "Module for useAnalysis",
+      "exports": [
+        "useAnalysis"
+      ],
+      "dependencies": [
+        "@/types"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "hooks/useLazyComponent.ts": {
+      "purpose": "React hook for lazy loading components",
+      "exports": [
+        "useLazyComponent",
+        "useLazyData",
+        "useIntersectionLazyLoad",
+        "useDeferredLoad"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "hooks/useRepositories.ts": {
+      "purpose": "React hook for fetching and managing repositories",
+      "exports": [
+        "useRepositories"
+      ],
+      "dependencies": [
+        "@/types/repository"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "hooks/useRepositoriesWithCache.ts": {
+      "purpose": "React hook for fetching repositories list with SWR caching",
+      "exports": [
+        "useRepositoriesWithCache"
+      ],
+      "dependencies": [
+        "@/types/repository"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "hooks/useRepository.ts": {
+      "purpose": "React hook for fetching single repository details",
+      "exports": [
+        "useRepository"
+      ],
+      "dependencies": [
+        "@/types/repository"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "hooks/useRepositoryContents.ts": {
+      "purpose": "React hook for fetching repository file/directory contents",
+      "exports": [
+        "useRepositoryContents"
+      ],
+      "dependencies": [
+        "@/types/repository"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "hooks/useRepositoryWithCache.ts": {
+      "purpose": "React hook for fetching repository details with SWR caching",
+      "exports": [
+        "useRepositoryWithCache"
+      ],
+      "dependencies": [
+        "@/types/repository"
+      ],
+      "lastModified": "2025-12-04"
+    }
+  },
+  "utilities": {
+    "lib/ai/claude-client.ts": {
+      "purpose": "Module for claude-client",
+      "exports": [
+        "ClaudeAPIError",
+        "ClaudeClient"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/ai/mcp-wrapper.ts": {
+      "purpose": "Wrapper for MCP Claude Analyzer Tools",
+      "exports": [
+        "PatternDetection",
+        "CodeAnalysis",
+        "MigrationPlan",
+        "MCPAnalyzerWrapper"
+      ],
+      "dependencies": [
+        "../ai/claude-client"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/ai/pattern-detector.ts": {
+      "purpose": "Try multiple extraction methods",
+      "exports": [
+        "PatternDetector"
+      ],
+      "dependencies": [
+        "./claude-client",
+        "./prompts"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/ai/prompts.ts": {
+      "purpose": "AI prompt templates for code analysis",
+      "exports": [
+        "PROMPTS",
+        "buildAnalysisPrompt"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/auth.ts": {
+      "purpose": "Authentication Helper Functions",
+      "exports": [
+        "isTokenExpiringSoon"
+      ],
+      "dependencies": [
+        "@/auth"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/cache/client-cache.ts": {
+      "purpose": "Client-side caching utilities for browser localStorage",
+      "exports": [
+        "CacheEntry",
+        "CacheOptions",
+        "ClientCache",
+        "CacheKeys",
+        "CacheTTL"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/cache/redis-cache.ts": {
+      "purpose": "Redis caching layer for server-side caching",
+      "exports": [
+        "RedisCache",
+        "CacheKeys",
+        "CacheTTL",
+        "getCache"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/cache/swr-config.ts": {
+      "purpose": "SWR configuration and provider setup",
+      "exports": [
+        "swrConfig",
+        "SWR_CACHE_TTL"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/cache/transformation-cache.ts": {
+      "purpose": "Caching utilities for transformation-related data",
+      "exports": [
+        "generateContentHash"
+      ],
+      "dependencies": [
+        "./redis-cache",
+        "@/types/migration"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/errors.ts": {
+      "purpose": "Custom error classes for authentication and authorization errors",
+      "exports": [
+        "AuthError",
+        "TokenExpiredError",
+        "InvalidTokenError",
+        "handleAuthError",
+        "logAuthEvent"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/github/apply-orchestrator.ts": {
+      "purpose": "GitHub Apply Orchestrator",
+      "exports": [
+        "ProgressCallback",
+        "GitHubApplyOrchestrator",
+        "createGitHubApplyOrchestrator"
+      ],
+      "dependencies": [
+        "./services/integration",
+        "./branch-name-generator",
+        "./lock-manager"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/github/branch-name-generator.ts": {
+      "purpose": "Branch Name Generator for GitHub Integration",
+      "exports": [
+        "BranchNameParams",
+        "BranchNameGenerator",
+        "createBranchNameGenerator"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/github/cache.ts": {
+      "purpose": "GitHub API Response Caching",
+      "exports": [
+        "CacheTTL",
+        "CacheKeys",
+        "clearCache",
+        "getCacheStats",
+        "cleanupExpiredCache"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/github/client.ts": {
+      "purpose": "Handle rate limits separately",
+      "exports": [
+        "createOctokit"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/github/content-service.ts": {
+      "purpose": "GitHub Content Fetching Service",
+      "exports": [
+        "FetchRepositoryFilesOptions",
+        "FetchRepositoryFilesResult",
+        "GitHubContentService"
+      ],
+      "dependencies": [
+        "./errors",
+        "./cache",
+        "@/types/repository",
+        "@/types/transformer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/github/errors.ts": {
+      "purpose": "Exponential backoff retry utility for GitHub API calls",
+      "exports": [
+        "GitHubAPIError"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/github/lock-manager.ts": {
+      "purpose": "Operation Lock Manager",
+      "exports": [
+        "OperationLockManager",
+        "getLockManager",
+        "resetLockManager"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/github/octokit.ts": {
+      "purpose": "Octokit client setup with retry and throttling plugins",
+      "exports": [
+        "createOctokit"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/github/orchestrator-registry.ts": {
+      "purpose": "Orchestrator Registry",
+      "exports": [
+        "registerOrchestrator",
+        "getOrchestrator",
+        "getCompletedOperation",
+        "unregisterOrchestrator",
+        "hasOrchestrator"
+      ],
+      "dependencies": [
+        "./apply-orchestrator"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/github/repositories.ts": {
+      "purpose": "GitHub repository operations with caching and error handling",
+      "exports": [],
+      "dependencies": [
+        "./cache",
+        "./errors"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/github/services/integration.ts": {
+      "purpose": "GitHub Integration Service for repository operations",
+      "exports": [
+        "GitHubIntegrationService"
+      ],
+      "dependencies": [
+        "../client",
+        "../errors",
+        "../cache"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/github/types.ts": {
+      "purpose": "TypeScript types for GitHub API responses and operations",
+      "exports": [
+        "Repository",
+        "RepositoryContent",
+        "Commit",
+        "GitHubUser",
+        "RepositoryListOptions",
+        "PaginationInfo",
+        "GitHubRateLimit",
+        "GitHubRateLimitResponse",
+        "RepositoryValidation",
+        "CreateCommitParams",
+        "TreeItem",
+        "CreatePRParams",
+        "PullRequest",
+        "ApplyChangesRequest",
+        "Phase3TransformResult",
+        "MigrationSpecification",
+        "ApplyChangesResult",
+        "ApplyProgress",
+        "RollbackResult",
+        "BranchNameParams",
+        "GitReference",
+        "GitTree",
+        "GitCommit"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/ai-transformation-engine.ts": {
+      "purpose": "AITransformationEngine",
+      "exports": [
+        "AITransformationEngine",
+        "default: function"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/app-router-file-generator.ts": {
+      "purpose": "App Router File Generator",
+      "exports": [
+        "FileGenerationOptions",
+        "AppRouterFileGenerator",
+        "metadata",
+        "middleware",
+        "config",
+        "dynamic",
+        "revalidate",
+        "runtime",
+        "default: function"
+      ],
+      "dependencies": [
+        "@/types/migration"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/ast-transformation-engine.ts": {
+      "purpose": "AST Transformation Engine for Phase 3 Code Migration",
+      "exports": [
+        "ASTTransformationEngine"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/backup-manager.ts": {
+      "purpose": "Backup and Rollback System for Migration Operations",
+      "exports": [
+        "BackupEntry",
+        "BackupSnapshot",
+        "BackupManager",
+        "BackupTransaction",
+        "createBackupTransaction"
+      ],
+      "dependencies": [
+        "./errors"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/component-style-transformer.ts": {
+      "purpose": "ComponentStyleTransformer",
+      "exports": [
+        "ComponentStyleTransformer"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/css-analyzer.ts": {
+      "purpose": "CSSAnalyzer",
+      "exports": [
+        "CSSClass",
+        "CSSProperty",
+        "CSSAnalysisResult",
+        "CSSAnalyzer"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/css-to-tailwind-converter.ts": {
+      "purpose": "CSSToTailwindConverter",
+      "exports": [
+        "TailwindMapping",
+        "CSSToTailwindConverter"
+      ],
+      "dependencies": [
+        "./css-analyzer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/enhanced-ai-transformer.ts": {
+      "purpose": "Enhanced AI Transformer",
+      "exports": [
+        "EnhancedTransformOptions",
+        "CodePattern",
+        "RefactoringSuggestion",
+        "EnhancedAITransformer"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/error-recovery.ts": {
+      "purpose": "Error recovery strategies for migration operations",
+      "exports": [
+        "RecoveryResult",
+        "ErrorRecoveryStrategy",
+        "RecoveryContext",
+        "RetryStrategy",
+        "FallbackStrategy",
+        "SkipStrategy",
+        "CompositeRecoveryStrategy",
+        "RecoveryManager",
+        "createDefaultRecoveryManager"
+      ],
+      "dependencies": [
+        "./errors"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/errors.ts": {
+      "purpose": "Error hierarchy for migration and transformation operations",
+      "exports": [
+        "MigrationError",
+        "TransformationError",
+        "ValidationError",
+        "GitHubAPIError",
+        "AIServiceError",
+        "ParseError",
+        "OrchestrationError",
+        "BackupError",
+        "handleMigrationError",
+        "logMigrationEvent"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/file-structure-manager.ts": {
+      "purpose": "FileStructureManager",
+      "exports": [
+        "FileStructureChange",
+        "FileStructureManager"
+      ],
+      "dependencies": [
+        "@/types/migration",
+        "./route-segment-extractor"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/framework-rules/index.ts": {
+      "purpose": "Framework Rules Module",
+      "exports": [],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/framework-rules/loader.ts": {
+      "purpose": "Framework Rules Loader Utility",
+      "exports": [
+        "FrameworkRulesLoader",
+        "getFrameworkRulesLoader",
+        "resetFrameworkRulesLoader"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/framework-rules/schema.ts": {
+      "purpose": "Framework Rules JSON Schema and Type Definitions",
+      "exports": [
+        "FrameworkRules",
+        "VersionRules",
+        "VersionConfiguration",
+        "DefaultMappings",
+        "MigrationPath",
+        "MigrationStep",
+        "CommonIssue",
+        "FrameworkRulesDatabase",
+        "validateFrameworkRules",
+        "validateVersionRules",
+        "validateMigrationPath",
+        "validateFrameworkRulesDatabase"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/github-fetcher.ts": {
+      "purpose": "GitHub Repository Fetcher for Phase 3 Code Migration",
+      "exports": [
+        "FetchProgressCallback",
+        "GitHubRepositoryFetcher"
+      ],
+      "dependencies": [
+        "@/lib/github/client",
+        "@/lib/github/errors",
+        "@/lib/github/cache",
+        "@/types/transformer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/hybrid-transformation-engine.ts": {
+      "purpose": "Hybrid Transformation Engine for Phase 3 Code Migration",
+      "exports": [
+        "HybridTransformationEngine",
+        "metadata",
+        "default: function"
+      ],
+      "dependencies": [
+        "./ast-transformation-engine",
+        "./ai-transformation-engine",
+        "./enhanced-ai-transformer",
+        "./rule-engine",
+        "./file-structure-manager",
+        "./css-analyzer",
+        "./css-to-tailwind-converter",
+        "./component-style-transformer",
+        "./tailwind-config-generator",
+        "./app-router-file-generator"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/index.ts": {
+      "purpose": "Migration Module",
+      "exports": [],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/lazy-loader.ts": {
+      "purpose": "Lazy loading utilities for migration components and data",
+      "exports": [
+        "FrameworkRulesLoader",
+        "getFrameworkRulesLoader",
+        "LazyTransformationExecutor",
+        "DeferredDataLoader",
+        "ResourceLoadQueue",
+        "IntersectionLazyLoader",
+        "createDeferredDiffViewer",
+        "createDeferredViolationViewer",
+        "BatchResourceLoader"
+      ],
+      "dependencies": [
+        "@/lib/cache/transformation-cache"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/migration-orchestrator.ts": {
+      "purpose": "Migration Orchestrator for Phase 3 Code Migration",
+      "exports": [
+        "MigrationOrchestrator",
+        "getMigrationOrchestrator",
+        "resetMigrationOrchestrator"
+      ],
+      "dependencies": [
+        "./github-fetcher",
+        "./hybrid-transformation-engine"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/parallel-processor.ts": {
+      "purpose": "Parallel processing utilities for transformation operations",
+      "exports": [
+        "Task",
+        "TaskResult",
+        "ProgressCallback",
+        "ParallelProcessorConfig",
+        "ParallelProcessor",
+        "BatchRequestProcessor",
+        "WorkerPool",
+        "ParallelFileProcessor",
+        "chunkArray"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/route-segment-extractor.ts": {
+      "purpose": "RouteSegmentExtractor",
+      "exports": [
+        "RouteSegment",
+        "RouteSegmentExtractor"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/rule-engine.ts": {
+      "purpose": "Rule Engine for Phase 3 Code Migration",
+      "exports": [
+        "RuleEngine",
+        "getRuleEngine",
+        "resetRuleEngine"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/spec-generator.ts": {
+      "purpose": "Migration Specification Generator",
+      "exports": [
+        "MigrationSpecGenerator",
+        "getMigrationSpecGenerator",
+        "resetMigrationSpecGenerator"
+      ],
+      "dependencies": [
+        "./styles.module.css"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/streaming-processor.ts": {
+      "purpose": "Streaming utilities for processing large files and generating diffs",
+      "exports": [
+        "STREAMING_THRESHOLD",
+        "shouldStreamFile",
+        "CodeTransformStream",
+        "DiffGeneratorStream",
+        "SSEStream",
+        "createSSEResponse",
+        "BatchStreamProcessor"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/tailwind-config-generator.ts": {
+      "purpose": "TailwindConfigGenerator",
+      "exports": [
+        "TailwindConfig",
+        "TailwindConfigGenerator",
+        "default: config"
+      ],
+      "dependencies": [
+        "./css-analyzer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/version-upgrade-detector.ts": {
+      "purpose": "Version Upgrade Detector",
+      "exports": [
+        "VersionUpgradeDetector",
+        "getVersionUpgradeDetector",
+        "resetVersionUpgradeDetector"
+      ],
+      "dependencies": [
+        "./framework-rules"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/version-upgrade-transformer.ts": {
+      "purpose": "Version Upgrade Transformer",
+      "exports": [
+        "VersionUpgradeTransformer",
+        "getVersionUpgradeTransformer",
+        "resetVersionUpgradeTransformer"
+      ],
+      "dependencies": [
+        "@/types/transformer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/__tests__/app-router-file-generator.test.ts": {
+      "purpose": "Tests for AppRouterFileGenerator",
+      "exports": [
+        "metadata",
+        "metadata",
+        "middleware",
+        "config",
+        "dynamic",
+        "revalidate",
+        "runtime",
+        "dynamic",
+        "revalidate",
+        "runtime",
+        "default: function"
+      ],
+      "dependencies": [
+        "../app-router-file-generator",
+        "@/types/migration"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/__tests__/css-analyzer.test.ts": {
+      "purpose": "Tests for CSSAnalyzer",
+      "exports": [],
+      "dependencies": [
+        "../css-analyzer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/__tests__/css-to-tailwind-converter.test.ts": {
+      "purpose": "Tests for CSSToTailwindConverter",
+      "exports": [],
+      "dependencies": [
+        "../css-to-tailwind-converter",
+        "../css-analyzer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/__tests__/enhanced-ai-transformer.test.ts": {
+      "purpose": "Tests for EnhancedAITransformer",
+      "exports": [],
+      "dependencies": [
+        "../enhanced-ai-transformer",
+        "@/types/migration"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/__tests__/file-structure-manager.test.ts": {
+      "purpose": "Tests for FileStructureManager",
+      "exports": [
+        "Header",
+        "Footer",
+        "default: function"
+      ],
+      "dependencies": [
+        "../file-structure-manager",
+        "@/types/migration"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/__tests__/integration-debug.test.ts": {
+      "purpose": "Debug test to see what's actually being returned",
+      "exports": [
+        "default: function"
+      ],
+      "dependencies": [
+        "../hybrid-transformation-engine",
+        "@/types/migration"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/__tests__/integration.test.ts": {
+      "purpose": "End-to-End Integration Test",
+      "exports": [
+        "formatDate",
+        "default: Home"
+      ],
+      "dependencies": [
+        "../hybrid-transformation-engine",
+        "@/types/migration",
+        "../components/Button"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/__tests__/route-segment-extractor.test.ts": {
+      "purpose": "Tests for RouteSegmentExtractor",
+      "exports": [],
+      "dependencies": [
+        "../route-segment-extractor"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/patterns/index.ts": {
+      "purpose": "Pattern Detection System - Main Export",
+      "exports": [
+        "PatternDetectionResult",
+        "analyzeCode",
+        "getPrioritizedPatterns",
+        "filterPatterns",
+        "getPatternById",
+        "getAvailableLanguages",
+        "getAvailableFrameworks",
+        "getAvailableTags"
+      ],
+      "dependencies": [
+        "./rules",
+        "./rules"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/patterns/nextjs-patterns.ts": {
+      "purpose": "Next.js-specific pattern detection rules",
+      "exports": [
+        "NEXTJS_PATTERNS",
+        "metadata",
+        "default: function"
+      ],
+      "dependencies": [
+        "./rules",
+        "./actions"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/patterns/python-patterns.ts": {
+      "purpose": "Python-specific pattern detection rules",
+      "exports": [
+        "PYTHON_PATTERNS"
+      ],
+      "dependencies": [
+        "./rules"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/patterns/react-patterns.ts": {
+      "purpose": "React-specific pattern detection rules",
+      "exports": [
+        "REACT_PATTERNS",
+        "store",
+        "useCounterStore"
+      ],
+      "dependencies": [
+        "./rules",
+        "./store",
+        "./store"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/patterns/rules.ts": {
+      "purpose": "Pattern Detection Rules Database",
+      "exports": [
+        "PatternRule",
+        "PatternCategory",
+        "PATTERN_CATEGORIES",
+        "getAllPatternRules",
+        "getPatternsByLanguage",
+        "getPatternsByFramework",
+        "getPatternsByCategory",
+        "detectPatterns",
+        "format",
+        "format"
+      ],
+      "dependencies": [
+        "./utils"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/patterns/vue-patterns.ts": {
+      "purpose": "Vue-specific pattern detection rules",
+      "exports": [
+        "VUE_PATTERNS",
+        "useEventBus",
+        "default"
+      ],
+      "dependencies": [
+        "./rules"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/planner/ai-enhancer.ts": {
+      "purpose": "0-100",
+      "exports": [
+        "AIInsight",
+        "EnhancedMigrationPlan",
+        "AIEnhancer"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/planner/ai-example.ts": {
+      "purpose": "Example: AI-Enhanced Migration Planning",
+      "exports": [],
+      "dependencies": [
+        "./migration-planner",
+        "./types"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/planner/complexity-estimator.ts": {
+      "purpose": "Normalize to 0-100",
+      "exports": [
+        "ComplexityEstimator"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/planner/dependency-graph.ts": {
+      "purpose": "Find tasks that depend on this one",
+      "exports": [
+        "DependencyGraphBuilder"
+      ],
+      "dependencies": [
+        "./types"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/planner/example.ts": {
+      "purpose": "Example usage of the Migration Planner",
+      "exports": [],
+      "dependencies": [
+        "./migration-planner",
+        "./dependency-graph",
+        "./types"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/planner/migration-planner.ts": {
+      "purpose": "Apply defaults to customization",
+      "exports": [
+        "MigrationPlanner"
+      ],
+      "dependencies": [
+        "./ai-enhancer",
+        "./complexity-estimator",
+        "./dependency-graph",
+        "./phase-generator"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/planner/phase-generator.ts": {
+      "purpose": "Determines if there are breaking changes that require a migration guide",
+      "exports": [
+        "PhaseGenerator"
+      ],
+      "dependencies": [
+        "./complexity-estimator"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/planner/types.ts": {
+      "purpose": "Types for migration planning system",
+      "exports": [
+        "SourceStack",
+        "TargetStack",
+        "DetectedPattern",
+        "MigrationTask",
+        "MigrationPhase",
+        "MigrationPlan",
+        "DependencyNode",
+        "PlanCustomization",
+        "ComplexityFactors",
+        "ComplexityEstimate",
+        "AIInsight"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/planner/utils/pattern-converter.ts": {
+      "purpose": "Converts Issue[] from scanner to DetectedPattern[] for planner",
+      "exports": [
+        "convertIssuesToPatterns",
+        "convertMCPPatterns",
+        "convertPatternDetectorResults",
+        "deduplicatePatterns"
+      ],
+      "dependencies": [
+        "@/lib/scanner/types",
+        "@/lib/planner/types"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/planner/utils/pattern-converters.ts": {
+      "purpose": "Pattern conversion utilities for migration planning",
+      "exports": [
+        "convertMCPPatterns",
+        "convertPatternDetectorResults",
+        "mapPatternCategory"
+      ],
+      "dependencies": [
+        "@/lib/planner/types"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/planner/utils/source-stack-extractor.ts": {
+      "purpose": "Source stack extraction utilities for migration planning",
+      "exports": [
+        "extractSourceStack",
+        "extractDependencyMap",
+        "extractPatternNames"
+      ],
+      "dependencies": [
+        "@/lib/scanner/types",
+        "@/lib/planner/types"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/planner/utils/stack-extractor.ts": {
+      "purpose": "Extracts SourceStack from AnalysisReport",
+      "exports": [
+        "extractSourceStack"
+      ],
+      "dependencies": [
+        "@/lib/scanner/types",
+        "@/lib/planner/types"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/planner/validation.ts": {
+      "purpose": "Zod schema for validating plan API requests",
+      "exports": [
+        "PlanRequestSchema",
+        "PlanRequest"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/config.ts": {
+      "purpose": "Scanner Configuration Module",
+      "exports": [
+        "ScannerConfig",
+        "ConfigurationError",
+        "loadScannerConfig",
+        "getScannerConfig",
+        "resetScannerConfig",
+        "validateScannerConfig"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/detectors/base.ts": {
+      "purpose": "Abstract base class for all detectors providing common functionality",
+      "exports": [],
+      "dependencies": [
+        "../types"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/detectors/buildtool.ts": {
+      "purpose": "Build tool detector that identifies build tools and bundlers",
+      "exports": [
+        "BuildToolDetector"
+      ],
+      "dependencies": [
+        "./base"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/detectors/dependency.ts": {
+      "purpose": "Dependency analyzer that parses package manager files and identifies outdated dependencies",
+      "exports": [
+        "DependencyAnalyzer"
+      ],
+      "dependencies": [
+        "./base",
+        "../services/npm-registry"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/detectors/framework.ts": {
+      "purpose": "Framework detector that identifies frontend and backend frameworks",
+      "exports": [
+        "FrameworkRecognizer"
+      ],
+      "dependencies": [
+        "./base"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/detectors/index.ts": {
+      "purpose": "Detector exports",
+      "exports": [],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/detectors/language.ts": {
+      "purpose": "Language detector that identifies programming languages in a repository",
+      "exports": [
+        "LanguageDetector"
+      ],
+      "dependencies": [
+        "./base"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/index.ts": {
+      "purpose": "Core services",
+      "exports": [],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/services/cache.ts": {
+      "purpose": "Cache service for scanner analysis results",
+      "exports": [
+        "CacheService",
+        "MemoryCacheService",
+        "RedisCacheService",
+        "createCacheService",
+        "generateScannerCacheKey",
+        "getScannerCacheTTL"
+      ],
+      "dependencies": [
+        "../types",
+        "../config"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/services/cached-orchestrator.ts": {
+      "purpose": "CachedScannerOrchestrator extends ScannerOrchestrator with caching behavior",
+      "exports": [
+        "CachedScannerOrchestrator"
+      ],
+      "dependencies": [
+        "../types",
+        "./orchestrator",
+        "./cache",
+        "./cache"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/services/enhanced-health-scorer.ts": {
+      "purpose": "Enhanced Health Scorer with Real Dependency Checking",
+      "exports": [
+        "HealthScoringInput",
+        "EnhancedHealthScorer"
+      ],
+      "dependencies": [
+        "./npm-registry"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/services/health-scorer.ts": {
+      "purpose": "Input data for health scoring",
+      "exports": [
+        "HealthScoringInput",
+        "HealthScorer"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/services/index.ts": {
+      "purpose": "Cache services",
+      "exports": [],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/services/npm-registry.ts": {
+      "purpose": "NPM Registry Service",
+      "exports": [
+        "NpmPackageInfo",
+        "NpmRegistryService"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/services/orchestrator.ts": {
+      "purpose": "ScannerOrchestrator coordinates the analysis pipeline, manages detector execution,",
+      "exports": [
+        "ScannerOrchestrator"
+      ],
+      "dependencies": [
+        "./report-generator",
+        "../config"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/services/report-generator.ts": {
+      "purpose": "ReportGenerator aggregates detection results and generates comprehensive analysis reports",
+      "exports": [
+        "ReportGenerator"
+      ],
+      "dependencies": [
+        "./enhanced-health-scorer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/services/repository-fetcher.ts": {
+      "purpose": "RepositoryFetcher handles fetching repository data from GitHub API",
+      "exports": [
+        "RepositoryFetcher"
+      ],
+      "dependencies": [
+        "../types",
+        "../config"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/types/index.ts": {
+      "purpose": "Core Scanner Types",
+      "exports": [
+        "Detector",
+        "RepositoryContext",
+        "FileTree",
+        "FileNode",
+        "RepositoryMetadata",
+        "DetectionResult",
+        "DetectionError",
+        "LanguageDetectionResult",
+        "DetectedLanguage",
+        "FrameworkDetectionResult",
+        "DetectedFramework",
+        "BuildToolDetectionResult",
+        "DetectedBuildTool",
+        "DependencyAnalysisResult",
+        "DependencyInfo",
+        "OutdatedDependency",
+        "HealthScore",
+        "CategoryScore",
+        "ScoringFactor",
+        "AnalysisReport",
+        "Issue",
+        "Recommendation",
+        "DetectorResult",
+        "AnalysisData"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/utils/index.ts": {
+      "purpose": "Utility function to create a timeout promise",
+      "exports": [
+        "createTimeout",
+        "safeJsonParse",
+        "normalizePath",
+        "getFileExtension",
+        "compareVersions",
+        "calculateConfidence",
+        "debounce"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/sse/progress-emitter.ts": {
+      "purpose": "ProgressEmitter for Server-Sent Events",
+      "exports": [
+        "ProgressEvent",
+        "ProgressSubscriber",
+        "ProgressEmitter",
+        "progressEmitter"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/base-transformer.ts": {
+      "purpose": "BaseTransformer - Abstract base class for all code transformers",
+      "exports": [],
+      "dependencies": [
+        "./diff-generator"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/build-tools/index.ts": {
+      "purpose": "Build Tools Transformers",
+      "exports": [],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/build-tools/vite-config-generator.ts": {
+      "purpose": "BuildToolConfigGenerator - Generates appropriate build tool configuration",
+      "exports": [
+        "BuildToolConfigGenerator",
+        "default: defineConfig"
+      ],
+      "dependencies": [
+        "../base-transformer",
+        "./App",
+        "./App.vue"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/build-tools/vite-setup-transformer.ts": {
+      "purpose": "ViteSetupTransformer - Automatically sets up Vite for React projects",
+      "exports": [
+        "ViteSetupTransformer",
+        "default: defineConfig"
+      ],
+      "dependencies": [
+        "../base-transformer",
+        "@/lib/planner/types",
+        "./App",
+        "./App"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/dependencies/dependency-updater.ts": {
+      "purpose": "DependencyUpdaterTransformer - Updates package dependencies to latest versions",
+      "exports": [
+        "DependencyUpdaterTransformer"
+      ],
+      "dependencies": [
+        "../base-transformer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/dependencies/index.ts": {
+      "purpose": "Dependency Transformers",
+      "exports": [],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/dependencies/multi-ecosystem-updater.ts": {
+      "purpose": "Multi-Ecosystem Dependency Updater",
+      "exports": [
+        "PackageEcosystem",
+        "MultiEcosystemDependencyUpdater"
+      ],
+      "dependencies": [
+        "../base-transformer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/diff-generator.ts": {
+      "purpose": "DiffGenerator Utility",
+      "exports": [
+        "DiffGenerator",
+        "diffGenerator"
+      ],
+      "dependencies": [
+        "@/types/transformer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/documentation/documentation-transformer.ts": {
+      "purpose": "DocumentationTransformer - Generates documentation from transformation metadata",
+      "exports": [
+        "DocumentationType",
+        "DocumentationTransformer"
+      ],
+      "dependencies": [
+        "../base-transformer",
+        "@/lib/ai/claude-client"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/index.ts": {
+      "purpose": "Transformers Module",
+      "exports": [],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/nextjs/data-fetching-converter.ts": {
+      "purpose": "Data Fetching Converter for Next.js Pages to App Router Migration",
+      "exports": [
+        "DataFetchingConversion",
+        "DataFetchingConverter"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/nextjs/layout-generator.ts": {
+      "purpose": "Layout Generator for Next.js Pages to App Router Migration",
+      "exports": [
+        "LayoutConversion",
+        "LayoutGenerator",
+        "metadata",
+        "default: function"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/nextjs/pages-to-app-transformer.ts": {
+      "purpose": "PagesToAppTransformer - Converts Next.js Pages Router to App Router",
+      "exports": [
+        "PagesToAppTransformer"
+      ],
+      "dependencies": [
+        "../base-transformer",
+        "./route-mapper",
+        "./data-fetching-converter",
+        "./layout-generator"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/nextjs/route-mapper.ts": {
+      "purpose": "Route Mapper for Next.js Pages to App Router Migration",
+      "exports": [
+        "RouteMapping",
+        "RouteMapper"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/orchestrator.ts": {
+      "purpose": "TransformationOrchestrator - Coordinates execution of multiple transformations from a migration plan",
+      "exports": [
+        "TransformationOrchestrator"
+      ],
+      "dependencies": [
+        "./transformation-pipeline",
+        "./transformer-registry",
+        "@/lib/github/content-service",
+        "@/lib/sse/progress-emitter",
+        "./diff-generator"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/react/ast-helpers.ts": {
+      "purpose": "AST Helper Utilities for React Transformations",
+      "exports": [
+        "isReactComponentClass",
+        "getComponentName",
+        "isLifecycleMethod",
+        "isRenderMethod",
+        "extractStateFromConstructor",
+        "extractPropTypes",
+        "extractDefaultProps",
+        "createUseStateCall",
+        "createUseEffectCall",
+        "capitalize",
+        "methodUsesThis",
+        "extractDependencies",
+        "replaceThisState",
+        "replaceThisProps"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/react/class-to-hooks-transformer.ts": {
+      "purpose": "ClassToHooksTransformer - Converts React class components to functional components with hooks",
+      "exports": [
+        "ClassToHooksTransformer"
+      ],
+      "dependencies": [
+        "../base-transformer",
+        "./state-converter",
+        "./hook-mapper"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/react/hook-mapper.ts": {
+      "purpose": "Hook Mapper for React Lifecycle Methods",
+      "exports": [
+        "LifecycleConversion",
+        "convertLifecycleToHooks",
+        "replaceThisReferences"
+      ],
+      "dependencies": [
+        "./ast-helpers"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/react/state-converter.ts": {
+      "purpose": "State Converter for React Class to Hooks Transformation",
+      "exports": [
+        "StateConversion",
+        "convertStateToHooks",
+        "replaceStateReferences"
+      ],
+      "dependencies": [
+        "./ast-helpers"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/transformation-pipeline.ts": {
+      "purpose": "TransformationPipeline - Orchestrates safe code transformation through sequential stages",
+      "exports": [
+        "TransformationPipeline"
+      ],
+      "dependencies": [
+        "./base-transformer",
+        "./validator"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/transformer-registry.ts": {
+      "purpose": "TransformerRegistry - Centralized registry for managing and routing transformers",
+      "exports": [
+        "TransformerRegistry",
+        "transformerRegistry"
+      ],
+      "dependencies": [
+        "./transformer-registry",
+        "./my-transformer",
+        "@/types/transformer",
+        "./base-transformer",
+        "@/lib/transformers/transformer-registry",
+        "./dependencies",
+        "./documentation/documentation-transformer",
+        "./nextjs/pages-to-app-transformer",
+        "./react/class-to-hooks-transformer",
+        "./typescript/proptypes-to-ts-transformer",
+        "./build-tools",
+        "./build-tools/vite-setup-transformer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/typescript/proptypes-to-ts-transformer.ts": {
+      "purpose": "PropTypesToTSTransformer - Converts React PropTypes to TypeScript interfaces",
+      "exports": [
+        "PropTypesToTSTransformer"
+      ],
+      "dependencies": [
+        "../base-transformer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/validator.ts": {
+      "purpose": "Multi-layer validation system for transformed code",
+      "exports": [
+        "Validator",
+        "validator"
+      ],
+      "dependencies": [
+        "@/types/transformer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/utils.ts": {
+      "purpose": "Module for utils",
+      "exports": [
+        "cn"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "app\\dashboard\\layout.tsx": {
+      "purpose": "React component for layout",
+      "exports": [
+        "async"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    }
+  },
+  "pages": {
+    "app/api/analyze/route.ts": {
+      "purpose": "Module for route",
+      "exports": [],
+      "dependencies": [
+        "@/auth",
+        "@/lib/ai/pattern-detector",
+        "@/lib/ai/claude-client"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app/api/auth/[...nextauth]/route.ts": {
+      "purpose": "NextAuth.js API Route Handler",
+      "exports": [],
+      "dependencies": [
+        "@/auth"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app/api/frameworks/rules/route.ts": {
+      "purpose": "Framework Rules API Endpoint",
+      "exports": [],
+      "dependencies": [
+        "@/lib/migration/framework-rules"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app/api/generate-readme/route.ts": {
+      "purpose": "README Generation API Endpoint",
+      "exports": [],
+      "dependencies": [
+        "@/auth",
+        "@/lib/github/octokit",
+        "@/lib/github/content-service",
+        "@/lib/transformers/documentation/documentation-transformer",
+        "@/lib/github/errors"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app/api/github/apply/progress/[operationId]/route.ts": {
+      "purpose": "GitHub Apply Progress Tracking API Endpoint",
+      "exports": [],
+      "dependencies": [
+        "@/lib/github/orchestrator-registry",
+        "@/lib/github/types"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app/api/github/apply/route.ts": {
+      "purpose": "GitHub Apply Changes API Endpoint",
+      "exports": [],
+      "dependencies": [
+        "@/auth",
+        "@/lib/github/client",
+        "@/lib/github/services/integration",
+        "@/lib/github/branch-name-generator",
+        "@/lib/github/lock-manager",
+        "@/lib/github/apply-orchestrator",
+        "@/lib/github/orchestrator-registry",
+        "@/lib/github/types"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app/api/github/content/[owner]/[repo]/[...path]/route.ts": {
+      "purpose": "Check authentication",
+      "exports": [],
+      "dependencies": [
+        "@/auth",
+        "@/lib/github/client",
+        "@/lib/github/errors"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app/api/github/files/[owner]/[repo]/route.ts": {
+      "purpose": "Check authentication",
+      "exports": [],
+      "dependencies": [
+        "@/auth",
+        "@/lib/github/client",
+        "@/lib/github/errors"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app/api/github/rollback/route.ts": {
+      "purpose": "GitHub Rollback API Endpoint",
+      "exports": [],
+      "dependencies": [
+        "@/auth",
+        "@/lib/github/orchestrator-registry"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app/api/migration/details/[migrationId]/route.ts": {
+      "purpose": "Mock data store - in production, this would be a database",
+      "exports": [],
+      "dependencies": [
+        "@/auth"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app/api/migration/progress/[jobId]/route.ts": {
+      "purpose": "Migration Progress API Endpoint (Server-Sent Events)",
+      "exports": [],
+      "dependencies": [
+        "@/lib/migration/migration-orchestrator",
+        "@/types/migration"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app/api/migration/result/[jobId]/route.ts": {
+      "purpose": "Migration Result API Endpoint",
+      "exports": [],
+      "dependencies": [
+        "@/auth",
+        "@/lib/migration/migration-orchestrator"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app/api/migration/rollback/[jobId]/route.ts": {
+      "purpose": "Migration Rollback API Endpoint",
+      "exports": [],
+      "dependencies": [
+        "@/auth",
+        "@/lib/migration/migration-orchestrator"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app/api/migration/start/route.ts": {
+      "purpose": "Migration Start API Endpoint",
+      "exports": [],
+      "dependencies": [
+        "@/auth",
+        "@/lib/migration/migration-orchestrator",
+        "@/types/migration"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app/api/migration/validate/route.ts": {
+      "purpose": "Migration Validation API Endpoint",
+      "exports": [],
+      "dependencies": [
+        "@/auth",
+        "@/types/migration"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app/api/plan/export/route.ts": {
+      "purpose": "Module for route",
+      "exports": [],
+      "dependencies": [
+        "@/auth",
+        "@/lib/planner/migration-planner",
+        "@/lib/planner/types"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app/api/plan/route.ts": {
+      "purpose": "Parse and validate request body",
+      "exports": [],
+      "dependencies": [
+        "@/auth",
+        "@/lib/planner/migration-planner",
+        "@/lib/planner/validation",
+        "@/lib/planner/utils/pattern-converter"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app/api/repos/route.ts": {
+      "purpose": "API endpoint to fetch user repositories",
+      "exports": [],
+      "dependencies": [
+        "@/auth",
+        "@/lib/github/octokit",
+        "@/lib/github/repositories",
+        "@/lib/github/errors",
+        "@/types/repository"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app/api/repos/[owner]/[repo]/contents/route.ts": {
+      "purpose": "API endpoint to fetch repository contents",
+      "exports": [],
+      "dependencies": [
+        "@/auth",
+        "@/lib/github/octokit",
+        "@/lib/github/repositories",
+        "@/lib/github/errors"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app/api/repos/[owner]/[repo]/route.ts": {
+      "purpose": "API endpoint to fetch single repository details",
+      "exports": [],
+      "dependencies": [
+        "@/auth",
+        "@/lib/github/octokit",
+        "@/lib/github/repositories",
+        "@/lib/github/errors"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app/api/scan/[owner]/[repo]/route.ts": {
+      "purpose": "API endpoint for repository scanning and analysis",
+      "exports": [],
+      "dependencies": [
+        "@/auth",
+        "@/lib/github/octokit",
+        "@/lib/github/errors"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app/api/transform/route.ts": {
+      "purpose": "Transformation API Endpoint",
+      "exports": [],
+      "dependencies": [
+        "@/auth",
+        "@/lib/github/octokit",
+        "@/lib/transformers/orchestrator",
+        "@/lib/github/errors",
+        "@/types/transformer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app/api/transform/stream/[jobId]/route.ts": {
+      "purpose": "Server-Sent Events (SSE) Streaming Endpoint",
+      "exports": [],
+      "dependencies": [
+        "@/lib/sse/progress-emitter",
+        "@/lib/sse/progress-emitter"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app/api/version-upgrade/detect/route.ts": {
+      "purpose": "Version Upgrade Detection API Endpoint",
+      "exports": [],
+      "dependencies": [
+        "@/auth",
+        "@/lib/migration/github-fetcher",
+        "@/lib/migration/version-upgrade-detector",
+        "@/types/migration"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app/api/version-upgrade/fix/route.ts": {
+      "purpose": "Version Upgrade Fix API Endpoint",
+      "exports": [],
+      "dependencies": [
+        "@/auth",
+        "@/lib/migration/version-upgrade-transformer",
+        "@/types/migration"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app/dashboard/[owner]/[repo]/loading.tsx": {
+      "purpose": "Loading state for repository detail page",
+      "exports": [
+        "default: function"
+      ],
+      "dependencies": [
+        "@/components/repository/MetricCardsSkeleton",
+        "@/components/ui/skeleton"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app/dashboard/[owner]/[repo]/page.tsx": {
+      "purpose": "Fetch repository metadata",
+      "exports": [
+        "default: async"
+      ],
+      "dependencies": [
+        "@/auth",
+        "@/lib/github/octokit",
+        "@/lib/github/repositories",
+        "@/lib/github/errors",
+        "@/types/repository",
+        "@/components/repository/RepositoryDetailClient"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app/layout.tsx": {
+      "purpose": "Module for layout",
+      "exports": [
+        "metadata",
+        "default: function"
+      ],
+      "dependencies": [
+        "@/components/auth/SessionProvider"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app/login/page.tsx": {
+      "purpose": "Redirect authenticated users to dashboard",
+      "exports": [
+        "default: async"
+      ],
+      "dependencies": [
+        "@/lib/auth",
+        "@/components/auth/LoginButton"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app/migrations/[migrationId]/page.tsx": {
+      "purpose": "Module for page",
+      "exports": [
+        "default: function"
+      ],
+      "dependencies": [
+        "@/components/ui/card",
+        "@/components/ui/badge",
+        "@/components/ui/button"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "app/page.tsx": {
+      "purpose": "Module for page",
+      "exports": [
+        "default: function"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "app/dashboard/layout.tsx": {
+      "purpose": "React component for layout",
+      "exports": [
+        "function"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "app/dashboard/page.tsx": {
+      "purpose": "React component for page",
+      "exports": [
+        "async"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    }
+  },
+  "types": {
+    "types/index.ts": {
+      "purpose": "Core types for ReviveHub",
+      "exports": [
+        "Repository",
+        "CodeFile",
+        "AnalysisResult",
+        "Issue",
+        "IssueType",
+        "Recommendation",
+        "CodeMetrics",
+        "TransformationRule",
+        "AIAnalysisRequest",
+        "AIAnalysisResponse"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "types/migration.ts": {
+      "purpose": "Phase 3: Code Migration Type Definitions",
+      "exports": [
+        "MigrationConfig",
+        "TargetSelection",
+        "FrameworkOptions",
+        "SourceConfiguration",
+        "TargetConfiguration",
+        "FileStructureRules",
+        "ComponentConventions",
+        "SyntaxMappings",
+        "APIMappings",
+        "LifecycleMappings",
+        "MigrationSpecification",
+        "MigrationMappings",
+        "ImportMappings",
+        "RoutingMappings",
+        "ComponentMappings",
+        "StylingMappings",
+        "StateManagementMappings",
+        "BuildSystemMappings",
+        "MigrationRules",
+        "BreakingChange",
+        "Deprecation",
+        "SpecMetadata",
+        "FrameworkRulesDatabase",
+        "FrameworkDefinition",
+        "VersionDefinition",
+        "CompatibleTarget",
+        "Feature",
+        "Phase3TransformResult",
+        "MigrationMetadata",
+        "TransformationContext",
+        "AITransformResult",
+        "RuleValidationResult",
+        "ViolationReport",
+        "Violation",
+        "FixSuggestion",
+        "RepositoryMetadata",
+        "FileTreeNode",
+        "MigrationRequest",
+        "MigrationJob",
+        "MigrationProgress",
+        "MigrationOptions",
+        "Phase3OrchestrationResult",
+        "MigrationSummary",
+        "Phase3ProgressUpdate",
+        "MigrationError",
+        "TransformationError",
+        "MigrationValidationError",
+        "GitHubAPIError",
+        "AIServiceError",
+        "RateLimitInfo",
+        "RecoveryResult",
+        "ErrorRecoveryStrategy",
+        "ConfidenceFactors",
+        "CodeGenOptions",
+        "CacheEntry",
+        "CacheService"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "types/patterns.ts": {
+      "purpose": "Pattern detection and analysis types",
+      "exports": [
+        "PatternSeverity",
+        "PatternCategory",
+        "DetectedPattern",
+        "PatternLocation",
+        "ModernizationSuggestion",
+        "EffortEstimate",
+        "BreakingChange",
+        "AnalysisResult",
+        "LEGACY_PATTERNS",
+        "LegacyPatternId"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "types/transformer.ts": {
+      "purpose": "Transformer Architecture Type Definitions for ReviveHub",
+      "exports": [
+        "MigrationPlan",
+        "SourceStack",
+        "TargetStack",
+        "Phase",
+        "Task",
+        "Pattern",
+        "Summary",
+        "DependencyNode",
+        "Customization",
+        "AIInsights",
+        "AIMetadata",
+        "TransformOptions",
+        "TransformResult",
+        "TransformMetadata",
+        "Diff",
+        "DiffLine",
+        "CharacterDiff",
+        "ValidationResult",
+        "ValidationError",
+        "TransformError",
+        "ErrorLocation",
+        "OrchestrationResult",
+        "TaskResult",
+        "TransformationSummary",
+        "PipelineStage",
+        "StageResult",
+        "ProgressEvent",
+        "ProgressUpdate",
+        "RepositoryInfo",
+        "RepositoryFile",
+        "TransformerMetadata",
+        "TransformerConfig",
+        "TransformationRequest",
+        "TransformationResponse",
+        "Backup",
+        "RollbackResult",
+        "ComplexityMetrics",
+        "RiskAssessment",
+        "RiskFactor",
+        "isTransformError",
+        "isValidationError",
+        "isTaskResult"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "types/repository.ts": {
+      "purpose": "Type definitions for repository",
+      "exports": [
+        "Repository",
+        "RepositoryContent",
+        "RepositoryListOptions",
+        "PaginationInfo"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "components\\layout\\Header.tsx": {
+      "purpose": "React component for header",
+      "exports": [
+        "DashboardHeader"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "components\\dashboard\\RepositoryCard.tsx": {
+      "purpose": "React component for repositorycard",
+      "exports": [
+        "RepositoryCard"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "components\\ui\\breadcrumb.tsx": {
+      "purpose": "React component for breadcrumb",
+      "exports": [
+        "Breadcrumb"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "types/auth.ts": {
+      "purpose": "Type definitions for auth",
+      "exports": [
+        "AuthUser"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/stats/statistics-service.ts": {
+      "purpose": "Utility functions for statistics-service",
+      "exports": [
+        "AnalysisRecord",
+        "TransformationRecord",
+        "UserStatistics",
+        "recordAnalysis",
+        "recordTransformation",
+        "getUserStatistics",
+        "clearStatistics"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    }
+  },
+  "config": {},
+  "transformers": {
+    "lib/transformers/base-transformer.ts": {
+      "purpose": "BaseTransformer - Abstract base class for all code transformers",
+      "exports": [],
+      "dependencies": [
+        "./diff-generator"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/build-tools/index.ts": {
+      "purpose": "Build Tools Transformers",
+      "exports": [],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/build-tools/vite-config-generator.ts": {
+      "purpose": "BuildToolConfigGenerator - Generates appropriate build tool configuration",
+      "exports": [
+        "BuildToolConfigGenerator",
+        "default: defineConfig"
+      ],
+      "dependencies": [
+        "../base-transformer",
+        "./App",
+        "./App.vue"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/build-tools/vite-setup-transformer.ts": {
+      "purpose": "ViteSetupTransformer - Automatically sets up Vite for React projects",
+      "exports": [
+        "ViteSetupTransformer",
+        "default: defineConfig"
+      ],
+      "dependencies": [
+        "../base-transformer",
+        "@/lib/planner/types",
+        "./App",
+        "./App"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/dependencies/dependency-updater.ts": {
+      "purpose": "DependencyUpdaterTransformer - Updates package dependencies to latest versions",
+      "exports": [
+        "DependencyUpdaterTransformer"
+      ],
+      "dependencies": [
+        "../base-transformer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/dependencies/index.ts": {
+      "purpose": "Dependency Transformers",
+      "exports": [],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/dependencies/multi-ecosystem-updater.ts": {
+      "purpose": "Multi-Ecosystem Dependency Updater",
+      "exports": [
+        "PackageEcosystem",
+        "MultiEcosystemDependencyUpdater"
+      ],
+      "dependencies": [
+        "../base-transformer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/diff-generator.ts": {
+      "purpose": "DiffGenerator Utility",
+      "exports": [
+        "DiffGenerator",
+        "diffGenerator"
+      ],
+      "dependencies": [
+        "@/types/transformer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/documentation/documentation-transformer.ts": {
+      "purpose": "DocumentationTransformer - Generates documentation from transformation metadata",
+      "exports": [
+        "DocumentationType",
+        "DocumentationTransformer"
+      ],
+      "dependencies": [
+        "../base-transformer",
+        "@/lib/ai/claude-client"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/index.ts": {
+      "purpose": "Transformers Module",
+      "exports": [],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/nextjs/data-fetching-converter.ts": {
+      "purpose": "Data Fetching Converter for Next.js Pages to App Router Migration",
+      "exports": [
+        "DataFetchingConversion",
+        "DataFetchingConverter"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/nextjs/layout-generator.ts": {
+      "purpose": "Layout Generator for Next.js Pages to App Router Migration",
+      "exports": [
+        "LayoutConversion",
+        "LayoutGenerator",
+        "metadata",
+        "default: function"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/nextjs/pages-to-app-transformer.ts": {
+      "purpose": "PagesToAppTransformer - Converts Next.js Pages Router to App Router",
+      "exports": [
+        "PagesToAppTransformer"
+      ],
+      "dependencies": [
+        "../base-transformer",
+        "./route-mapper",
+        "./data-fetching-converter",
+        "./layout-generator"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/nextjs/route-mapper.ts": {
+      "purpose": "Route Mapper for Next.js Pages to App Router Migration",
+      "exports": [
+        "RouteMapping",
+        "RouteMapper"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/orchestrator.ts": {
+      "purpose": "TransformationOrchestrator - Coordinates execution of multiple transformations from a migration plan",
+      "exports": [
+        "TransformationOrchestrator"
+      ],
+      "dependencies": [
+        "./transformation-pipeline",
+        "./transformer-registry",
+        "@/lib/github/content-service",
+        "@/lib/sse/progress-emitter",
+        "./diff-generator"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/react/ast-helpers.ts": {
+      "purpose": "AST Helper Utilities for React Transformations",
+      "exports": [
+        "isReactComponentClass",
+        "getComponentName",
+        "isLifecycleMethod",
+        "isRenderMethod",
+        "extractStateFromConstructor",
+        "extractPropTypes",
+        "extractDefaultProps",
+        "createUseStateCall",
+        "createUseEffectCall",
+        "capitalize",
+        "methodUsesThis",
+        "extractDependencies",
+        "replaceThisState",
+        "replaceThisProps"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/react/class-to-hooks-transformer.ts": {
+      "purpose": "ClassToHooksTransformer - Converts React class components to functional components with hooks",
+      "exports": [
+        "ClassToHooksTransformer"
+      ],
+      "dependencies": [
+        "../base-transformer",
+        "./state-converter",
+        "./hook-mapper"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/react/hook-mapper.ts": {
+      "purpose": "Hook Mapper for React Lifecycle Methods",
+      "exports": [
+        "LifecycleConversion",
+        "convertLifecycleToHooks",
+        "replaceThisReferences"
+      ],
+      "dependencies": [
+        "./ast-helpers"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/react/state-converter.ts": {
+      "purpose": "State Converter for React Class to Hooks Transformation",
+      "exports": [
+        "StateConversion",
+        "convertStateToHooks",
+        "replaceStateReferences"
+      ],
+      "dependencies": [
+        "./ast-helpers"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/transformation-pipeline.ts": {
+      "purpose": "TransformationPipeline - Orchestrates safe code transformation through sequential stages",
+      "exports": [
+        "TransformationPipeline"
+      ],
+      "dependencies": [
+        "./base-transformer",
+        "./validator"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/transformer-registry.ts": {
+      "purpose": "TransformerRegistry - Centralized registry for managing and routing transformers",
+      "exports": [
+        "TransformerRegistry",
+        "transformerRegistry"
+      ],
+      "dependencies": [
+        "./transformer-registry",
+        "./my-transformer",
+        "@/types/transformer",
+        "./base-transformer",
+        "@/lib/transformers/transformer-registry",
+        "./dependencies",
+        "./documentation/documentation-transformer",
+        "./nextjs/pages-to-app-transformer",
+        "./react/class-to-hooks-transformer",
+        "./typescript/proptypes-to-ts-transformer",
+        "./build-tools",
+        "./build-tools/vite-setup-transformer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/typescript/proptypes-to-ts-transformer.ts": {
+      "purpose": "PropTypesToTSTransformer - Converts React PropTypes to TypeScript interfaces",
+      "exports": [
+        "PropTypesToTSTransformer"
+      ],
+      "dependencies": [
+        "../base-transformer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/transformers/validator.ts": {
+      "purpose": "Multi-layer validation system for transformed code",
+      "exports": [
+        "Validator",
+        "validator"
+      ],
+      "dependencies": [
+        "@/types/transformer"
+      ],
+      "lastModified": "2025-12-04"
+    }
+  },
+  "migration": {
+    "lib/migration/ai-transformation-engine.ts": {
+      "purpose": "AITransformationEngine",
+      "exports": [
+        "AITransformationEngine",
+        "default: function"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/app-router-file-generator.ts": {
+      "purpose": "App Router File Generator",
+      "exports": [
+        "FileGenerationOptions",
+        "AppRouterFileGenerator",
+        "metadata",
+        "middleware",
+        "config",
+        "dynamic",
+        "revalidate",
+        "runtime",
+        "default: function"
+      ],
+      "dependencies": [
+        "@/types/migration"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/ast-transformation-engine.ts": {
+      "purpose": "AST Transformation Engine for Phase 3 Code Migration",
+      "exports": [
+        "ASTTransformationEngine"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/backup-manager.ts": {
+      "purpose": "Backup and Rollback System for Migration Operations",
+      "exports": [
+        "BackupEntry",
+        "BackupSnapshot",
+        "BackupManager",
+        "BackupTransaction",
+        "createBackupTransaction"
+      ],
+      "dependencies": [
+        "./errors"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/component-style-transformer.ts": {
+      "purpose": "ComponentStyleTransformer",
+      "exports": [
+        "ComponentStyleTransformer"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/css-analyzer.ts": {
+      "purpose": "CSSAnalyzer",
+      "exports": [
+        "CSSClass",
+        "CSSProperty",
+        "CSSAnalysisResult",
+        "CSSAnalyzer"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/css-to-tailwind-converter.ts": {
+      "purpose": "CSSToTailwindConverter",
+      "exports": [
+        "TailwindMapping",
+        "CSSToTailwindConverter"
+      ],
+      "dependencies": [
+        "./css-analyzer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/enhanced-ai-transformer.ts": {
+      "purpose": "Enhanced AI Transformer",
+      "exports": [
+        "EnhancedTransformOptions",
+        "CodePattern",
+        "RefactoringSuggestion",
+        "EnhancedAITransformer"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/error-recovery.ts": {
+      "purpose": "Error recovery strategies for migration operations",
+      "exports": [
+        "RecoveryResult",
+        "ErrorRecoveryStrategy",
+        "RecoveryContext",
+        "RetryStrategy",
+        "FallbackStrategy",
+        "SkipStrategy",
+        "CompositeRecoveryStrategy",
+        "RecoveryManager",
+        "createDefaultRecoveryManager"
+      ],
+      "dependencies": [
+        "./errors"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/errors.ts": {
+      "purpose": "Error hierarchy for migration and transformation operations",
+      "exports": [
+        "MigrationError",
+        "TransformationError",
+        "ValidationError",
+        "GitHubAPIError",
+        "AIServiceError",
+        "ParseError",
+        "OrchestrationError",
+        "BackupError",
+        "handleMigrationError",
+        "logMigrationEvent"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/file-structure-manager.ts": {
+      "purpose": "FileStructureManager",
+      "exports": [
+        "FileStructureChange",
+        "FileStructureManager"
+      ],
+      "dependencies": [
+        "@/types/migration",
+        "./route-segment-extractor"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/framework-rules/index.ts": {
+      "purpose": "Framework Rules Module",
+      "exports": [],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/framework-rules/loader.ts": {
+      "purpose": "Framework Rules Loader Utility",
+      "exports": [
+        "FrameworkRulesLoader",
+        "getFrameworkRulesLoader",
+        "resetFrameworkRulesLoader"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/framework-rules/schema.ts": {
+      "purpose": "Framework Rules JSON Schema and Type Definitions",
+      "exports": [
+        "FrameworkRules",
+        "VersionRules",
+        "VersionConfiguration",
+        "DefaultMappings",
+        "MigrationPath",
+        "MigrationStep",
+        "CommonIssue",
+        "FrameworkRulesDatabase",
+        "validateFrameworkRules",
+        "validateVersionRules",
+        "validateMigrationPath",
+        "validateFrameworkRulesDatabase"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/github-fetcher.ts": {
+      "purpose": "GitHub Repository Fetcher for Phase 3 Code Migration",
+      "exports": [
+        "FetchProgressCallback",
+        "GitHubRepositoryFetcher"
+      ],
+      "dependencies": [
+        "@/lib/github/client",
+        "@/lib/github/errors",
+        "@/lib/github/cache",
+        "@/types/transformer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/hybrid-transformation-engine.ts": {
+      "purpose": "Hybrid Transformation Engine for Phase 3 Code Migration",
+      "exports": [
+        "HybridTransformationEngine",
+        "metadata",
+        "default: function"
+      ],
+      "dependencies": [
+        "./ast-transformation-engine",
+        "./ai-transformation-engine",
+        "./enhanced-ai-transformer",
+        "./rule-engine",
+        "./file-structure-manager",
+        "./css-analyzer",
+        "./css-to-tailwind-converter",
+        "./component-style-transformer",
+        "./tailwind-config-generator",
+        "./app-router-file-generator"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/index.ts": {
+      "purpose": "Migration Module",
+      "exports": [],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/lazy-loader.ts": {
+      "purpose": "Lazy loading utilities for migration components and data",
+      "exports": [
+        "FrameworkRulesLoader",
+        "getFrameworkRulesLoader",
+        "LazyTransformationExecutor",
+        "DeferredDataLoader",
+        "ResourceLoadQueue",
+        "IntersectionLazyLoader",
+        "createDeferredDiffViewer",
+        "createDeferredViolationViewer",
+        "BatchResourceLoader"
+      ],
+      "dependencies": [
+        "@/lib/cache/transformation-cache"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/migration-orchestrator.ts": {
+      "purpose": "Migration Orchestrator for Phase 3 Code Migration",
+      "exports": [
+        "MigrationOrchestrator",
+        "getMigrationOrchestrator",
+        "resetMigrationOrchestrator"
+      ],
+      "dependencies": [
+        "./github-fetcher",
+        "./hybrid-transformation-engine"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/parallel-processor.ts": {
+      "purpose": "Parallel processing utilities for transformation operations",
+      "exports": [
+        "Task",
+        "TaskResult",
+        "ProgressCallback",
+        "ParallelProcessorConfig",
+        "ParallelProcessor",
+        "BatchRequestProcessor",
+        "WorkerPool",
+        "ParallelFileProcessor",
+        "chunkArray"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/route-segment-extractor.ts": {
+      "purpose": "RouteSegmentExtractor",
+      "exports": [
+        "RouteSegment",
+        "RouteSegmentExtractor"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/rule-engine.ts": {
+      "purpose": "Rule Engine for Phase 3 Code Migration",
+      "exports": [
+        "RuleEngine",
+        "getRuleEngine",
+        "resetRuleEngine"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/spec-generator.ts": {
+      "purpose": "Migration Specification Generator",
+      "exports": [
+        "MigrationSpecGenerator",
+        "getMigrationSpecGenerator",
+        "resetMigrationSpecGenerator"
+      ],
+      "dependencies": [
+        "./styles.module.css"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/streaming-processor.ts": {
+      "purpose": "Streaming utilities for processing large files and generating diffs",
+      "exports": [
+        "STREAMING_THRESHOLD",
+        "shouldStreamFile",
+        "CodeTransformStream",
+        "DiffGeneratorStream",
+        "SSEStream",
+        "createSSEResponse",
+        "BatchStreamProcessor"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/tailwind-config-generator.ts": {
+      "purpose": "TailwindConfigGenerator",
+      "exports": [
+        "TailwindConfig",
+        "TailwindConfigGenerator",
+        "default: config"
+      ],
+      "dependencies": [
+        "./css-analyzer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/version-upgrade-detector.ts": {
+      "purpose": "Version Upgrade Detector",
+      "exports": [
+        "VersionUpgradeDetector",
+        "getVersionUpgradeDetector",
+        "resetVersionUpgradeDetector"
+      ],
+      "dependencies": [
+        "./framework-rules"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/version-upgrade-transformer.ts": {
+      "purpose": "Version Upgrade Transformer",
+      "exports": [
+        "VersionUpgradeTransformer",
+        "getVersionUpgradeTransformer",
+        "resetVersionUpgradeTransformer"
+      ],
+      "dependencies": [
+        "@/types/transformer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/__tests__/app-router-file-generator.test.ts": {
+      "purpose": "Tests for AppRouterFileGenerator",
+      "exports": [
+        "metadata",
+        "metadata",
+        "middleware",
+        "config",
+        "dynamic",
+        "revalidate",
+        "runtime",
+        "dynamic",
+        "revalidate",
+        "runtime",
+        "default: function"
+      ],
+      "dependencies": [
+        "../app-router-file-generator",
+        "@/types/migration"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/__tests__/css-analyzer.test.ts": {
+      "purpose": "Tests for CSSAnalyzer",
+      "exports": [],
+      "dependencies": [
+        "../css-analyzer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/__tests__/css-to-tailwind-converter.test.ts": {
+      "purpose": "Tests for CSSToTailwindConverter",
+      "exports": [],
+      "dependencies": [
+        "../css-to-tailwind-converter",
+        "../css-analyzer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/__tests__/enhanced-ai-transformer.test.ts": {
+      "purpose": "Tests for EnhancedAITransformer",
+      "exports": [],
+      "dependencies": [
+        "../enhanced-ai-transformer",
+        "@/types/migration"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/__tests__/file-structure-manager.test.ts": {
+      "purpose": "Tests for FileStructureManager",
+      "exports": [
+        "Header",
+        "Footer",
+        "default: function"
+      ],
+      "dependencies": [
+        "../file-structure-manager",
+        "@/types/migration"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/__tests__/integration-debug.test.ts": {
+      "purpose": "Debug test to see what's actually being returned",
+      "exports": [
+        "default: function"
+      ],
+      "dependencies": [
+        "../hybrid-transformation-engine",
+        "@/types/migration"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/__tests__/integration.test.ts": {
+      "purpose": "End-to-End Integration Test",
+      "exports": [
+        "formatDate",
+        "default: Home"
+      ],
+      "dependencies": [
+        "../hybrid-transformation-engine",
+        "@/types/migration",
+        "../components/Button"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/migration/__tests__/route-segment-extractor.test.ts": {
+      "purpose": "Tests for RouteSegmentExtractor",
+      "exports": [],
+      "dependencies": [
+        "../route-segment-extractor"
+      ],
+      "lastModified": "2025-12-04"
+    }
+  },
+  "planner": {
+    "lib/planner/ai-enhancer.ts": {
+      "purpose": "0-100",
+      "exports": [
+        "AIInsight",
+        "EnhancedMigrationPlan",
+        "AIEnhancer"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/planner/ai-example.ts": {
+      "purpose": "Example: AI-Enhanced Migration Planning",
+      "exports": [],
+      "dependencies": [
+        "./migration-planner",
+        "./types"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/planner/complexity-estimator.ts": {
+      "purpose": "Normalize to 0-100",
+      "exports": [
+        "ComplexityEstimator"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/planner/dependency-graph.ts": {
+      "purpose": "Find tasks that depend on this one",
+      "exports": [
+        "DependencyGraphBuilder"
+      ],
+      "dependencies": [
+        "./types"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/planner/example.ts": {
+      "purpose": "Example usage of the Migration Planner",
+      "exports": [],
+      "dependencies": [
+        "./migration-planner",
+        "./dependency-graph",
+        "./types"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/planner/migration-planner.ts": {
+      "purpose": "Apply defaults to customization",
+      "exports": [
+        "MigrationPlanner"
+      ],
+      "dependencies": [
+        "./ai-enhancer",
+        "./complexity-estimator",
+        "./dependency-graph",
+        "./phase-generator"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/planner/phase-generator.ts": {
+      "purpose": "Determines if there are breaking changes that require a migration guide",
+      "exports": [
+        "PhaseGenerator"
+      ],
+      "dependencies": [
+        "./complexity-estimator"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/planner/types.ts": {
+      "purpose": "Types for migration planning system",
+      "exports": [
+        "SourceStack",
+        "TargetStack",
+        "DetectedPattern",
+        "MigrationTask",
+        "MigrationPhase",
+        "MigrationPlan",
+        "DependencyNode",
+        "PlanCustomization",
+        "ComplexityFactors",
+        "ComplexityEstimate",
+        "AIInsight"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/planner/utils/pattern-converter.ts": {
+      "purpose": "Converts Issue[] from scanner to DetectedPattern[] for planner",
+      "exports": [
+        "convertIssuesToPatterns",
+        "convertMCPPatterns",
+        "convertPatternDetectorResults",
+        "deduplicatePatterns"
+      ],
+      "dependencies": [
+        "@/lib/scanner/types",
+        "@/lib/planner/types"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/planner/utils/pattern-converters.ts": {
+      "purpose": "Pattern conversion utilities for migration planning",
+      "exports": [
+        "convertMCPPatterns",
+        "convertPatternDetectorResults",
+        "mapPatternCategory"
+      ],
+      "dependencies": [
+        "@/lib/planner/types"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/planner/utils/source-stack-extractor.ts": {
+      "purpose": "Source stack extraction utilities for migration planning",
+      "exports": [
+        "extractSourceStack",
+        "extractDependencyMap",
+        "extractPatternNames"
+      ],
+      "dependencies": [
+        "@/lib/scanner/types",
+        "@/lib/planner/types"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/planner/utils/stack-extractor.ts": {
+      "purpose": "Extracts SourceStack from AnalysisReport",
+      "exports": [
+        "extractSourceStack"
+      ],
+      "dependencies": [
+        "@/lib/scanner/types",
+        "@/lib/planner/types"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/planner/validation.ts": {
+      "purpose": "Zod schema for validating plan API requests",
+      "exports": [
+        "PlanRequestSchema",
+        "PlanRequest"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    }
+  },
+  "github": {
+    "lib/github/apply-orchestrator.ts": {
+      "purpose": "GitHub Apply Orchestrator",
+      "exports": [
+        "ProgressCallback",
+        "GitHubApplyOrchestrator",
+        "createGitHubApplyOrchestrator"
+      ],
+      "dependencies": [
+        "./services/integration",
+        "./branch-name-generator",
+        "./lock-manager"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/github/branch-name-generator.ts": {
+      "purpose": "Branch Name Generator for GitHub Integration",
+      "exports": [
+        "BranchNameParams",
+        "BranchNameGenerator",
+        "createBranchNameGenerator"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/github/cache.ts": {
+      "purpose": "GitHub API Response Caching",
+      "exports": [
+        "CacheTTL",
+        "CacheKeys",
+        "clearCache",
+        "getCacheStats",
+        "cleanupExpiredCache"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/github/client.ts": {
+      "purpose": "Handle rate limits separately",
+      "exports": [
+        "createOctokit"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/github/content-service.ts": {
+      "purpose": "GitHub Content Fetching Service",
+      "exports": [
+        "FetchRepositoryFilesOptions",
+        "FetchRepositoryFilesResult",
+        "GitHubContentService"
+      ],
+      "dependencies": [
+        "./errors",
+        "./cache",
+        "@/types/repository",
+        "@/types/transformer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/github/errors.ts": {
+      "purpose": "Exponential backoff retry utility for GitHub API calls",
+      "exports": [
+        "GitHubAPIError"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/github/lock-manager.ts": {
+      "purpose": "Operation Lock Manager",
+      "exports": [
+        "OperationLockManager",
+        "getLockManager",
+        "resetLockManager"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/github/octokit.ts": {
+      "purpose": "Octokit client setup with retry and throttling plugins",
+      "exports": [
+        "createOctokit"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/github/orchestrator-registry.ts": {
+      "purpose": "Orchestrator Registry",
+      "exports": [
+        "registerOrchestrator",
+        "getOrchestrator",
+        "getCompletedOperation",
+        "unregisterOrchestrator",
+        "hasOrchestrator"
+      ],
+      "dependencies": [
+        "./apply-orchestrator"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/github/repositories.ts": {
+      "purpose": "GitHub repository operations with caching and error handling",
+      "exports": [],
+      "dependencies": [
+        "./cache",
+        "./errors"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/github/services/integration.ts": {
+      "purpose": "GitHub Integration Service for repository operations",
+      "exports": [
+        "GitHubIntegrationService"
+      ],
+      "dependencies": [
+        "../client",
+        "../errors",
+        "../cache"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/github/types.ts": {
+      "purpose": "TypeScript types for GitHub API responses and operations",
+      "exports": [
+        "Repository",
+        "RepositoryContent",
+        "Commit",
+        "GitHubUser",
+        "RepositoryListOptions",
+        "PaginationInfo",
+        "GitHubRateLimit",
+        "GitHubRateLimitResponse",
+        "RepositoryValidation",
+        "CreateCommitParams",
+        "TreeItem",
+        "CreatePRParams",
+        "PullRequest",
+        "ApplyChangesRequest",
+        "Phase3TransformResult",
+        "MigrationSpecification",
+        "ApplyChangesResult",
+        "ApplyProgress",
+        "RollbackResult",
+        "BranchNameParams",
+        "GitReference",
+        "GitTree",
+        "GitCommit"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    }
+  },
+  "scanner": {
+    "lib/scanner/config.ts": {
+      "purpose": "Scanner Configuration Module",
+      "exports": [
+        "ScannerConfig",
+        "ConfigurationError",
+        "loadScannerConfig",
+        "getScannerConfig",
+        "resetScannerConfig",
+        "validateScannerConfig"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/detectors/base.ts": {
+      "purpose": "Abstract base class for all detectors providing common functionality",
+      "exports": [],
+      "dependencies": [
+        "../types"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/detectors/buildtool.ts": {
+      "purpose": "Build tool detector that identifies build tools and bundlers",
+      "exports": [
+        "BuildToolDetector"
+      ],
+      "dependencies": [
+        "./base"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/detectors/dependency.ts": {
+      "purpose": "Dependency analyzer that parses package manager files and identifies outdated dependencies",
+      "exports": [
+        "DependencyAnalyzer"
+      ],
+      "dependencies": [
+        "./base",
+        "../services/npm-registry"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/detectors/framework.ts": {
+      "purpose": "Framework detector that identifies frontend and backend frameworks",
+      "exports": [
+        "FrameworkRecognizer"
+      ],
+      "dependencies": [
+        "./base"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/detectors/index.ts": {
+      "purpose": "Detector exports",
+      "exports": [],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/detectors/language.ts": {
+      "purpose": "Language detector that identifies programming languages in a repository",
+      "exports": [
+        "LanguageDetector"
+      ],
+      "dependencies": [
+        "./base"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/index.ts": {
+      "purpose": "Core services",
+      "exports": [],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/services/cache.ts": {
+      "purpose": "Cache service for scanner analysis results",
+      "exports": [
+        "CacheService",
+        "MemoryCacheService",
+        "RedisCacheService",
+        "createCacheService",
+        "generateScannerCacheKey",
+        "getScannerCacheTTL"
+      ],
+      "dependencies": [
+        "../types",
+        "../config"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/services/cached-orchestrator.ts": {
+      "purpose": "CachedScannerOrchestrator extends ScannerOrchestrator with caching behavior",
+      "exports": [
+        "CachedScannerOrchestrator"
+      ],
+      "dependencies": [
+        "../types",
+        "./orchestrator",
+        "./cache",
+        "./cache"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/services/enhanced-health-scorer.ts": {
+      "purpose": "Enhanced Health Scorer with Real Dependency Checking",
+      "exports": [
+        "HealthScoringInput",
+        "EnhancedHealthScorer"
+      ],
+      "dependencies": [
+        "./npm-registry"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/services/health-scorer.ts": {
+      "purpose": "Input data for health scoring",
+      "exports": [
+        "HealthScoringInput",
+        "HealthScorer"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/services/index.ts": {
+      "purpose": "Cache services",
+      "exports": [],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/services/npm-registry.ts": {
+      "purpose": "NPM Registry Service",
+      "exports": [
+        "NpmPackageInfo",
+        "NpmRegistryService"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/services/orchestrator.ts": {
+      "purpose": "ScannerOrchestrator coordinates the analysis pipeline, manages detector execution,",
+      "exports": [
+        "ScannerOrchestrator"
+      ],
+      "dependencies": [
+        "./report-generator",
+        "../config"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/services/report-generator.ts": {
+      "purpose": "ReportGenerator aggregates detection results and generates comprehensive analysis reports",
+      "exports": [
+        "ReportGenerator"
+      ],
+      "dependencies": [
+        "./enhanced-health-scorer"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/services/repository-fetcher.ts": {
+      "purpose": "RepositoryFetcher handles fetching repository data from GitHub API",
+      "exports": [
+        "RepositoryFetcher"
+      ],
+      "dependencies": [
+        "../types",
+        "../config"
+      ],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/types/index.ts": {
+      "purpose": "Core Scanner Types",
+      "exports": [
+        "Detector",
+        "RepositoryContext",
+        "FileTree",
+        "FileNode",
+        "RepositoryMetadata",
+        "DetectionResult",
+        "DetectionError",
+        "LanguageDetectionResult",
+        "DetectedLanguage",
+        "FrameworkDetectionResult",
+        "DetectedFramework",
+        "BuildToolDetectionResult",
+        "DetectedBuildTool",
+        "DependencyAnalysisResult",
+        "DependencyInfo",
+        "OutdatedDependency",
+        "HealthScore",
+        "CategoryScore",
+        "ScoringFactor",
+        "AnalysisReport",
+        "Issue",
+        "Recommendation",
+        "DetectorResult",
+        "AnalysisData"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    },
+    "lib/scanner/utils/index.ts": {
+      "purpose": "Utility function to create a timeout promise",
+      "exports": [
+        "createTimeout",
+        "safeJsonParse",
+        "normalizePath",
+        "getFileExtension",
+        "compareVersions",
+        "calculateConfidence",
+        "debounce"
+      ],
+      "dependencies": [],
+      "lastModified": "2025-12-04"
+    }
+  }
+}

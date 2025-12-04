@@ -6,11 +6,13 @@
 // Cache TTL constants (in seconds)
 export const CacheTTL = {
   REPOSITORY_METADATA: 300, // 5 minutes
+  REPO_METADATA: 300, // 5 minutes (alias)
   FILE_CONTENTS: 600, // 10 minutes
   FILE_TREE: 300, // 5 minutes
   USER_PROFILE: 900, // 15 minutes
   REPOSITORY_LIST: 180, // 3 minutes
   COMMIT_HISTORY: 1800, // 30 minutes
+  BRANCH_INFO: 300, // 5 minutes
 } as const
 
 // Cache key generators
@@ -24,6 +26,8 @@ export const CacheKeys = {
   commits: (owner: string, repo: string, branch: string) => 
     `gh:commits:${owner}:${repo}:${branch}`,
   rateLimit: () => 'gh:ratelimit',
+  branch: (owner: string, repo: string, branch: string) =>
+    `gh:branch:${owner}:${repo}:${branch}`,
 } as const
 
 // In-memory cache for development (in production, use Redis)

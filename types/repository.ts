@@ -17,6 +17,14 @@ export interface Repository {
   createdAt: Date
   updatedAt: Date
   pushedAt: Date
+  topics: string[]
+  archived: boolean
+  htmlUrl: string
+  cloneUrl: string
+  size: number
+  disabled: boolean
+  hasIssues: boolean
+  hasWiki: boolean
 }
 
 export interface RepositoryContent {

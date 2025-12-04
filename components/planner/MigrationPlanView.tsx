@@ -10,6 +10,7 @@ import { ComponentLoadingSkeleton } from './ComponentLoadingSkeleton'
 import type { OrchestrationResult, TransformationRequest } from '@/types/transformer'
 import { Phase3Card } from './Phase3Card'
 import { SuccessModal, useSuccessModal } from '@/components/ui/success-modal'
+import { recordTransformation } from '@/lib/stats/statistics-service'
 
 
 // Lazy load heavy components for better performance
@@ -184,10 +185,10 @@ export function MigrationPlanView({
 
   // Show success modal when transformation is applied successfully
   useEffect(() => {
-    if (applySuccess && shouldShow('transformation')) {
+    if (applySuccess && shouldShow('transformation') && !showTransformationSuccessModal) {
       setShowTransformationSuccessModal(true)
     }
-  }, [applySuccess, shouldShow])
+  }, [applySuccess, shouldShow, showTransformationSuccessModal])
 
   console.log('[ENABLED_TRANSFORMATION]', enabledTransformations)
 
@@ -465,8 +466,8 @@ export function MigrationPlanView({
         },
         body: JSON.stringify({
           repository: {
-            owner: repositoryOwner || repositoryName.split('/')[0],
-            name: repositoryName.split('/')[1] || repositoryName,
+            owner: repositoryName.split('/')[0],
+            name: repositoryName.split('/')[1],
           },
           migrationJobId: result.jobId,
           acceptedFiles: acceptedFilesArray,
@@ -501,6 +502,19 @@ export function MigrationPlanView({
         })
         setError(null)
         console.log('[MigrationPlanView] Apply successful, PR:', data.pullRequest?.htmlUrl)
+        
+        // Record transformation statistics
+        recordTransformation({
+          repositoryFullName: repositoryName,
+          tasksCompleted: acceptedFilesArray.length,
+          filesTransformed: acceptedFilesArray.length,
+          status: data.status === 'success' ? 'success' : 'partial',
+        })
+        
+        // Dispatch custom event to update stats in dashboard
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('revivehub-stats-updated'))
+        }
       } else {
         throw new Error(data.message || 'Failed to apply changes')
       }
@@ -582,7 +596,11 @@ export function MigrationPlanView({
       {/* Transformation Success Modal */}
       <SuccessModal
         isOpen={showTransformationSuccessModal}
-        onClose={() => setShowTransformationSuccessModal(false)}
+        onClose={() => {
+          setShowTransformationSuccessModal(false)
+          setApplySuccess(null)
+          setTransformationFlow({ stage: 'idle' })
+        }}
         title="Transformation Applied!"
         message="Your code transformation has been successfully applied to GitHub. A pull request has been created with all your accepted changes."
         pullRequestUrl={applySuccess?.prUrl}

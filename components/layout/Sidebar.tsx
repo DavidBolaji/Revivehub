@@ -12,34 +12,38 @@ const navigation = [
     icon: '🎃',
     description: 'Overview',
   },
-  {
-    name: 'Repositories',
-    href: '/dashboard/repositories',
-    icon: '👻',
-    description: 'Your haunted code',
-  },
-  {
-    name: 'Settings',
-    href: '/dashboard/settings',
-    icon: '⚙️',
-    description: 'Configure',
-  },
 ]
 
 export function Sidebar() {
   const pathname = usePathname()
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isMobileOpen, setIsMobileOpen] = useState(false)
 
   return (
     <>
+      {/* Mobile menu button */}
+      <button
+        onClick={() => setIsMobileOpen(!isMobileOpen)}
+        className="lg:hidden fixed top-4 left-4 z-50 flex items-center justify-center w-10 h-10 rounded-lg bg-slate-900/90 border border-purple-500/30 text-white backdrop-blur-xl shadow-lg"
+      >
+        <span className="text-xl">{isMobileOpen ? '✕' : '☰'}</span>
+      </button>
+
       {/* Mobile overlay */}
-      <div className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40" />
+      {isMobileOpen && (
+        <div
+          onClick={() => setIsMobileOpen(false)}
+          className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+        />
+      )}
       
       {/* Sidebar */}
       <aside
         className={cn(
-          'relative flex flex-col border-r border-purple-500/20 bg-slate-900/80 backdrop-blur-xl transition-all duration-300',
-          isCollapsed ? 'w-20' : 'w-64'
+          'relative flex flex-col border-r border-purple-500/20 bg-slate-900/80 backdrop-blur-xl transition-all duration-300 z-40',
+          'lg:relative fixed inset-y-0 left-0',
+          isCollapsed ? 'w-20' : 'w-64',
+          isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         )}
       >
         {/* Logo section */}
@@ -60,7 +64,7 @@ export function Sidebar() {
         {/* Navigation */}
         <nav className="flex-1 space-y-1 p-4">
           {navigation.map((item) => {
-            const isActive = pathname === item.href
+            const isActive = pathname.startsWith(item.href)
             return (
               <Link
                 key={item.name}
@@ -91,8 +95,8 @@ export function Sidebar() {
           })}
         </nav>
 
-        {/* Collapse toggle */}
-        <div className="border-t border-purple-500/20 p-4">
+        {/* Collapse toggle - desktop only */}
+        <div className="hidden lg:block border-t border-purple-500/20 p-4">
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="flex w-full items-center justify-center gap-2 rounded-lg bg-purple-900/30 px-3 py-2 text-sm text-purple-200 transition-all hover:bg-purple-900/50 hover:text-white"

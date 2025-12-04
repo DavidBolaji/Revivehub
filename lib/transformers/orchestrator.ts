@@ -53,7 +53,6 @@ import { DiffGenerator } from './diff-generator'
  * Orchestrates transformation execution across multiple tasks and phases
  */
 export class TransformationOrchestrator {
-  private pipeline: TransformationPipeline
   private registry: TransformerRegistry
   private githubService: GitHubContentService
   private progressEmitter: ProgressEmitter
@@ -71,7 +70,6 @@ export class TransformationOrchestrator {
     registry?: TransformerRegistry,
     emitter?: ProgressEmitter
   ) {
-    this.pipeline = new TransformationPipeline()
     this.registry = registry || transformerRegistry
     this.githubService = new GitHubContentService(octokit)
     this.progressEmitter = emitter || globalProgressEmitter
@@ -108,7 +106,7 @@ export class TransformationOrchestrator {
   ): Promise<OrchestrationResult> {
     const startTime = Date.now()
 
-    console.log(`[ORCHESTRATOR] Starting job ${jobId}`)
+    console.log(`rting job ${jobId}`)
     console.log(`[ORCHESTRATOR] Repository: ${repository.owner}/${repository.name}`)
     console.log(`[ORCHESTRATOR] Selected task IDs:`, Array.from(selectedTaskIds))
     console.log(`[ORCHESTRATOR] Migration plan phases:`, migrationPlan.phases.length)
@@ -379,11 +377,13 @@ export class TransformationOrchestrator {
                     for (const conversion of result.metadata.jsToJsxConversions) {
                       console.log(`[ORCHESTRATOR] Converting: ${conversion.originalPath} → ${conversion.newPath}`)
                       
+                      // Get the original .js file content from the repository
+                      const originalFileContent = fileContentsMap.get(conversion.originalPath) || conversion.content
+                      
                       // Add the original .js file to transformedFiles if not already there
                       // This ensures it shows in the UI as "to be renamed"
                       if (!transformedFiles.has(conversion.originalPath)) {
-                        const originalContent = fileContentsMap.get(conversion.originalPath) || conversion.content
-                        transformedFiles.set(conversion.originalPath, originalContent)
+                        transformedFiles.set(conversion.originalPath, originalFileContent)
                         console.log(`[ORCHESTRATOR] Added original file to transformedFiles: ${conversion.originalPath}`)
                       } else {
                         console.log(`[ORCHESTRATOR] Original file already in transformedFiles: ${conversion.originalPath}`)
@@ -399,6 +399,34 @@ export class TransformationOrchestrator {
                         `   🔄 Converted: ${conversion.originalPath} → ${conversion.newPath}`
                       )
 
+                      // Generate a special "rename" diff that shows full content
+                      // For JS to JSX conversions, we want to show the full file content
+                      // even though the content is identical
+                      console.log(`[ORCHESTRATOR] ===== JS TO JSX CONVERSION DEBUG =====`)
+                      console.log(`[ORCHESTRATOR] Original path: ${conversion.originalPath}`)
+                      console.log(`[ORCHESTRATOR] New path: ${conversion.newPath}`)
+                      console.log(`[ORCHESTRATOR] Content length: ${conversion.content.length}`)
+                      
+                      const conversionDiff = this.diffGenerator.generateRenameDiff(
+                        conversion.content,
+                        conversion.originalPath,
+                        conversion.newPath
+                      )
+                      console.log(`[ORCHESTRATOR] Rename diff generated:`, !!conversionDiff)
+                      console.log(`[ORCHESTRATOR] Diff unified length:`, conversionDiff?.unified?.length || 0)
+                      console.log(`[ORCHESTRATOR] Diff visual length:`, conversionDiff?.visual?.length || 0)
+                      
+                      // For renames, count the actual lines in the diff
+                      // The diff shows all lines as removed then added
+                      const totalLines = conversion.content.split('\n').length
+                      const linesAdded = conversionDiff.visual.filter(l => l.type === 'added').length
+                      const linesRemoved = conversionDiff.visual.filter(l => l.type === 'removed').length
+                      
+                      console.log(`[ORCHESTRATOR] Total lines: ${totalLines}`)
+                      console.log(`[ORCHESTRATOR] Lines added: ${linesAdded}`)
+                      console.log(`[ORCHESTRATOR] Lines removed: ${linesRemoved}`)
+                      console.log(`[ORCHESTRATOR] ===== END DEBUG =====`)
+
                       // Add a separate result entry for the conversion
                       results.push({
                         taskId: task.id,
@@ -409,15 +437,11 @@ export class TransformationOrchestrator {
                           code: conversion.content,
                           errors: [],
                           warnings: [],
-                          diff: {
-                            original: conversion.content,
-                            transformed: conversion.content,
-                            unified: `--- ${conversion.originalPath}\n+++ ${conversion.newPath}\n@@ File renamed from .js to .jsx @@\n${conversion.content}`,
-                            visual: [],
-                            characterLevel: []
-                          },
+                          diff: conversionDiff,
                           metadata: {
                             ...result.metadata,
+                            linesAdded,
+                            linesRemoved,
                             transformationType: 'js-to-jsx-conversion',
                             filesModified: [conversion.originalPath, conversion.newPath],
                             fileStructureChange: {
@@ -429,6 +453,14 @@ export class TransformationOrchestrator {
                           }
                         },
                         duration: Date.now() - taskStartTime,
+                      })
+                      
+                      console.log(`[ORCHESTRATOR] Result pushed for ${conversion.newPath}`)
+                      console.log(`[ORCHESTRATOR] Result metadata:`, {
+                        linesAdded,
+                        linesRemoved,
+                        transformationType: 'js-to-jsx-conversion',
+                        hasDiff: !!conversionDiff
                       })
                     }
                   }
@@ -531,50 +563,7 @@ export class TransformationOrchestrator {
       
       if (jsToJsxConversions.length > 0) {
         console.log(`[ORCHESTRATOR] Found ${jsToJsxConversions.length} JS files to convert to JSX`)
-        
-        for (const conversion of jsToJsxConversions) {
-          // Keep the old .js file in transformedFiles so it shows as "to be deleted"
-          // Add the new .jsx file so it shows as "to be created"
-          // The apply logic will handle the actual rename on GitHub
-          transformedFiles.set(conversion.newPath, conversion.content)
-          
-          this.progressEmitter.emit(
-            jobId,
-            `   🔄 Converted: ${conversion.originalPath} → ${conversion.newPath}`
-          )
-          
-          // Add a result entry for the NEW .jsx file
-          results.push({
-            taskId: 'js-to-jsx-conversion',
-            filePath: conversion.newPath,
-            success: true,
-            result: {
-              success: true,
-              code: conversion.content,
-              errors: [],
-              warnings: [],
-              metadata: {
-                transformationType: 'js-to-jsx-conversion',
-                linesAdded: 0,
-                linesRemoved: 0,
-                filesModified: [conversion.originalPath, conversion.newPath],
-                estimatedTimeSaved: '< 1 minute',
-                requiresManualReview: false,
-                riskScore: 0,
-                confidenceScore: 100,
-                transformationsApplied: ['JS to JSX file extension conversion'],
-                notes: [`Renamed from ${conversion.originalPath} (contains JSX)`],
-                fileStructureChange: {
-                  action: 'rename',
-                  originalPath: conversion.originalPath,
-                  isRouteFile: false
-                },
-                newFilePath: conversion.newPath
-              }
-            },
-            duration: 0,
-          })
-        }
+        console.log(`[ORCHESTRATOR] Skipping duplicate result creation - results already added in executeTask`)
         
         this.progressEmitter.emit(
           jobId,
@@ -783,10 +772,12 @@ export class TransformationOrchestrator {
               for (const conversion of result.metadata.jsToJsxConversions) {
                 console.log(`[ORCHESTRATOR] Converting: ${conversion.originalPath} → ${conversion.newPath}`)
                 
+                // Get the original .js file content from the repository
+                const originalFileContent = fileContentsMap.get(conversion.originalPath) || conversion.content
+                
                 // Add the original .js file to transformedFiles if not already there
                 if (!transformedFiles.has(conversion.originalPath)) {
-                  const originalContent = fileContentsMap.get(conversion.originalPath) || conversion.content
-                  transformedFiles.set(conversion.originalPath, originalContent)
+                  transformedFiles.set(conversion.originalPath, originalFileContent)
                   console.log(`[ORCHESTRATOR] Added original file to transformedFiles: ${conversion.originalPath}`)
                 }
                 
@@ -800,6 +791,34 @@ export class TransformationOrchestrator {
                   `   🔄 Converted: ${conversion.originalPath} → ${conversion.newPath}`
                 )
 
+                // Generate a special "rename" diff that shows full content
+                // For JS to JSX conversions, we want to show the full file content
+                // even though the content is identical
+                console.log(`[ORCHESTRATOR-TASK] ===== JS TO JSX CONVERSION DEBUG (executeTask) =====`)
+                console.log(`[ORCHESTRATOR-TASK] Original path: ${conversion.originalPath}`)
+                console.log(`[ORCHESTRATOR-TASK] New path: ${conversion.newPath}`)
+                console.log(`[ORCHESTRATOR-TASK] Content length: ${conversion.content.length}`)
+                
+                const conversionDiff = this.diffGenerator.generateRenameDiff(
+                  conversion.content,
+                  conversion.originalPath,
+                  conversion.newPath
+                )
+                console.log(`[ORCHESTRATOR-TASK] Rename diff generated:`, !!conversionDiff)
+                console.log(`[ORCHESTRATOR-TASK] Diff unified length:`, conversionDiff?.unified?.length || 0)
+                console.log(`[ORCHESTRATOR-TASK] Diff visual length:`, conversionDiff?.visual?.length || 0)
+                
+                // For renames, count the actual lines in the diff
+                // The diff shows all lines as removed then added
+                const totalLines = conversion.content.split('\n').length
+                const linesAdded = conversionDiff.visual.filter(l => l.type === 'added').length
+                const linesRemoved = conversionDiff.visual.filter(l => l.type === 'removed').length
+                
+                console.log(`[ORCHESTRATOR-TASK] Total lines: ${totalLines}`)
+                console.log(`[ORCHESTRATOR-TASK] Lines added: ${linesAdded}`)
+                console.log(`[ORCHESTRATOR-TASK] Lines removed: ${linesRemoved}`)
+                console.log(`[ORCHESTRATOR-TASK] ===== END DEBUG =====`)
+
                 // Add a separate result entry for the conversion
                 results.push({
                   taskId: task.id,
@@ -810,15 +829,11 @@ export class TransformationOrchestrator {
                     code: conversion.content,
                     errors: [],
                     warnings: [],
-                    diff: {
-                      original: conversion.content,
-                      transformed: conversion.content,
-                      unified: `--- ${conversion.originalPath}\n+++ ${conversion.newPath}\n@@ File renamed from .js to .jsx @@\n${conversion.content}`,
-                      visual: [],
-                      characterLevel: []
-                    },
+                    diff: conversionDiff,
                     metadata: {
                       ...result.metadata,
+                      linesAdded,
+                      linesRemoved,
                       transformationType: 'js-to-jsx-conversion',
                       filesModified: [conversion.originalPath, conversion.newPath],
                       fileStructureChange: {
@@ -830,6 +845,14 @@ export class TransformationOrchestrator {
                     }
                   },
                   duration: Date.now() - taskStartTime,
+                })
+                
+                console.log(`[ORCHESTRATOR-TASK] Result pushed for ${conversion.newPath}`)
+                console.log(`[ORCHESTRATOR-TASK] Result metadata:`, {
+                  linesAdded,
+                  linesRemoved,
+                  transformationType: 'js-to-jsx-conversion',
+                  hasDiff: !!conversionDiff
                 })
               }
             }

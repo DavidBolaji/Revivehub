@@ -25,6 +25,7 @@ interface FrameworkOption {
   estimatedTime: string
   features: string[]
   recommended?: boolean
+  comingSoon?: boolean
 }
 
 // Get compatible target frameworks based on source
@@ -58,6 +59,7 @@ const getCompatibleFrameworks = (
         difficulty: 'hard',
         estimatedTime: '4-8 hours',
         features: ['Composition API', 'Reactivity', 'SFC', 'TypeScript Support'],
+        comingSoon: true,
       },
       {
         id: 'svelte',
@@ -68,6 +70,7 @@ const getCompatibleFrameworks = (
         difficulty: 'hard',
         estimatedTime: '4-8 hours',
         features: ['No Virtual DOM', 'Reactive', 'Small Bundle', 'Easy Syntax'],
+        comingSoon: true,
       },
     ]
   }
@@ -105,6 +108,7 @@ const getCompatibleFrameworks = (
         difficulty: 'medium',
         estimatedTime: '2-4 hours',
         features: ['No Virtual DOM', 'Reactive', 'Small Bundle', 'Easy Syntax'],
+        comingSoon: true,
       },
     ]
   }
@@ -204,6 +208,11 @@ export function TargetFrameworkSelector({
   const frameworks = getCompatibleFrameworks(sourceFramework, sourceLanguage)
 
   const handleSelect = (framework: FrameworkOption) => {
+    // Don't allow selection of coming soon frameworks
+    if (framework.comingSoon) {
+      return
+    }
+    
     const target: TargetSelection = {
       framework: framework.id,
       version: framework.version,
@@ -236,17 +245,27 @@ export function TargetFrameworkSelector({
             <Card
               key={framework.id}
               className={cn(
-                'relative cursor-pointer transition-all duration-200',
-                isSelected
+                'relative transition-all duration-200',
+                framework.comingSoon
+                  ? 'cursor-not-allowed opacity-60 border-gray-300 bg-gray-50'
+                  : 'cursor-pointer',
+                !framework.comingSoon && isSelected
                   ? 'border-purple-500 bg-purple-50 shadow-lg ring-2 ring-purple-500'
-                  : 'border-gray-200 hover:border-purple-300 hover:shadow-md',
-                isHovered && !isSelected && 'scale-[1.02]'
+                  : !framework.comingSoon && 'border-gray-200 hover:border-purple-300 hover:shadow-md',
+                !framework.comingSoon && isHovered && !isSelected && 'scale-[1.02]'
               )}
-              onMouseEnter={() => setHoveredFramework(framework.id)}
+              onMouseEnter={() => !framework.comingSoon && setHoveredFramework(framework.id)}
               onMouseLeave={() => setHoveredFramework(null)}
               onClick={() => handleSelect(framework)}
             >
-              {framework.recommended && (
+              {framework.comingSoon && (
+                <div className="absolute -top-2 -right-2 z-10">
+                  <Badge className="bg-gradient-to-r from-gray-600 to-gray-700 text-white border-0">
+                    🚧 Coming Soon
+                  </Badge>
+                </div>
+              )}
+              {framework.recommended && !framework.comingSoon && (
                 <div className="absolute -top-2 -right-2 z-10">
                   <Badge className="bg-gradient-to-r from-purple-600 to-orange-600 text-white border-0">
                     ⭐ Recommended
@@ -318,8 +337,13 @@ export function TargetFrameworkSelector({
                       e.stopPropagation()
                       handleSelect(framework)
                     }}
+                    disabled={framework.comingSoon}
                   >
-                    {isSelected ? (
+                    {framework.comingSoon ? (
+                      <>
+                        🚧 Coming Soon
+                      </>
+                    ) : isSelected ? (
                       <>
                         <Check className="h-4 w-4 mr-2" />
                         Selected

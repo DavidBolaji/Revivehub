@@ -21,7 +21,7 @@ interface OptionConfig {
   label: string
   description: string
   type: 'select' | 'boolean'
-  options?: Array<{ value: string; label: string; description?: string }>
+  options?: Array<{ value: string; label: string; description?: string; comingSoon?: boolean }>
   defaultValue: any
   recommended?: string
   incompatibleWith?: string[]
@@ -37,18 +37,19 @@ const getFrameworkOptions = (framework: string): OptionConfig[] => {
       {
         id: 'router',
         label: 'Router Type',
-        description: 'Choose between Pages Router (traditional) or App Router (modern with Server Components)',
+        description: 'App Router with Server Components is the only supported option',
         type: 'select',
         options: [
           {
-            value: 'pages',
-            label: 'Pages Router',
-            description: 'Traditional routing with pages directory. Easier migration path.',
-          },
-          {
             value: 'app',
             label: 'App Router',
-            description: 'Modern routing with app directory and Server Components. Recommended for new projects.',
+            description: 'Modern routing with app directory and Server Components.',
+          },
+          {
+            value: 'pages',
+            label: 'Pages Router',
+            description: 'Coming Soon - Traditional routing with pages directory.',
+            comingSoon: true,
           },
         ],
         defaultValue: 'app',
@@ -57,14 +58,14 @@ const getFrameworkOptions = (framework: string): OptionConfig[] => {
       {
         id: 'styling',
         label: 'Styling Solution',
-        description: 'Select your preferred styling approach',
+        description: 'Tailwind CSS is the only supported styling option',
         type: 'select',
         options: [
-          { value: 'css-modules', label: 'CSS Modules', description: 'Scoped CSS with .module.css files' },
           { value: 'tailwind', label: 'Tailwind CSS', description: 'Utility-first CSS framework' },
-          { value: 'styled-components', label: 'Styled Components', description: 'CSS-in-JS with tagged templates' },
-          { value: 'emotion', label: 'Emotion', description: 'Performant CSS-in-JS library' },
-          { value: 'sass', label: 'Sass/SCSS', description: 'CSS preprocessor with variables and mixins' },
+          { value: 'css-modules', label: 'CSS Modules', description: 'Coming Soon - Scoped CSS with .module.css files', comingSoon: true },
+          { value: 'styled-components', label: 'Styled Components', description: 'Coming Soon - CSS-in-JS with tagged templates', comingSoon: true },
+          { value: 'emotion', label: 'Emotion', description: 'Coming Soon - Performant CSS-in-JS library', comingSoon: true },
+          { value: 'sass', label: 'Sass/SCSS', description: 'Coming Soon - CSS preprocessor with variables and mixins', comingSoon: true },
         ],
         defaultValue: 'tailwind',
         recommended: 'tailwind',
@@ -319,17 +320,21 @@ export function FrameworkOptionsForm({
                   {config.options.map((option) => {
                     const isSelected = options[config.id] === option.value
                     const isRecommendedOption = config.recommended === option.value
+                    const isComingSoon = option.comingSoon || false
 
                     return (
                       <div
                         key={option.value}
                         className={cn(
-                          'relative p-3 border rounded-lg cursor-pointer transition-all',
-                          isSelected
+                          'relative p-3 border rounded-lg transition-all',
+                          isComingSoon
+                            ? 'cursor-not-allowed opacity-60 border-gray-300 bg-gray-50'
+                            : 'cursor-pointer',
+                          !isComingSoon && isSelected
                             ? 'border-purple-500 bg-purple-50 shadow-sm'
-                            : 'border-gray-200 hover:border-purple-300 hover:bg-gray-50'
+                            : !isComingSoon && 'border-gray-200 hover:border-purple-300 hover:bg-gray-50'
                         )}
-                        onClick={() => handleSelectChange(config.id, option.value)}
+                        onClick={() => !isComingSoon && handleSelectChange(config.id, option.value)}
                       >
                         <div className="flex items-start gap-3">
                           <div
@@ -346,17 +351,22 @@ export function FrameworkOptionsForm({
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center gap-2">
-                              <Label className="text-sm font-medium cursor-pointer">
+                              <Label className={cn("text-sm font-medium", !isComingSoon && "cursor-pointer")}>
                                 {option.label}
                               </Label>
-                              {isRecommendedOption && (
+                              {isRecommendedOption && !isComingSoon && (
                                 <Badge variant="outline" className="text-xs bg-purple-100 text-purple-700 border-purple-300">
                                   ⭐ Recommended
                                 </Badge>
                               )}
+                              {isComingSoon && (
+                                <Badge variant="outline" className="text-xs bg-gray-100 text-gray-600 border-gray-300">
+                                  🚧 Coming Soon
+                                </Badge>
+                              )}
                             </div>
                             {option.description && (
-                              <p className="text-xs text-gray-500 mt-1">
+                              <p className={cn("text-xs mt-1", isComingSoon ? "text-gray-400" : "text-gray-500")}>
                                 {option.description}
                               </p>
                             )}

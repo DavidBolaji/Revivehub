@@ -677,28 +677,43 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   private updatePackageJson(packageJson: any, config: ViteSetupConfig): any {
     const updated = { ...packageJson }
     
-    // Update scripts
+    // Add type: "module" for ES modules
+    updated.type = 'module'
+    
+    // Remove Create React App scripts and replace with Vite scripts
     updated.scripts = {
-      ...updated.scripts,
       dev: 'vite',
       build: 'vite build',
       preview: 'vite preview',
-      // Keep existing test script or add default
-      test: updated.scripts?.test || 'jest',
+      test: 'vitest',
+      lint: 'eslint .',
+      format: 'prettier --write .'
     }
     
-    // Update dependencies - ensure React 18+
+    // Clean up dependencies - remove CRA-specific packages
+    const craPackagesToRemove = [
+      'react-scripts',
+      '@testing-library/dom' // Duplicate, will be in devDependencies
+    ]
+    
     updated.dependencies = {
-      ...updated.dependencies,
-      react: '^18.3.1',
-      'react-dom': '^18.3.1',
+      react: '^19.2.0',
+      'react-dom': '^19.2.0',
+      'web-vitals': updated.dependencies?.['web-vitals'] || '^3.5.2'
     }
     
-    // Update devDependencies
+    // Clean up devDependencies - remove CRA packages and add Vite packages
     updated.devDependencies = {
-      ...updated.devDependencies,
-      '@vitejs/plugin-react': '^4.3.0',
+      '@testing-library/jest-dom': '^6.9.1',
+      '@testing-library/react': '^14.3.1',
+      '@testing-library/user-event': '^14.6.1',
       vite: '^5.2.0',
+      vitest: '^1.6.0',
+      eslint: '^9.0.0',
+      prettier: '^3.3.0',
+      '@vitejs/plugin-react': '^4.3.0',
+      'eslint-plugin-react-hooks': '^5.0.0',
+      'eslint-plugin-react-refresh': '^0.4.7'
     }
     
     // Add TypeScript dependencies if needed
@@ -711,15 +726,13 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       }
     }
     
-    // Add testing dependencies if not present
-    if (!updated.devDependencies.jest && !updated.devDependencies.vitest) {
-      updated.devDependencies = {
-        ...updated.devDependencies,
-        jest: '^29.7.0',
-        '@testing-library/react': '^14.1.2',
-        '@testing-library/jest-dom': '^6.4.2',
-        '@testing-library/user-event': '^14.5.2',
-      }
+    // Remove CRA-specific config sections
+    delete updated.eslintConfig
+    delete updated.browserslist
+    
+    // Add engines requirement
+    updated.engines = {
+      node: '>=18'
     }
     
     return updated
@@ -730,19 +743,22 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   /**
    * Convert JS files to JSX if they contain JSX syntax
    */
-  private async convertJsFilesToJsx(files: Map<string, string>): Promise<Array<{originalPath: string, newPath: string, content: string}>> {
-    const conversions: Array<{originalPath: string, newPath: string, content: string}> = []
+  private async convertJsFilesToJsx(files: Map<string, string>): Promise<Array<{originalPath: string, newPath: string, content: string, originalContent: string}>> {
+    const conversions: Array<{originalPath: string, newPath: string, content: string, originalContent: string}> = []
     
     for (const [filePath, content] of files.entries()) {
       if (filePath.endsWith('.js') && this.containsJsx(content)) {
         // Convert .js to .jsx
         const newPath = filePath.replace(/\.js$/, '.jsx')
+        // Store BOTH original and new content for proper diff generation
+        const originalContent = content
         files.delete(filePath)
         files.set(newPath, content)
         conversions.push({
           originalPath: filePath,
           newPath: newPath,
-          content: content
+          content: content,
+          originalContent: originalContent
         })
       }
     }
