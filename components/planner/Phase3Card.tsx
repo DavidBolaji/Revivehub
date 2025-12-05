@@ -302,7 +302,7 @@ export function Phase3Card({
       console.log(`[Phase3Card] Updating migration result with edited content`)
       console.log(`[Phase3Card] Modified content length:`, modifiedContent.length)
       
-      setMigrationResult((prevResult) => {
+      setMigrationResult((prevResult: any) => {
         if (!prevResult) return prevResult
         
         // Update the transformations Map
@@ -314,15 +314,15 @@ export function Phase3Card({
         
         if (existingTransform) {
           console.log(`[Phase3Card] Found existing transform, updating code`)
-          console.log(`[Phase3Card] Old code length:`, existingTransform.code.length)
+          console.log(`[Phase3Card] Old code length:`, (existingTransform as any).code?.length || 0)
           console.log(`[Phase3Card] New code length:`, modifiedContent.length)
-          console.log(`[Phase3Card] Old code preview:`, existingTransform.code.substring(0, 100))
+          console.log(`[Phase3Card] Old code preview:`, (existingTransform as any).code?.substring(0, 100) || '')
           console.log(`[Phase3Card] New code preview:`, modifiedContent.substring(0, 100))
           
           updatedTransformations.set(filePath, {
             ...existingTransform,
             code: modifiedContent, // This is the edited content
-          })
+          } as any)
           
           console.log(`[Phase3Card] ✅ Transform updated in Map`)
         } else {
@@ -687,7 +687,7 @@ export function Phase3Card({
           <div className="space-y-4">
             <div className="p-4 bg-purple-900/20 border border-purple-500/20 rounded-lg">
               <h4 className="text-sm font-semibold text-white mb-2">
-                What's included in Phase 3:
+                What&apos;s included in Phase 3:
               </h4>
               <ul className="space-y-2 text-sm text-purple-200">
                 <li className="flex items-start gap-2">

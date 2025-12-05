@@ -215,7 +215,7 @@ const CSSTransformationCard: React.FC<{ results: TaskResult[] }> = ({ results })
   // Extract CSS transformation data from results
   const cssStats = useMemo(() => {
     let totalClassesTransformed = 0
-    let unmappedClasses: string[] = []
+    const unmappedClasses: string[] = []
     let cssFilesAnalyzed = 0
     let tailwindConfigGenerated = false
     

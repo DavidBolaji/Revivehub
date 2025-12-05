@@ -88,7 +88,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, isSelected, onToggle }) => {
             <div className="flex items-center space-x-1">
               <Clock className="h-4 w-4" />
               <span>{task.estimatedMinutes}m</span>
-              {task.automatedMinutes > 0 && (
+              {task.automatedMinutes != null && task.automatedMinutes > 0 && (
                 <span className="text-green-600">
                   ({task.automatedMinutes}m automated)
                 </span>
@@ -96,11 +96,11 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, isSelected, onToggle }) => {
             </div>
             <div className="flex items-center space-x-1">
               <FileText className="h-4 w-4" />
-              <span>{task.affectedFiles.length} files</span>
+              <span>{task?.affectedFiles && task.affectedFiles.length} files</span>
             </div>
           </div>
 
-          {task.affectedFiles.length > 0 && (
+          {task?.affectedFiles && task.affectedFiles.length > 0 && (
             <div className="space-y-1">
               <p className="text-xs font-medium text-gray-700">Affected Files:</p>
               <div className="flex flex-wrap gap-1">
@@ -118,7 +118,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, isSelected, onToggle }) => {
             </div>
           )}
 
-          {task.breakingChanges.length > 0 && (
+          {task.breakingChanges && task.breakingChanges.length > 0 && (
             <div className="space-y-1">
               <div className="flex items-center space-x-1">
                 <AlertTriangle className="h-4 w-4 text-orange-500" />
@@ -248,10 +248,10 @@ export const TaskSelector: React.FC<TaskSelectorProps> = ({
 
     return {
       totalSelected: selectedTasks.length,
-      totalEstimatedTime: selectedTasks.reduce((sum, task) => sum + task.estimatedMinutes, 0),
-      totalAutomatedTime: selectedTasks.reduce((sum, task) => sum + task.automatedMinutes, 0),
+      totalEstimatedTime: selectedTasks.reduce((sum, task) => sum + (task?.estimatedMinutes && task.estimatedMinutes ? task.estimatedMinutes: 0), 0),
+      totalAutomatedTime: selectedTasks.reduce((sum, task) => sum + (task?.automatedMinutes && task.automatedMinutes ? task.automatedMinutes: 0), 0),
       highRiskTasks: selectedTasks.filter(task => task.riskLevel === 'high').length,
-      breakingChanges: selectedTasks.reduce((sum, task) => sum + task.breakingChanges.length, 0),
+      breakingChanges: selectedTasks.reduce((sum, task) => sum + (task.breakingChanges ? task.breakingChanges.length: 0), 0),
     }
   }, [migrationPlan, selectedTaskIds])
 

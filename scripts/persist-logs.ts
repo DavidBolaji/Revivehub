@@ -9,7 +9,6 @@ import { appendFileSync, existsSync, mkdirSync } from 'fs'
 import { join } from 'path'
 
 const LOG_DIR = 'logs'
-const MAX_LOG_SIZE_MB = 10
 
 function ensureLogDirectory(): void {
   if (!existsSync(LOG_DIR)) {

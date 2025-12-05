@@ -122,7 +122,7 @@ export class ViteSetupTransformer extends BaseTransformer {
    * Handle vite.config.js creation
    */
   private async handleViteConfig(
-    code: string,
+    _code: string,
     options: TransformOptions,
     metadata: any
   ): Promise<TransformResult> {
@@ -154,7 +154,7 @@ export class ViteSetupTransformer extends BaseTransformer {
    * Handle index.html creation
    */
   private async handleIndexHtml(
-    code: string,
+    _code: string,
     options: TransformOptions,
     metadata: any
   ): Promise<TransformResult> {
@@ -185,7 +185,7 @@ export class ViteSetupTransformer extends BaseTransformer {
    * Handle src/main.jsx creation
    */
   private async handleMainEntry(
-    code: string,
+    _code: string,
     options: TransformOptions,
     metadata: any
   ): Promise<TransformResult> {
@@ -216,8 +216,8 @@ export class ViteSetupTransformer extends BaseTransformer {
    * Handle .eslintrc.json creation
    */
   private async handleEslintConfig(
-    code: string,
-    options: TransformOptions,
+    _code: string,
+    _options: TransformOptions,
     metadata: any
   ): Promise<TransformResult> {
     const eslintConfig = {
@@ -261,8 +261,8 @@ export class ViteSetupTransformer extends BaseTransformer {
    * Handle .prettierrc creation
    */
   private async handlePrettierConfig(
-    code: string,
-    options: TransformOptions,
+    _code: string,
+    _options: TransformOptions,
     metadata: any
   ): Promise<TransformResult> {
     const prettierConfig = {
@@ -291,8 +291,8 @@ export class ViteSetupTransformer extends BaseTransformer {
    * Handle .eslintignore creation
    */
   private async handleEslintIgnore(
-    code: string,
-    options: TransformOptions,
+    _code: string,
+    _options: TransformOptions,
     metadata: any
   ): Promise<TransformResult> {
     const content = `node_modules
@@ -319,8 +319,8 @@ build
    * Handle .prettierignore creation
    */
   private async handlePrettierIgnore(
-    code: string,
-    options: TransformOptions,
+    _code: string,
+    _options: TransformOptions,
     metadata: any
   ): Promise<TransformResult> {
     const content = `node_modules
@@ -408,7 +408,7 @@ yarn.lock
       }
 
       // Process repository files for JS to JSX conversion
-      let repositoryFiles: Map<string, string> = new Map()
+      const repositoryFiles: Map<string, string> = new Map()
       let jsToJsxConversions: Array<{originalPath: string, newPath: string, content: string}> = []
       
       console.log(`[ViteSetupTransformer] handlePackageJson called`)
@@ -691,10 +691,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     }
     
     // Clean up dependencies - remove CRA-specific packages
-    const craPackagesToRemove = [
-      'react-scripts',
-      '@testing-library/dom' // Duplicate, will be in devDependencies
-    ]
+
     
     updated.dependencies = {
       react: '^19.2.0',

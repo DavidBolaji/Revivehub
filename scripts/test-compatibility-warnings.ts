@@ -46,6 +46,7 @@ async function testCompatibilityWarnings() {
     affectedFiles: ['package.json'],
     dependencies: [],
     breakingChanges: [],
+    manualSteps: [],
     pattern: {
       id: 'outdated-deps',
       name: 'Outdated Dependencies',
@@ -55,6 +56,10 @@ async function testCompatibilityWarnings() {
       occurrences: 5,
       affectedFiles: ['package.json'],
       automated: true,
+      frameworks: ['react', 'next'],
+      riskLevel: 'medium',
+      estimatedMinutes: 5,
+      tags: ['dependencies', 'updates']
     }
   }
 

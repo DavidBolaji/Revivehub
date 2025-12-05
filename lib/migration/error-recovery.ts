@@ -161,7 +161,7 @@ export class FallbackStrategy implements ErrorRecoveryStrategy {
   async recover<T>(
     error: MigrationError,
     context: RecoveryContext,
-    operation: () => Promise<T>
+    _operation: () => Promise<T>
   ): Promise<RecoveryResult<T>> {
     logMigrationEvent('recovery:fallback:start', {
       error: error.code,
@@ -229,7 +229,7 @@ export class SkipStrategy implements ErrorRecoveryStrategy {
     private onSkip?: (error: MigrationError, context: RecoveryContext) => void
   ) {}
 
-  canRecover(error: MigrationError): boolean {
+  canRecover(_error: MigrationError): boolean {
     // Always can "recover" by skipping, but check condition in recover()
     return true
   }
@@ -237,7 +237,7 @@ export class SkipStrategy implements ErrorRecoveryStrategy {
   async recover<T>(
     error: MigrationError,
     context: RecoveryContext,
-    operation: () => Promise<T>
+    _operation: () => Promise<T>
   ): Promise<RecoveryResult<T>> {
     // Check if we should skip this error
     if (!this.skipCondition(error, context)) {

@@ -89,6 +89,7 @@ export class RedisCacheService implements CacheService {
   constructor(redisUrl: string, redisToken: string) {
     // Lazy load Redis to avoid requiring it in development
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { Redis } = require('@upstash/redis')
       this.redis = new Redis({
         url: redisUrl,

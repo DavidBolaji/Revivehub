@@ -23,7 +23,7 @@ export function convertIssuesToPatterns(issues: Issue[]): DetectedPattern[] {
  */
 function mapCategoryToPatternCategory(
   category: string
-): 'dependency' | 'structural' | 'component' | 'documentation' {
+): 'dependency' | 'structural' | 'component' | 'documentation' | 'build-tool' {
   const categoryLower = category.toLowerCase()
   
   const categoryMap: Record<string, DetectedPattern['category']> = {
@@ -38,7 +38,7 @@ function mapCategoryToPatternCategory(
     'docs': 'documentation',
   }
   
-  return categoryMap[categoryLower] || 'structural'
+  return categoryMap[categoryLower] || 'structural' 
 }
 
 /**

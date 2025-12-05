@@ -46,6 +46,7 @@ async function testDependencyUpdater() {
     affectedFiles: ['package.json'],
     dependencies: [],
     breakingChanges: [],
+    manualSteps: [],
     pattern: {
       id: 'outdated-deps',
       name: 'Outdated Dependencies',
@@ -55,6 +56,10 @@ async function testDependencyUpdater() {
       occurrences: 12,
       affectedFiles: ['package.json'],
       automated: true,
+      frameworks: ['react', 'next'],
+      riskLevel: 'low',
+      estimatedMinutes: 5,
+      tags: ['dependencies', 'updates']
     }
   }
 

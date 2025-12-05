@@ -45,6 +45,8 @@ export interface RepositoryListOptions {
   direction?: 'asc' | 'desc'
   perPage?: number
   page?: number
+  type?: any
+  affiliation?: any
 }
 
 export interface PaginationInfo {

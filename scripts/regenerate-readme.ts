@@ -66,8 +66,8 @@ async function regenerateReadme() {
       framework: 'Next.js',
       version: '14',
       language: 'TypeScript',
-      packageManager: 'npm',
-      dependencies: []
+      packageManager: 'pnpm',
+      dependencies: [] as unknown as any
     })
 
     if (!canHandle) {
@@ -94,7 +94,7 @@ async function regenerateReadme() {
     }
 
     // Write the new README
-    writeFileSync(readmePath, result.code)
+    writeFileSync(readmePath, (result as any).code)
     console.log('✅ README.md updated successfully!')
 
     // Show summary
@@ -108,7 +108,7 @@ async function regenerateReadme() {
     if (result.warnings && result.warnings.length > 0) {
       console.log('\n⚠️  Warnings:')
       result.warnings.forEach(warning => {
-        console.log(`  - ${warning.message}`)
+        console.log(`  - ${(warning as any).message}`)
       })
     }
 

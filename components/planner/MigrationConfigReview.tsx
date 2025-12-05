@@ -323,7 +323,7 @@ export function MigrationConfigReview({
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="mt-0.5">•</span>
-                    <span>You'll be able to review all changes before accepting them</span>
+                    <span>You&apos;ll be able to review all changes before accepting them</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="mt-0.5">•</span>

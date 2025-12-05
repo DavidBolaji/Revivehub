@@ -231,7 +231,7 @@ export function TargetFrameworkSelector({
           </h4>
           <p className="text-sm text-blue-700">
             Choose the framework you want to migrate your {sourceFramework} application to.
-            We'll guide you through the configuration options next.
+            We&apos;ll guide you through the configuration options next.
           </p>
         </div>
       </div>

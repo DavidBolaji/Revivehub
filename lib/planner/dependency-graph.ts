@@ -3,7 +3,7 @@ import type { DependencyNode, MigrationTask } from './types'
 export class DependencyGraphBuilder {
   buildGraph(tasks: MigrationTask[]): DependencyNode[] {
     const nodes: DependencyNode[] = []
-    const taskMap = new Map(tasks.map((t) => [t.id, t]))
+    // const taskMap = new Map(tasks.map((t) => [t.id, t]))
 
     for (const task of tasks) {
       const node: DependencyNode = {
@@ -127,8 +127,8 @@ export class DependencyGraphBuilder {
     return cycles
   }
 
-  getExecutionOrder(nodes: DependencyNode[], tasks: MigrationTask[]): string[][] {
-    const taskMap = new Map(tasks.map((t) => [t.id, t]))
+  getExecutionOrder(nodes: DependencyNode[], _tasks: MigrationTask[]): string[][] {
+    // const taskMap = new Map(tasks.map((t) => [t.id, t]))
     const completed = new Set<string>()
     const batches: string[][] = []
 

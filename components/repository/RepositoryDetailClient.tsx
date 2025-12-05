@@ -240,8 +240,8 @@ export function RepositoryDetailClient({
     // Record analysis statistics
     recordAnalysis({
       repositoryFullName: `${owner}/${repo}`,
-      patternsFound: results.patterns?.length || 0,
-      filesScanned: results.summary?.totalFiles || 0,
+      patternsFound: results?.patterns?.length || 0,
+      filesScanned: results?.summary?.totalFiles || 0,
     })
     
     // Dispatch custom event to update stats in dashboard

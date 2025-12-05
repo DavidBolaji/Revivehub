@@ -1,5 +1,4 @@
 import type {
-  DetectedPattern,
   MigrationPlan,
   MigrationPhase,
   MigrationTask,
@@ -91,7 +90,7 @@ export class AIEnhancer {
 
   private analyzeCodebaseStructure(plan: MigrationPlan): AIInsight[] {
     const insights: AIInsight[] = []
-    const { sourceStack, targetStack } = plan
+    const { sourceStack } = plan
 
     // Check for monorepo structure
     if (this.detectMonorepo(sourceStack)) {

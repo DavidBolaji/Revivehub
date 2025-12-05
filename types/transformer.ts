@@ -52,27 +52,32 @@ export interface Task {
   name: string
   description: string
   type: 'automated' | 'manual' | 'review'
-  estimatedMinutes: number
-  automatedMinutes: number
+  estimatedMinutes?: number
+  automatedMinutes?: number
   estimatedEffort?: number
   riskLevel: 'low' | 'medium' | 'high'
-  affectedFiles: string[]
+  affectedFiles?: string[]
   dependencies: string[]
-  breakingChanges: string[]
+  breakingChanges?: string[]
   pattern: Pattern
+  manualSteps: any
 }
 
 export interface Pattern {
-  id: string
+  id?: string
   name: string
   category: 'dependency' | 'structural' | 'code-quality' | 'documentation' | 'build-tool'
-  severity: 'low' | 'medium' | 'high'
-  occurrences: number
-  affectedFiles: string[]
+  severity?: 'low' | 'medium' | 'high'
+  occurrences?: number
+  affectedFiles?: string[]
   description: string
-  automated: boolean
+  automated?: boolean
   examples?: string[]
   detectionRules?: string[]
+  frameworks: string[],
+  riskLevel: string,
+  estimatedMinutes: number,
+  tags: string[]
 }
 
 export interface Summary {

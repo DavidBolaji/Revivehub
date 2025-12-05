@@ -57,7 +57,7 @@ export function convertPatternDetectorResults(patterns: Array<{
 /**
  * Maps pattern detector categories to planner categories
  */
-export function mapPatternCategory(category: string): 'dependency' | 'structural' | 'component' | 'documentation' {
+export function mapPatternCategory(category: string): 'dependency' | 'structural' | 'component' | 'documentation' | 'build-tool' {
   const categoryMap: Record<string, DetectedPattern['category']> = {
     'dependencies': 'dependency',
     'react': 'component',

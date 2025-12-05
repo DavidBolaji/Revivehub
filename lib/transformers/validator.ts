@@ -140,7 +140,7 @@ export class Validator {
    * @param code - Python source code
    * @returns ValidationResult
    */
-  private async validatePython(code: string): Promise<ValidationResult> {
+  private async validatePython(_code: string): Promise<ValidationResult> {
     // For now, return a warning that Python validation is not fully implemented
     // In production, this would use LibCST via Python subprocess
     return {
@@ -170,8 +170,8 @@ export class Validator {
         semanticValid: true
       })
     } catch (error: any) {
-      const match = error.message.match(/position (\d+)/)
-      const position = match ? parseInt(match[1]) : undefined
+      
+      
       
       return Promise.resolve({
         isValid: false,

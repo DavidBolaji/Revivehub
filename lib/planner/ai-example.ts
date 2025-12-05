@@ -132,7 +132,7 @@ async function demonstrateAIEnhancement() {
     console.log('📋 OVERALL AI INSIGHTS')
     console.log('═══════════════════════════════════════════════════════\n')
 
-    plan.aiInsights.overall.forEach((insight, index) => {
+    plan.aiInsights.overall.forEach((insight, _index) => {
       const icon = {
         warning: '⚠️',
         tip: '💡',

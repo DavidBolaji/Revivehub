@@ -88,7 +88,7 @@ export class MultiEcosystemDependencyUpdater extends BaseTransformer {
    */
   async transform(
     code: string,
-    options: TransformOptions,
+    _options: TransformOptions,
     task?: Task
   ): Promise<TransformResult> {
     const metadata = this.createBaseMetadata(task?.affectedFiles || [], 85)
@@ -188,7 +188,7 @@ export class MultiEcosystemDependencyUpdater extends BaseTransformer {
   private async updatePipDependencies(
     code: string,
     fileName: string,
-    task?: Task
+    _task?: Task
   ): Promise<TransformResult> {
     const metadata = this.createBaseMetadata([fileName], 80)
 
@@ -236,7 +236,7 @@ export class MultiEcosystemDependencyUpdater extends BaseTransformer {
       // Parse package==version or package>=version
       const match = line.match(/^([a-zA-Z0-9_-]+)\s*([=><~!]+)\s*(.+)$/)
       if (match) {
-        const [, pkgName, operator, currentVersion] = match
+        const [, pkgName, , currentVersion] = match
 
         // Fetch latest version from PyPI
         const latestVersion = await this.fetchPyPIVersion(pkgName)
@@ -281,7 +281,7 @@ export class MultiEcosystemDependencyUpdater extends BaseTransformer {
    * Update pyproject.toml format (TOML parsing required)
    */
   private async updatePyprojectToml(
-    code: string,
+    _code: string,
     metadata: any
   ): Promise<TransformResult> {
     // For now, return a placeholder
@@ -307,7 +307,7 @@ export class MultiEcosystemDependencyUpdater extends BaseTransformer {
    */
   private async updateComposerDependencies(
     code: string,
-    task?: Task
+    _task?: Task
   ): Promise<TransformResult> {
     const metadata = this.createBaseMetadata(['composer.json'], 80)
 
@@ -391,7 +391,7 @@ export class MultiEcosystemDependencyUpdater extends BaseTransformer {
    */
   private async updateGemDependencies(
     code: string,
-    task?: Task
+    _task?: Task
   ): Promise<TransformResult> {
     const metadata = this.createBaseMetadata(['Gemfile'], 80)
     const lines = code.split('\n')
@@ -447,8 +447,8 @@ export class MultiEcosystemDependencyUpdater extends BaseTransformer {
    * Update Go module dependencies (go.mod)
    */
   private async updateGoDependencies(
-    code: string,
-    task?: Task
+    _code: string,
+    _task?: Task
   ): Promise<TransformResult> {
     const metadata = this.createBaseMetadata(['go.mod'], 80)
 
@@ -472,8 +472,8 @@ export class MultiEcosystemDependencyUpdater extends BaseTransformer {
    * Update Rust Cargo dependencies (Cargo.toml)
    */
   private async updateCargoDependencies(
-    code: string,
-    task?: Task
+    _code: string,
+    _task?: Task
   ): Promise<TransformResult> {
     const metadata = this.createBaseMetadata(['Cargo.toml'], 80)
 

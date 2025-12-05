@@ -213,7 +213,7 @@ export class FileStructureManager {
   private planPageFileChange(
     filePath: string,
     content: string,
-    spec: MigrationSpecification
+    _spec: MigrationSpecification
   ): FileStructureChange {
     const normalized = filePath.replace(/\\/g, '/')
     
@@ -272,7 +272,7 @@ export class FileStructureManager {
   private planApiFileChange(
     filePath: string,
     content: string,
-    spec: MigrationSpecification
+    _spec: MigrationSpecification
   ): FileStructureChange {
     // Convert to App Router API route
     const newPath = this.routeExtractor.convertToAppRouterPath(filePath, 'route')
@@ -429,7 +429,7 @@ export class FileStructureManager {
   private planStyleFileChange(
     filePath: string,
     content: string,
-    spec: MigrationSpecification
+    _spec: MigrationSpecification
   ): FileStructureChange | null {
     const normalized = filePath.replace(/\\/g, '/')
     
@@ -490,9 +490,9 @@ export class FileStructureManager {
    * @returns Planned file structure change or null if no change needed
    */
   private planConfigFileChange(
-    filePath: string,
-    content: string,
-    spec: MigrationSpecification
+    _filePath: string,
+    _content: string,
+    _spec: MigrationSpecification
   ): FileStructureChange | null {
     // Config files typically stay at root
     return null
@@ -507,7 +507,7 @@ export class FileStructureManager {
    */
   private determineFileType(
     filePath: string,
-    content: string
+    _content: string
   ): 'page' | 'api' | 'component' | 'style' | 'config' | 'other' {
     const normalized = filePath.replace(/\\/g, '/')
     
@@ -646,7 +646,7 @@ export class FileStructureManager {
   /**
    * Create root layout change
    */
-  private createRootLayoutChange(spec: MigrationSpecification): FileStructureChange {
+  private createRootLayoutChange(_spec: MigrationSpecification): FileStructureChange {
     return {
       originalPath: '',
       newPath: 'app/layout.tsx',
@@ -665,7 +665,7 @@ export class FileStructureManager {
   /**
    * Create root error change
    */
-  private createRootErrorChange(spec: MigrationSpecification): FileStructureChange {
+  private createRootErrorChange(_spec: MigrationSpecification): FileStructureChange {
     return {
       originalPath: '',
       newPath: 'app/error.tsx',
@@ -684,7 +684,7 @@ export class FileStructureManager {
   /**
    * Create not-found change
    */
-  private createNotFoundChange(spec: MigrationSpecification): FileStructureChange {
+  private createNotFoundChange(_spec: MigrationSpecification): FileStructureChange {
     return {
       originalPath: '',
       newPath: 'app/not-found.tsx',
@@ -703,7 +703,7 @@ export class FileStructureManager {
   /**
    * Create globals.css change
    */
-  private createGlobalsCssChange(spec: MigrationSpecification): FileStructureChange {
+  private createGlobalsCssChange(_spec: MigrationSpecification): FileStructureChange {
     return {
       originalPath: '',
       newPath: 'app/globals.css',
@@ -718,7 +718,7 @@ export class FileStructureManager {
   /**
    * Check if route should generate layout
    */
-  private shouldGenerateLayout(routeSegment: string, content: string): boolean {
+  private shouldGenerateLayout(routeSegment: string, _content: string): boolean {
     // Don't generate layout for root (it's required and will be generated separately)
     if (routeSegment === '(root)') {
       return false

@@ -155,7 +155,7 @@ export function SuccessModal({
               className="rounded border-white/30 bg-white/10 text-white focus:ring-white/50"
             />
             <label htmlFor="dontShowAgain" className="text-white/70 text-sm">
-              Don't show this again for {type}s
+              Don&apos;t show this again for {type}s
             </label>
           </div>
 

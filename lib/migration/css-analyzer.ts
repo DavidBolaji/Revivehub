@@ -198,7 +198,7 @@ export class CSSAnalyzer {
       if (parent.type === 'atrule' && (parent as AtRule).name === 'media') {
         return (parent as AtRule).params
       }
-      parent = parent.parent
+      parent = parent.parent as unknown as any
     }
     
     return undefined

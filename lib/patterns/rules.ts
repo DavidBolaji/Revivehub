@@ -59,9 +59,13 @@ export const PATTERN_CATEGORIES: PatternCategory[] = [
  */
 export function getAllPatternRules(): PatternRule[] {
   // Import patterns from other files
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { REACT_PATTERNS } = require('./react-patterns')
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { NEXTJS_PATTERNS } = require('./nextjs-patterns')
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { VUE_PATTERNS } = require('./vue-patterns')
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { PYTHON_PATTERNS } = require('./python-patterns')
   
   return [

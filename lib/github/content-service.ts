@@ -9,7 +9,7 @@
 import { Octokit } from '@octokit/rest'
 import { handleGitHubError, withExponentialBackoff } from './errors'
 import { cachedGitHubRequest, CacheKeys, CacheTTL } from './cache'
-import type { RepositoryContent } from '@/types/repository'
+
 import type { RepositoryFile } from '@/types/transformer'
 
 export interface FetchRepositoryFilesOptions {
@@ -375,7 +375,7 @@ export class GitHubContentService {
     repo: string,
     path: string = '',
     ref?: string
-  ): Promise<RepositoryContent[]> {
+  ): Promise<any> {
     try {
       const { data } = await withExponentialBackoff(() =>
         this.octokit.repos.getContent({

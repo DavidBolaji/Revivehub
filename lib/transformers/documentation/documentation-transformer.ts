@@ -249,16 +249,17 @@ export class DocumentationTransformer extends BaseTransformer {
     }
 
     // Check affected files
-    if (task.affectedFiles.some((f) => f.toLowerCase().includes('changelog'))) {
+    if (task?.affectedFiles && task?.affectedFiles.some((f) => f.toLowerCase().includes('changelog'))) {
       return 'changelog'
     }
 
-    if (task.affectedFiles.some((f) => f.toLowerCase().includes('readme'))) {
+    if (task?.affectedFiles && task?.affectedFiles.some((f) => f.toLowerCase().includes('readme'))) {
       return 'readme'
     }
 
     if (
-      task.affectedFiles.some(
+      task?.affectedFiles &&
+      task?.affectedFiles.some(
         (f) => f.toLowerCase().includes('migration') || f.toLowerCase().includes('guide')
       )
     ) {
@@ -289,7 +290,7 @@ export class DocumentationTransformer extends BaseTransformer {
     // For now, we create a basic metadata entry
     const transformationMetadata: TransformMetadata = {
       transformationType: task.pattern.name,
-      filesModified: task.affectedFiles,
+      filesModified: task.affectedFiles || [],
       linesAdded: 0,
       linesRemoved: 0,
       confidenceScore: 85,
@@ -1302,7 +1303,7 @@ Please make sure to update tests as appropriate and follow the existing code sty
   /**
    * Analyzes configuration files
    */
-  private analyzeConfigFile(fileName: string, content: string, analysis: ProjectAnalysis): void {
+  private analyzeConfigFile(fileName: string, _content: string, analysis: ProjectAnalysis): void {
     // TypeScript config
     if (fileName === 'tsconfig.json') {
       analysis.language = 'TypeScript'
@@ -1330,7 +1331,7 @@ Please make sure to update tests as appropriate and follow the existing code sty
   /**
    * Analyzes source code files for features
    */
-  private analyzeSourceFile(path: string, content: string, analysis: ProjectAnalysis): void {
+  private analyzeSourceFile(_path: string, content: string, analysis: ProjectAnalysis): void {
     // Check for common patterns
     if (content.includes('useState') || content.includes('useEffect')) {
       if (!analysis.features.includes('React Hooks')) {
@@ -1458,7 +1459,7 @@ Additional Info:
   /**
    * Creates template-based README from analysis
    */
-  private createTemplateReadmeFromAnalysis(analysis: ProjectAnalysis, existingReadme?: string): string {
+  private createTemplateReadmeFromAnalysis(analysis: ProjectAnalysis, _existingReadme?: string): string {
     let readme = `# ${analysis.projectName}\n\n`
     
     // Add description

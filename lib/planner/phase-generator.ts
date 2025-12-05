@@ -196,137 +196,137 @@ export class PhaseGenerator {
     }
   }
 
-  private createStructuralPhase(
-    patterns: DetectedPattern[],
-    customization: PlanCustomization
-  ): MigrationPhase {
-    const tasks: MigrationTask[] = []
+  // private createStructuralPhase(
+  //   patterns: DetectedPattern[],
+  //   customization: PlanCustomization
+  // ): MigrationPhase {
+  //   const tasks: MigrationTask[] = []
 
-    for (const pattern of patterns) {
-      if (!this.shouldIncludePattern(pattern, customization)) continue
+  //   for (const pattern of patterns) {
+  //     if (!this.shouldIncludePattern(pattern, customization)) continue
 
-      const timeEstimate = this.complexityEstimator.estimateTaskTime(
-        {
-          type: pattern.automated ? 'review' : 'manual',
-          affectedFiles: pattern.affectedFiles,
-          complexity: 'high',
-        },
-        customization.aggressiveness
-      )
+  //     const timeEstimate = this.complexityEstimator.estimateTaskTime(
+  //       {
+  //         type: pattern.automated ? 'review' : 'manual',
+  //         affectedFiles: pattern.affectedFiles,
+  //         complexity: 'high',
+  //       },
+  //       customization.aggressiveness
+  //     )
 
-      const taskId = `struct-${pattern.id}`
-      const isAIGenerated = pattern.id.includes('mcp-') || pattern.id.includes('detector-')
-      const dependencies = isAIGenerated ? [] : ['phase-1-dependencies']
+  //     const taskId = `struct-${pattern.id}`
+  //     const isAIGenerated = pattern.id.includes('mcp-') || pattern.id.includes('detector-')
+  //     const dependencies = isAIGenerated ? [] : ['phase-1-dependencies']
       
-      // Ensure task doesn't depend on itself
-      const safeDependencies = dependencies.filter(dep => dep !== taskId)
+  //     // Ensure task doesn't depend on itself
+  //     const safeDependencies = dependencies.filter(dep => dep !== taskId)
       
-      console.log(`[PHASE_GEN] Creating task ${taskId}, AI-generated: ${isAIGenerated}, dependencies: ${JSON.stringify(safeDependencies)}, pattern.id: ${pattern.id}`)
+  //     console.log(`[PHASE_GEN] Creating task ${taskId}, AI-generated: ${isAIGenerated}, dependencies: ${JSON.stringify(safeDependencies)}, pattern.id: ${pattern.id}`)
 
-      const task: MigrationTask = {
-        id: taskId,
-        name: `Migrate ${pattern.name}`,
-        description: pattern.description,
-        type: (pattern.automated ? 'review' : 'manual') as 'automated' | 'manual' | 'review',
-        estimatedMinutes: timeEstimate.manual,
-        automatedMinutes: timeEstimate.automated,
-        riskLevel: pattern.severity as 'low' | 'medium' | 'high',
-        affectedFiles: pattern.affectedFiles,
-        dependencies: safeDependencies,
-        breakingChanges: this.identifyBreakingChanges(pattern),
-        pattern,
-      }
+  //     const task: MigrationTask = {
+  //       id: taskId,
+  //       name: `Migrate ${pattern.name}`,
+  //       description: pattern.description,
+  //       type: (pattern.automated ? 'review' : 'manual') as 'automated' | 'manual' | 'review',
+  //       estimatedMinutes: timeEstimate.manual,
+  //       automatedMinutes: timeEstimate.automated,
+  //       riskLevel: pattern.severity as 'low' | 'medium' | 'high',
+  //       affectedFiles: pattern.affectedFiles,
+  //       dependencies: safeDependencies,
+  //       breakingChanges: this.identifyBreakingChanges(pattern),
+  //       pattern,
+  //     }
       
-      // Double-check: ensure no self-reference
-      if (task.dependencies.includes(task.id)) {
-        console.warn(`[PHASE_GEN] WARNING: Task ${task.id} has self-reference, removing it`)
-        task.dependencies = task.dependencies.filter(dep => dep !== task.id)
-      }
+  //     // Double-check: ensure no self-reference
+  //     if (task.dependencies.includes(task.id)) {
+  //       console.warn(`[PHASE_GEN] WARNING: Task ${task.id} has self-reference, removing it`)
+  //       task.dependencies = task.dependencies.filter(dep => dep !== task.id)
+  //     }
       
-      tasks.push(task)
-    }
+  //     tasks.push(task)
+  //   }
 
-    const totalEstimated = tasks.reduce((sum, t) => sum + t.estimatedMinutes, 0)
-    const totalAutomated = tasks.reduce((sum, t) => sum + t.automatedMinutes, 0)
+  //   const totalEstimated = tasks.reduce((sum, t) => sum + t.estimatedMinutes, 0)
+  //   const totalAutomated = tasks.reduce((sum, t) => sum + t.automatedMinutes, 0)
 
-    return {
-      id: 'phase-2-structural',
-      name: 'Phase 2: Structural Changes',
-      description:
-        'Migrate routing, architecture patterns, and core framework features. Requires careful testing.',
-      order: 2,
-      tasks,
-      totalEstimatedMinutes: totalEstimated,
-      totalAutomatedMinutes: totalAutomated,
-      riskLevel: 'high',
-      canRunInParallel: false,
-    }
-  }
+  //   return {
+  //     id: 'phase-2-structural',
+  //     name: 'Phase 2: Structural Changes',
+  //     description:
+  //       'Migrate routing, architecture patterns, and core framework features. Requires careful testing.',
+  //     order: 2,
+  //     tasks,
+  //     totalEstimatedMinutes: totalEstimated,
+  //     totalAutomatedMinutes: totalAutomated,
+  //     riskLevel: 'high',
+  //     canRunInParallel: false,
+  //   }
+  // }
 
-  private createComponentPhase(
-    patterns: DetectedPattern[],
-    customization: PlanCustomization
-  ): MigrationPhase {
-    const tasks: MigrationTask[] = []
+  // private createComponentPhase(
+  //   patterns: DetectedPattern[],
+  //   customization: PlanCustomization
+  // ): MigrationPhase {
+  //   const tasks: MigrationTask[] = []
 
-    for (const pattern of patterns) {
-      if (!this.shouldIncludePattern(pattern, customization)) continue
+  //   for (const pattern of patterns) {
+  //     if (!this.shouldIncludePattern(pattern, customization)) continue
 
-      const timeEstimate = this.complexityEstimator.estimateTaskTime(
-        {
-          type: pattern.automated ? 'automated' : 'review',
-          affectedFiles: pattern.affectedFiles,
-          complexity: pattern.severity === 'high' ? 'high' : 'medium',
-        },
-        customization.aggressiveness
-      )
+  //     const timeEstimate = this.complexityEstimator.estimateTaskTime(
+  //       {
+  //         type: pattern.automated ? 'automated' : 'review',
+  //         affectedFiles: pattern.affectedFiles,
+  //         complexity: pattern.severity === 'high' ? 'high' : 'medium',
+  //       },
+  //       customization.aggressiveness
+  //     )
 
-      const taskId = `comp-${pattern.id}`
-      const isAIGenerated = pattern.id.includes('mcp-') || pattern.id.includes('detector-')
-      const dependencies = isAIGenerated ? [] : ['phase-2-structural']
+  //     const taskId = `comp-${pattern.id}`
+  //     const isAIGenerated = pattern.id.includes('mcp-') || pattern.id.includes('detector-')
+  //     const dependencies = isAIGenerated ? [] : ['phase-2-structural']
       
-      // Ensure task doesn't depend on itself
-      const safeDependencies = dependencies.filter(dep => dep !== taskId)
+  //     // Ensure task doesn't depend on itself
+  //     const safeDependencies = dependencies.filter(dep => dep !== taskId)
       
-      const task: MigrationTask = {
-        id: taskId,
-        name: `Modernize ${pattern.name}`,
-        description: pattern.description,
-        type: (pattern.automated ? 'automated' : 'review') as 'automated' | 'manual' | 'review',
-        estimatedMinutes: timeEstimate.manual,
-        automatedMinutes: timeEstimate.automated,
-        riskLevel: (pattern.severity === 'high' ? 'medium' : 'low') as 'low' | 'medium' | 'high',
-        affectedFiles: pattern.affectedFiles,
-        dependencies: safeDependencies,
-        breakingChanges: this.identifyBreakingChanges(pattern),
-        pattern,
-      }
+  //     const task: MigrationTask = {
+  //       id: taskId,
+  //       name: `Modernize ${pattern.name}`,
+  //       description: pattern.description,
+  //       type: (pattern.automated ? 'automated' : 'review') as 'automated' | 'manual' | 'review',
+  //       estimatedMinutes: timeEstimate.manual,
+  //       automatedMinutes: timeEstimate.automated,
+  //       riskLevel: (pattern.severity === 'high' ? 'medium' : 'low') as 'low' | 'medium' | 'high',
+  //       affectedFiles: pattern.affectedFiles,
+  //       dependencies: safeDependencies,
+  //       breakingChanges: this.identifyBreakingChanges(pattern),
+  //       pattern,
+  //     }
       
-      // Double-check: ensure no self-reference
-      if (task.dependencies.includes(task.id)) {
-        console.warn(`[PHASE_GEN] WARNING: Task ${task.id} has self-reference, removing it`)
-        task.dependencies = task.dependencies.filter(dep => dep !== task.id)
-      }
+  //     // Double-check: ensure no self-reference
+  //     if (task.dependencies.includes(task.id)) {
+  //       console.warn(`[PHASE_GEN] WARNING: Task ${task.id} has self-reference, removing it`)
+  //       task.dependencies = task.dependencies.filter(dep => dep !== task.id)
+  //     }
       
-      tasks.push(task)
-    }
+  //     tasks.push(task)
+  //   }
 
-    const totalEstimated = tasks.reduce((sum, t) => sum + t.estimatedMinutes, 0)
-    const totalAutomated = tasks.reduce((sum, t) => sum + t.automatedMinutes, 0)
+  //   const totalEstimated = tasks.reduce((sum, t) => sum + t.estimatedMinutes, 0)
+  //   const totalAutomated = tasks.reduce((sum, t) => sum + t.automatedMinutes, 0)
 
-    return {
-      id: 'phase-3-components',
-      name: 'Phase 3: Component Modernization',
-      description:
-        'Update components to use modern patterns, hooks, and best practices. Can be done incrementally.',
-      order: 3,
-      tasks,
-      totalEstimatedMinutes: totalEstimated,
-      totalAutomatedMinutes: totalAutomated,
-      riskLevel: 'medium',
-      canRunInParallel: true,
-    }
-  }
+  //   return {
+  //     id: 'phase-3-components',
+  //     name: 'Phase 3: Component Modernization',
+  //     description:
+  //       'Update components to use modern patterns, hooks, and best practices. Can be done incrementally.',
+  //     order: 3,
+  //     tasks,
+  //     totalEstimatedMinutes: totalEstimated,
+  //     totalAutomatedMinutes: totalAutomated,
+  //     riskLevel: 'medium',
+  //     canRunInParallel: true,
+  //   }
+  // }
 
   private createDocumentationPhase(
     _patterns: DetectedPattern[],

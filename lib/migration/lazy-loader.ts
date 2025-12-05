@@ -380,8 +380,8 @@ export class IntersectionLazyLoader {
 export function createDeferredDiffViewer() {
   return new DeferredDataLoader(async () => {
     // Dynamically import diff viewer component
-    const module = await import('@/components/planner/CodeMigrationDiffViewer')
-    return module.default
+    const diffModule = await import('@/components/planner/CodeMigrationDiffViewer')
+    return (diffModule as any).default
   })
 }
 
@@ -391,8 +391,8 @@ export function createDeferredDiffViewer() {
 export function createDeferredViolationViewer() {
   return new DeferredDataLoader(async () => {
     // Dynamically import violation report viewer component
-    const module = await import('@/components/planner/ViolationReportViewer')
-    return module.default
+    const violationModule = await import('@/components/planner/ViolationReportViewer')
+    return (violationModule as any).default
   })
 }
 

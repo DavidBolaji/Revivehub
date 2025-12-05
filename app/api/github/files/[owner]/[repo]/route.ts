@@ -4,7 +4,7 @@ import { createOctokit } from '@/lib/github/client'
 import { handleGitHubError } from '@/lib/github/errors'
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { owner: string; repo: string } }
 ) {
   try {

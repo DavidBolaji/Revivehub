@@ -3,7 +3,7 @@
  * Handles files > 1MB with streaming to avoid memory issues
  */
 
-import { Readable, Transform } from 'stream'
+import { Transform } from 'stream'
 import { createReadStream, createWriteStream } from 'fs'
 import { pipeline } from 'stream/promises'
 
@@ -90,7 +90,7 @@ export async function streamFileTransformation(
 export class DiffGeneratorStream extends Transform {
   private originalLines: string[] = []
   private transformedLines: string[] = []
-  private lineIndex = 0
+
   private isOriginal = true
 
   constructor() {

@@ -1,7 +1,6 @@
 'use client'
 
 import { Repository } from '@/types/repository'
-import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'

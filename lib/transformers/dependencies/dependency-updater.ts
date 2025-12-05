@@ -39,7 +39,7 @@ interface NpmPackageInfo {
 
 /**
  * Interface for package version metadata
- */
+ 
 interface PackageVersionMetadata {
   peerDependencies?: Record<string, string>
   engines?: {
@@ -47,7 +47,7 @@ interface PackageVersionMetadata {
     npm?: string
   }
 }
-
+*/
 /**
  * Interface for compatibility check result
  */
@@ -90,7 +90,7 @@ export class DependencyUpdaterTransformer extends BaseTransformer {
    */
   async transform(
     code: string,
-    options: TransformOptions,
+    _options: TransformOptions,
     task?: Task
   ): Promise<TransformResult> {
     const metadata = this.createBaseMetadata(['package.json'], 85)

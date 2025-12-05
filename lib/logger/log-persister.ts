@@ -3,7 +3,7 @@
  * Captures and persists console logs to files
  */
 
-import { appendFileSync, existsSync, mkdirSync, writeFileSync } from 'fs'
+import { appendFileSync, existsSync, mkdirSync } from 'fs'
 import { join } from 'path'
 
 export interface LogEntry {
@@ -17,8 +17,7 @@ export interface LogEntry {
 export class LogPersister {
   private logDir: string
   private currentLogFile: string
-  private maxLogSizeMB: number = 10
-  private rotateOnSize: boolean = true
+
 
   constructor(logDir: string = 'logs') {
     this.logDir = logDir

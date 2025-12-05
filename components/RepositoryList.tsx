@@ -27,12 +27,12 @@ export function RepositoryList() {
     return (
       <div className="rounded-lg border border-destructive bg-destructive/10 p-4">
         <h3 className="font-semibold text-destructive">Error</h3>
-        <p className="text-sm text-muted-foreground">{error.message}</p>
-        {error.rateLimit && (
+        <p className="text-sm text-muted-foreground">{(error as any)?.message}</p>
+        {(error as any)?.rateLimit && (
           <p className="mt-2 text-xs text-muted-foreground">
-            Rate limit: {error.rateLimit.remaining}/{error.rateLimit.limit} remaining
+            Rate limit: {(error as any)?.rateLimit.remaining}/{(error as any)?.rateLimit.limit} remaining
             <br />
-            Resets at: {error.rateLimit.reset.toLocaleString()}
+            Resets at: {(error as any)?.rateLimit.reset.toLocaleString()}
           </p>
         )}
         <button

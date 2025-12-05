@@ -148,8 +148,8 @@ export const EditableDiffViewer: React.FC<EditableDiffViewerProps> = ({
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [viewMode, setViewMode] = useState<'split' | 'inline'>('split')
-  const [acceptedChanges, setAcceptedChanges] = useState<Set<number>>(new Set())
-  const [rejectedChanges, setRejectedChanges] = useState<Set<number>>(new Set())
+  const [acceptedChanges, ] = useState<Set<number>>(new Set())
+  const [rejectedChanges, ] = useState<Set<number>>(new Set())
   const [hasBeenEdited, setHasBeenEdited] = useState(false)
   
   const changeRefs = useRef<Map<number, HTMLDivElement>>(new Map())

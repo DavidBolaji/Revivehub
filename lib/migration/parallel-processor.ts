@@ -9,7 +9,7 @@ import { cpus } from 'os'
 /**
  * Task to be processed
  */
-export interface Task<T, R> {
+export interface Task<T, _R> {
   id: string
   data: T
 }
@@ -211,7 +211,7 @@ export class WorkerPool {
   private createWorker(): void {
     const worker = new Worker(this.workerScript)
 
-    worker.on('message', (result) => {
+    worker.on('message', (_result) => {
       this.availableWorkers.push(worker)
       this.processQueue()
     })
@@ -290,7 +290,7 @@ export class ParallelFileProcessor {
       content: string
       metadata?: T
     }) => Promise<R>,
-    onProgress?: ProgressCallback
+    _onProgress?: ProgressCallback
   ): Promise<Map<string, TaskResult<R>>> {
     const tasks: Task<
       { path: string; content: string; metadata?: T },

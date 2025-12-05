@@ -520,7 +520,7 @@ export class EnhancedHealthScorer {
     // Check for test files (7 points max)
     // Look in multiple places: configFiles, file patterns, and common test directories
     let testFilesFound = 0
-    let testIndicators: string[] = []
+    const testIndicators: string[] = []
 
     // Check config files for test frameworks
     languages.languages.forEach(lang => {

@@ -68,7 +68,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get migration paths
-    let migrationPaths: any[] = []
+    const migrationPaths: any[] = []
 
     if (includePaths) {
       for (const [pathId] of Object.entries(database.migrationPaths)) {

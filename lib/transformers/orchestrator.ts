@@ -43,7 +43,7 @@ import type {
   TransformationSummary,
   RepositoryInfo,
 } from '@/types/transformer'
-import { TransformationPipeline } from './transformation-pipeline'
+
 import { transformerRegistry, type TransformerRegistry } from './transformer-registry'
 import { GitHubContentService } from '@/lib/github/content-service'
 import { progressEmitter as globalProgressEmitter, type ProgressEmitter } from '@/lib/sse/progress-emitter'
@@ -285,12 +285,12 @@ export class TransformationOrchestrator {
 
             // Step 6: Transform affected files
             let taskSuccess = true
-            let taskErrors: string[] = []
+            const taskErrors: string[] = []
             
             console.log(`[ORCHESTRATOR] Task ${task.id} affectedFiles:`, task.affectedFiles)
 
             // Special handling for documentation tasks - ensure README.md is included
-            let filesToTransform = [...task.affectedFiles]
+            let filesToTransform = [...task.affectedFiles as any]
             if (task.pattern.category === 'documentation' && filesToTransform.length === 0) {
               console.log(`[ORCHESTRATOR] Documentation task with no affected files, adding README.md`)
               filesToTransform = ['README.md']
@@ -696,11 +696,11 @@ export class TransformationOrchestrator {
       this.progressEmitter.emit(jobId, `   Using transformer: ${transformer.getMetadata().name}`)
 
       let taskSuccess = true
-      let taskErrors: string[] = []
+      const taskErrors: string[] = []
       
       console.log(`[ORCHESTRATOR] Task ${task.id} affectedFiles:`, task.affectedFiles)
 
-      let filesToTransform = [...task.affectedFiles]
+      let filesToTransform = [...task.affectedFiles as any]
       if (task.pattern.category === 'documentation' && filesToTransform.length === 0) {
         filesToTransform = ['README.md']
       }
@@ -996,13 +996,18 @@ export class TransformationOrchestrator {
         description: `packages: ${Array.from(allPackages).join(', ')}`,
         automated: true,
         examples: [],
-        detectionRules: []
+        detectionRules: [],
+        frameworks: ['*'],
+        riskLevel: maxRiskLevel,
+        estimatedMinutes: tasks.reduce((sum, t) => sum + (t.estimatedMinutes || 0), 0),
+        tags: ['dependencies', 'automated']
       },
       affectedFiles: ['package.json'],
       estimatedEffort: tasks.reduce((sum, t) => sum + (t.estimatedEffort || 0), 0),
       riskLevel: maxRiskLevel,
       breakingChanges: allBreakingChanges,
-      dependencies: []
+      dependencies: [],
+      manualSteps: null
     }
     
     const taskStartTime = Date.now()

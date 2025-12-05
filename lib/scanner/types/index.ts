@@ -157,6 +157,8 @@ export interface AnalysisReport {
   healthScore: HealthScore
   issues: Issue[]
   recommendations: Recommendation[]
+  patterns?: any 
+  summary?: any
   metadata: {
     analysisVersion: string
     completionStatus: 'complete' | 'partial'

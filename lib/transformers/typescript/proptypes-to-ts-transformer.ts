@@ -70,7 +70,7 @@ export class PropTypesToTSTransformer extends BaseTransformer {
           componentPath?: NodePath<any>
         }>()
 
-        const self = this
+        const transformer = this
         
         traverse(ast, {
           ExpressionStatement(path: NodePath<t.ExpressionStatement>) {
@@ -84,7 +84,7 @@ export class PropTypesToTSTransformer extends BaseTransformer {
             ) {
               if (t.isObjectExpression(expr.right)) {
                 const componentName = expr.left.object.name
-                const props = self.extractPropTypes(expr.right)
+                const props = transformer.extractPropTypes(expr.right)
                 
                 propTypesMap.set(componentName, {
                   props,

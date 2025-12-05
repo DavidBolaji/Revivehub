@@ -4,7 +4,7 @@
  * Requirements: 6.1, 6.2, 6.4
  */
 
-import type { OctokitInstance } from '../client'
+import type { Octokit } from '@octokit/rest'
 import { handleGitHubError } from '../errors'
 import { cachedGitHubRequest, CacheKeys as GitHubCacheKeys, CacheTTL as GitHubCacheTTL } from '../cache'
 import type { 
@@ -52,7 +52,7 @@ function mapGitHubUser(user: any): {
  * Requirements: 6.1, 6.2, 6.4, 7.5
  */
 export class GitHubIntegrationService {
-  constructor(private octokit: OctokitInstance) {}
+  constructor(private octokit: Octokit) {}
 
   /**
    * Validates repository state before applying changes
@@ -130,7 +130,7 @@ export class GitHubIntegrationService {
 
       return repoData.default_branch
     } catch (error) {
-      handleGitHubError(error)
+      return handleGitHubError(error)
     }
   }
 
@@ -149,9 +149,9 @@ export class GitHubIntegrationService {
         }
       )
 
-      return branchData.commit.sha
+      return branchData.commit.sha as string
     } catch (error) {
-      handleGitHubError(error)
+      return handleGitHubError(error)
     }
   }
 
@@ -256,7 +256,7 @@ export class GitHubIntegrationService {
         branchName,
         error: error instanceof Error ? error.message : String(error),
       })
-      handleGitHubError(error)
+      return handleGitHubError(error)
     }
   }
 
@@ -303,7 +303,7 @@ export class GitHubIntegrationService {
         itemCount: tree.length,
         error: error instanceof Error ? error.message : String(error),
       })
-      handleGitHubError(error)
+      return handleGitHubError(error)
     }
   }
 
@@ -379,7 +379,8 @@ export class GitHubIntegrationService {
         fileCount: files.length,
         error: error instanceof Error ? error.message : String(error),
       })
-      handleGitHubError(error)
+      return handleGitHubError(error)
+       
     }
   }
 
@@ -515,7 +516,7 @@ export class GitHubIntegrationService {
         title,
         error: error instanceof Error ? error.message : String(error),
       })
-      handleGitHubError(error)
+      return handleGitHubError(error)
     }
   }
 
@@ -545,7 +546,7 @@ export class GitHubIntegrationService {
         prNumber,
         error: error instanceof Error ? error.message : String(error),
       })
-      handleGitHubError(error)
+     return handleGitHubError(error)
     }
   }
 
@@ -598,7 +599,7 @@ export class GitHubIntegrationService {
         prNumber,
         error: error instanceof Error ? error.message : String(error),
       })
-      handleGitHubError(error)
+      return handleGitHubError(error)
     }
   }
 
