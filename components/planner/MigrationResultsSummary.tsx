@@ -91,10 +91,13 @@ export function MigrationResultsSummary({
     : Object.keys(result.transformations)
 
   const successfulTransforms = transformationsEntries.filter(
-    ([_, transform]) => !transform.requiresReview
+    ([_, transform]) => !transform.requiresReview && transform.newFilePath !== ''
   )
   const reviewRequiredTransforms = transformationsEntries.filter(
-    ([_, transform]) => transform.requiresReview
+    ([_, transform]) => transform.requiresReview && transform.newFilePath !== ''
+  )
+  const deletedFiles = transformationsEntries.filter(
+    ([_, transform]) => transform.newFilePath === '' || transform.metadata?.fileStructureChange?.action === 'delete'
   )
   // Only show actual errors (filter out empty/null values)
   const failedTransforms = errorsEntries.filter(
@@ -454,6 +457,63 @@ export function MigrationResultsSummary({
                           Review
                         </Button>
                       )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          )}
+        </Card>
+      )}
+
+      {/* Deleted Files */}
+      {deletedFiles.length > 0 && (
+        <Card className="border-gray-300">
+          <CardHeader
+            className="cursor-pointer hover:bg-gray-50 transition-colors"
+            onClick={() => toggleSection('deleted')}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                {expandedSections.has('deleted') ? (
+                  <ChevronDown className="h-5 w-5 text-gray-500" />
+                ) : (
+                  <ChevronRight className="h-5 w-5 text-gray-500" />
+                )}
+                <X className="h-5 w-5 text-gray-600" />
+                <CardTitle className="text-base">
+                  Files Removed ({deletedFiles.length})
+                </CardTitle>
+              </div>
+            </div>
+          </CardHeader>
+
+          {expandedSections.has('deleted') && (
+            <CardContent className="pt-0">
+              <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg mb-3">
+                <p className="text-sm text-gray-700">
+                  These files are no longer needed in Next.js and will be removed during migration.
+                </p>
+              </div>
+              <div className="space-y-2">
+                {deletedFiles.map(([filePath]) => (
+                  <div
+                    key={filePath}
+                    className="p-3 border border-gray-200 bg-gray-50 rounded-lg"
+                  >
+                    <div className="flex items-start gap-2">
+                      <FileCode className="h-4 w-4 text-gray-600 mt-0.5 flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium text-gray-900 truncate line-through">
+                          {filePath}
+                        </div>
+                        <div className="text-xs text-gray-600 mt-1">
+                          {filePath.includes('index.') && 'React entry point - replaced by Next.js App Router'}
+                          {filePath.includes('reportWebVitals') && 'Web vitals reporting - not needed in Next.js'}
+                          {filePath.includes('setupTests') && 'Test setup - moved to __tests__ directory'}
+                          {filePath.includes('index.html') && 'HTML template - Next.js generates this automatically'}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ))}

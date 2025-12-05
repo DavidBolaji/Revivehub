@@ -1,0 +1,29 @@
+{
+  "name": "Log Persistence",
+  "description": "Automatically persist logs to file on agent execution",
+  "version": "1.0.0",
+  "triggers": [
+    {
+      "event": "onMessageSent",
+      "action": {
+        "type": "command",
+        "command": "node scripts/persist-logs.js \"[USER MESSAGE] {{message}}\""
+      }
+    },
+    {
+      "event": "onExecutionComplete",
+      "action": {
+        "type": "command",
+        "command": "node scripts/persist-logs.js \"[EXECUTION COMPLETE] Session completed at {{timestamp}}\""
+      }
+    },
+    {
+      "event": "onSessionStart",
+      "action": {
+        "type": "command",
+        "command": "node scripts/persist-logs.js \"[SESSION START] New Kiro session started\""
+      }
+    }
+  ],
+  "enabled": true
+}

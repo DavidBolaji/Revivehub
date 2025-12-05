@@ -10,13 +10,13 @@
 import type { MigrationSpecification } from '@/types/migration'
 import { RouteSegmentExtractor } from './route-segment-extractor'
 
-console.log('[FileStructureManager] Module loaded - version 2.0 with enhanced logging')
+console.log('[FileStructureManager] Module loaded - version 3.1 - setupTests MOVED NOT DELETED - ' + new Date().toISOString())
 
 export interface FileStructureChange {
   originalPath: string
   newPath: string
   action: 'move' | 'create' | 'delete' | 'rename'
-  fileType: 'page' | 'layout' | 'loading' | 'error' | 'api' | 'component' | 'style' | 'config'
+  fileType: 'page' | 'layout' | 'loading' | 'error' | 'api' | 'component' | 'style' | 'config' | 'other'
   content?: string
   metadata: {
     isRouteFile: boolean
@@ -45,6 +45,10 @@ export class FileStructureManager {
     files: Map<string, string>,
     spec: MigrationSpecification
   ): FileStructureChange[] {
+    console.log(`[FileStructureManager] !!!!! METHOD CALLED !!!!!`)
+    console.log(`[FileStructureManager] files type:`, typeof files, files instanceof Map)
+    console.log(`[FileStructureManager] spec type:`, typeof spec)
+    
     try {
       console.log(`[FileStructureManager] ========================================`)
       console.log(`[FileStructureManager] Starting planStructureChanges`)
@@ -52,6 +56,7 @@ export class FileStructureManager {
       console.log(`[FileStructureManager] File paths:`, Array.from(files.keys()))
       console.log(`[FileStructureManager] Target framework: ${spec.target.framework}`)
       console.log(`[FileStructureManager] Target routing: ${spec.target.routing}`)
+      console.log(`[FileStructureManager] Source framework: ${spec.source.framework}`)
       console.log(`[FileStructureManager] ========================================`)
       
       const changes: FileStructureChange[] = []
@@ -98,9 +103,31 @@ export class FileStructureManager {
     content: string,
     spec: MigrationSpecification
   ): FileStructureChange | null {
+    const normalized = filePath.replace(/\\/g, '/')
+    
+    console.log(`[FileStructureManager] ===== Planning change for: ${normalized} =====`)
+    
+    // Check if file should be removed during React → Next.js migration
+    const shouldDelete = this.shouldRemoveFile(normalized, spec)
+    console.log(`[FileStructureManager] Should delete: ${shouldDelete}`)
+    
+    if (shouldDelete) {
+      console.log(`[FileStructureManager] ✓ Marking ${filePath} for DELETION`)
+      return {
+        originalPath: filePath,
+        newPath: '', // Empty path indicates deletion
+        action: 'delete',
+        fileType: 'other',
+        content,
+        metadata: {
+          isRouteFile: false,
+        }
+      }
+    }
+    
     const fileType = this.determineFileType(filePath, content)
     
-    console.log(`[FileStructureManager] Planning change for ${filePath} (type: ${fileType})`)
+    console.log(`[FileStructureManager] File type determined: ${fileType}`)
     
     // Handle different file types
     switch (fileType) {
@@ -118,6 +145,61 @@ export class FileStructureManager {
         console.log(`[FileStructureManager] No change needed for ${filePath} (type: ${fileType})`)
         return null
     }
+  }
+
+  /**
+   * Check if a file should be removed during migration
+   * 
+   * @param filePath - Normalized file path
+   * @param spec - Migration specification
+   * @returns True if file should be removed
+   */
+  private shouldRemoveFile(
+    filePath: string,
+    spec: MigrationSpecification
+  ): boolean {
+    // Normalize path to use forward slashes
+    const normalized = filePath.replace(/\\/g, '/')
+    
+    // Only remove files when migrating from React to Next.js
+    // Use case-insensitive comparison
+    const sourceFramework = spec.source.framework.toLowerCase()
+    const targetFramework = spec.target.framework.toLowerCase()
+    
+    const isReactToNextJs = 
+      (sourceFramework === 'react' || sourceFramework === 'cra') &&
+      (targetFramework === 'nextjs' || 
+       targetFramework === 'nextjs-app' || 
+       targetFramework.includes('next'))
+    
+    console.log(`[FileStructureManager] shouldRemoveFile check for ${normalized}:`)
+    console.log(`[FileStructureManager]   - Original path: ${filePath}`)
+    console.log(`[FileStructureManager]   - Normalized path: ${normalized}`)
+    console.log(`[FileStructureManager]   - Source: ${spec.source.framework} (${sourceFramework})`)
+    console.log(`[FileStructureManager]   - Target: ${spec.target.framework} (${targetFramework})`)
+    console.log(`[FileStructureManager]   - Is React to Next.js: ${isReactToNextJs}`)
+    
+    if (!isReactToNextJs) {
+      console.log(`[FileStructureManager]   - Not React to Next.js migration, skipping deletion check`)
+      return false
+    }
+    
+    // Files to remove during React → Next.js migration
+    const filesToRemove = [
+      'src/index.js',
+      'src/index.jsx',
+      'src/index.ts',
+      'src/index.tsx',
+      'src/reportWebVitals.js',
+      'src/reportWebVitals.ts',
+      'public/index.html', // React's HTML template not needed in Next.js
+    ]
+    
+    const shouldRemove = filesToRemove.some(pattern => normalized === pattern)
+    console.log(`[FileStructureManager]   - Checking against patterns:`, filesToRemove)
+    console.log(`[FileStructureManager]   - Should remove: ${shouldRemove}`)
+    
+    return shouldRemove
   }
 
   /**
@@ -230,6 +312,24 @@ export class FileStructureManager {
     
     console.log(`[FileStructureManager] Checking component: ${normalized}`)
     
+    // Handle test files - move to __tests__ directory
+    if (this.isTestFile(normalized)) {
+      const testName = normalized.split('/').pop() || ''
+      // Change extension to .tsx if needed
+      const newName = testName.replace(/\.jsx?$/, '.tsx')
+      console.log(`[FileStructureManager] Moving test ${normalized} → __tests__/${newName}`)
+      return {
+        originalPath: filePath,
+        newPath: `__tests__/${newName}`,
+        action: 'move',
+        fileType: 'component',
+        content,
+        metadata: {
+          isRouteFile: false,
+        }
+      }
+    }
+    
     // Move src/components/ to components/ for React → Next.js
     if (normalized.startsWith('src/components/')) {
       const componentName = normalized.replace('src/components/', '')
@@ -239,6 +339,42 @@ export class FileStructureManager {
       return {
         originalPath: filePath,
         newPath: `components/${newName}`,
+        action: 'move',
+        fileType: 'component',
+        content,
+        metadata: {
+          isRouteFile: false,
+        }
+      }
+    }
+    
+    // Handle src/context/ → context/ for React → Next.js (NOT app/context/)
+    if (normalized.startsWith('src/context/')) {
+      const contextName = normalized.replace('src/context/', '')
+      // Change extension to .tsx if needed
+      const newName = contextName.replace(/\.jsx?$/, '.tsx')
+      console.log(`[FileStructureManager] Moving context ${normalized} → context/${newName}`)
+      return {
+        originalPath: filePath,
+        newPath: `context/${newName}`,
+        action: 'move',
+        fileType: 'component',
+        content,
+        metadata: {
+          isRouteFile: false,
+        }
+      }
+    }
+    
+    // Handle src/hooks/ → hooks/ for React → Next.js
+    if (normalized.startsWith('src/hooks/')) {
+      const hookName = normalized.replace('src/hooks/', '')
+      // Change extension to .tsx (keep .tsx for consistency)
+      const newName = hookName.replace(/\.jsx?$/, '.tsx')
+      console.log(`[FileStructureManager] Moving hook ${normalized} → hooks/${newName}`)
+      return {
+        originalPath: filePath,
+        newPath: `hooks/${newName}`,
         action: 'move',
         fileType: 'component',
         content,
@@ -268,6 +404,18 @@ export class FileStructureManager {
     
     console.log(`[FileStructureManager] No component change needed for ${normalized}`)
     return null
+  }
+
+  /**
+   * Check if a file is a test file
+   * 
+   * @param filePath - Normalized file path
+   * @returns True if file is a test file
+   */
+  private isTestFile(filePath: string): boolean {
+    // Match .test.js, .spec.js, or setupTests.js files
+    return /\.(test|spec)\.(tsx?|jsx?)$/i.test(filePath) || 
+           /setupTests\.(tsx?|jsx?)$/i.test(filePath)
   }
 
   /**
@@ -363,6 +511,12 @@ export class FileStructureManager {
   ): 'page' | 'api' | 'component' | 'style' | 'config' | 'other' {
     const normalized = filePath.replace(/\\/g, '/')
     
+    // Check if it's a test file first (before other checks)
+    if (this.isTestFile(normalized)) {
+      console.log(`[FileStructureManager] Detected test file: ${normalized}`)
+      return 'component' // Treat test files as components so they get processed
+    }
+    
     // Check if it's an API route
     if (this.routeExtractor.isApiRoute(filePath)) {
       return 'api'
@@ -388,11 +542,15 @@ export class FileStructureManager {
       return 'config'
     }
     
-    // Check if it's a component
-    if (/\.(tsx?|jsx?)$/.test(filePath) && filePath.includes('components/')) {
+    // Check if it's a component (including context and hooks)
+    if (/\.(tsx?|jsx?)$/.test(filePath) && 
+        (filePath.includes('components/') || 
+         filePath.includes('context/') || 
+         filePath.includes('hooks/'))) {
       return 'component'
     }
     
+    console.log(`[FileStructureManager] File type 'other' for: ${normalized}`)
     return 'other'
   }
 

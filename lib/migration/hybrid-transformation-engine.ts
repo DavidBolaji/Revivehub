@@ -9,7 +9,7 @@
  * - Rule validation for compliance checking
  */
 
-console.log('[HybridEngine] Module loaded - version 3.0 with file structure logging')
+console.log('[HybridEngine] Module loaded - version 3.1 - DELETION FILTER ACTIVE')
 
 import { ASTTransformationEngine } from './ast-transformation-engine'
 import { AITransformationEngine } from './ai-transformation-engine'
@@ -273,6 +273,9 @@ export class HybridTransformationEngine {
 
       // Step 7: Determine new file path (use provided path or determine from spec)
       const finalNewFilePath = newFilePath || this.determineNewFilePath(file.path, spec)
+      console.log(`[Hybrid Engine] transform() for ${file.path}`)
+      console.log(`[Hybrid Engine]   - Provided newFilePath: ${newFilePath || 'NONE'}`)
+      console.log(`[Hybrid Engine]   - Final newFilePath: ${finalNewFilePath}`)
 
       // Step 8: Build metadata describing the transformation
       const metadata = this.buildMetadata(
@@ -391,8 +394,13 @@ export class HybridTransformationEngine {
     const PARALLEL_LIMIT = 5 // Process 5 files at a time
     
     // Step 1: Plan file structure changes
+    console.log('[Hybrid Engine] ========================================')
+    console.log('[Hybrid Engine] BATCH TRANSFORMATION STARTED')
+    console.log('[Hybrid Engine] ========================================')
     console.log('[Hybrid Engine] Planning file structure changes...')
     console.log('[Hybrid Engine] Files count:', files.length)
+    console.log('[Hybrid Engine] File list:', files.map(f => f.path).join(', '))
+    console.log('[Hybrid Engine] Spec source:', spec.source.framework, spec.source.language)
     console.log('[Hybrid Engine] Spec target:', spec.target.framework, spec.target.routing)
     
     const fileMap = new Map(files.map((f) => [f.path, f.content]))
@@ -403,6 +411,9 @@ export class HybridTransformationEngine {
     const structureChanges =
       this.fileStructureManager.planStructureChanges(fileMap, spec)
 
+    console.log('[Hybrid Engine] ========================================')
+    console.log('[Hybrid Engine] FILE STRUCTURE PLANNING COMPLETE')
+    console.log('[Hybrid Engine] ========================================')
     console.log('[Hybrid Engine] Returned from planStructureChanges')
     console.log(
       `[Hybrid Engine] Planned ${structureChanges.length} file structure changes`
@@ -413,23 +424,44 @@ export class HybridTransformationEngine {
     console.log(
       `[Hybrid Engine] - Creates: ${structureChanges.filter((c) => c.action === 'create').length}`
     )
+    console.log(
+      `[Hybrid Engine] - Deletes: ${structureChanges.filter((c) => c.action === 'delete').length}`
+    )
+    console.log('[Hybrid Engine] Detailed changes:')
+    structureChanges.forEach((change, index) => {
+      console.log(`[Hybrid Engine]   ${index + 1}. ${change.action.toUpperCase()}: ${change.originalPath} → ${change.newPath} (${change.fileType})`)
+    })
 
     // Create a map of original path to new path
     const pathMapping = new Map<string, string>()
     for (const change of structureChanges) {
       if (change.originalPath) {
         pathMapping.set(change.originalPath, change.newPath)
+        console.log(`[Hybrid Engine] Path mapping: ${change.originalPath} → ${change.newPath}`)
       }
     }
+    console.log(`[Hybrid Engine] Total path mappings: ${pathMapping.size}`)
+    console.log(`[Hybrid Engine] Path mapping entries:`, Array.from(pathMapping.entries()))
 
     // Step 1.5: Analyze CSS files for Tailwind conversion
     console.log('[Hybrid Engine] Analyzing CSS files for Tailwind conversion...')
     const cssFiles = files.filter((f) =>
       /\.(css|scss|sass)$/i.test(f.path)
     )
-    const componentFiles = files.filter(
-      (f) => !/\.(css|scss|sass)$/i.test(f.path)
+    
+    // Filter out files marked for deletion
+    const filesToDelete = new Set(
+      structureChanges
+        .filter((c) => c.action === 'delete')
+        .map((c) => c.originalPath)
     )
+    console.log(`[Hybrid Engine] Files marked for deletion: ${Array.from(filesToDelete).join(', ')}`)
+    
+    const componentFiles = files.filter(
+      (f) => !/\.(css|scss|sass)$/i.test(f.path) && !filesToDelete.has(f.path)
+    )
+    console.log(`[Hybrid Engine] Component files to transform: ${componentFiles.length}`)
+    console.log(`[Hybrid Engine] Skipping ${filesToDelete.size} files marked for deletion`)
 
     // Build CSS to Tailwind mapping
     const cssToTailwindMap = new Map<string, string[]>()
@@ -493,6 +525,9 @@ export class HybridTransformationEngine {
 
           // Get new file path from structure changes
           const newPath = pathMapping.get(file.path)
+          console.log(`[Hybrid Engine] Transforming ${file.path}`)
+          console.log(`[Hybrid Engine]   - New path from mapping: ${newPath || 'NOT FOUND'}`)
+          console.log(`[Hybrid Engine]   - Will use: ${newPath || 'determineNewFilePath fallback'}`)
 
           // Transform the file with new path and CSS context
           const result = await this.transform(file, spec, newPath, cssToTailwindMap)
