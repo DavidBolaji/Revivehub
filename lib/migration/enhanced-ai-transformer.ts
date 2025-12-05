@@ -439,8 +439,37 @@ ${instructions.join('\n')}
 4. ${isTypeScript ? '⚠️ CRITICAL: MUST use React.FC<PropsType> or explicit return types' : ''}
 5. Follow ${spec.target.framework} conventions
 6. ${spec.target.routing === 'app-router' || spec.target.routing === 'app' ? '⚠️ CRITICAL: Add "use client" directive at the TOP of the file if the component uses ANY React hooks (useState, useEffect, useCallback, useMemo, useRef, useContext, etc.) or event handlers' : ''}
-7. Return ONLY the transformed code, no explanations
-8. ${isTypeScript ? 'Wrap code in ```typescript tags (NOT ```javascript)' : 'Wrap code in ```javascript tags'}
+7. ⚠️ CRITICAL: MUST use path aliases for ALL imports - DO NOT use relative paths
+8. Return ONLY the transformed code, no explanations
+9. ${isTypeScript ? 'Wrap code in ```typescript tags (NOT ```javascript)' : 'Wrap code in ```javascript tags'}
+
+**Import Path Aliases (⚠️ CRITICAL - MUST FOLLOW):**
+YOU MUST use path aliases for ALL imports. NEVER use relative paths like './', '../', './components', '../hooks', etc.
+
+Required import alias mappings:
+- Components: import { Button } from '@components/Button' (NOT './components/Button' or '../components/Button')
+- Hooks: import { useTodos } from '@hooks/useTodos' (NOT './hooks/useTodos' or '../hooks/useTodos')
+- Context: import { TodoContext } from '@context/TodoContext' (NOT './context/TodoContext' or '../context/TodoContext')
+- Lib/Utils: import { formatDate } from '@lib/utils' (NOT './lib/utils' or '../lib/utils')
+- Types: import type { Todo } from '@types/todo' (NOT './types/todo' or '../types/todo')
+- App: import { metadata } from '@app/layout' (NOT './app/layout' or '../app/layout')
+
+Examples of CORRECT imports:
+\`\`\`typescript
+import { TodoList } from '@components/TodoList'
+import { useTodos } from '@hooks/useTodos'
+import { TodoContext } from '@context/TodoContext'
+import { formatDate } from '@lib/utils'
+import type { TodoItem } from '@types/todo'
+\`\`\`
+
+Examples of INCORRECT imports (DO NOT USE):
+\`\`\`typescript
+import { TodoList } from './components/TodoList'  // ❌ WRONG
+import { useTodos } from '../hooks/useTodos'      // ❌ WRONG
+import { TodoContext } from './context/TodoContext' // ❌ WRONG
+import { formatDate } from '../lib/utils'         // ❌ WRONG
+\`\`\`
 
 **TypeScript Requirements (⚠️ CRITICAL - MUST FOLLOW):**
 ${isTypeScript ? `YOU MUST OUTPUT TYPESCRIPT CODE, NOT JAVASCRIPT. This is non-negotiable.
@@ -569,33 +598,39 @@ Return ONLY the transformed package.json wrapped in \`\`\`json tags, no explanat
   ): string {
     // Only for Next.js App Router
     if (spec.target.routing !== 'app-router' && spec.target.routing !== 'app') {
+      console.log('[Enhanced AI] Skipping "use client" check - not App Router')
       return code
     }
 
     // Check if already has "use client"
     if (code.trim().startsWith("'use client'") || code.trim().startsWith('"use client"')) {
+      console.log('[Enhanced AI] "use client" already present')
       return code
     }
 
-    // Check for React hooks (more comprehensive)
-    const hasHooks = /\b(useState|useEffect|useContext|useReducer|useCallback|useMemo|useRef|useImperativeHandle|useLayoutEffect|useDebugValue|useId|useTransition|useDeferredValue)\s*\(/.test(code)
+    // Check for React hooks (comprehensive list)
+    const hasHooks = /\b(useState|useEffect|useContext|useReducer|useCallback|useMemo|useRef|useImperativeHandle|useLayoutEffect|useDebugValue|useId|useTransition|useDeferredValue|useSyncExternalStore|useInsertionEffect)\s*\(/.test(code)
     
-    // Check for event handlers
-    const hasEventHandlers = /\b(onClick|onChange|onSubmit|onKeyDown|onKeyUp|onKeyPress|onMouseDown|onMouseUp|onMouseEnter|onMouseLeave|onFocus|onBlur|onInput|onLoad|onError|onScroll)\s*=/.test(code)
+    // Check for event handlers (comprehensive list)
+    const hasEventHandlers = /\b(onClick|onChange|onSubmit|onKeyDown|onKeyUp|onKeyPress|onMouseDown|onMouseUp|onMouseEnter|onMouseLeave|onMouseMove|onFocus|onBlur|onInput|onLoad|onError|onScroll|onWheel|onDrag|onDrop|onTouchStart|onTouchEnd|onTouchMove|onPointerDown|onPointerUp|onPointerMove|onAnimationStart|onAnimationEnd|onTransitionEnd)\s*=/.test(code)
     
     // Check for imports from 'react' that include hooks
-    const importsHooks = /import\s*{[^}]*\b(useState|useEffect|useContext|useReducer|useCallback|useMemo|useRef)[^}]*}\s*from\s*['"]react['"]/.test(code)
+    const importsHooks = /import\s*{[^}]*\b(useState|useEffect|useContext|useReducer|useCallback|useMemo|useRef|useImperativeHandle|useLayoutEffect|useSyncExternalStore)[^}]*}\s*from\s*['"]react['"]/.test(code)
 
-    // If has hooks or event handlers, add "use client"
-    if (hasHooks || hasEventHandlers || importsHooks) {
-      console.log('[Enhanced AI] Adding "use client" directive')
+    // Check for custom hooks (functions starting with 'use')
+    const hasCustomHooks = /\buse[A-Z]\w*\s*\(/.test(code)
+
+    // If has hooks, event handlers, or custom hooks, add "use client"
+    if (hasHooks || hasEventHandlers || importsHooks || hasCustomHooks) {
+      console.log('[Enhanced AI] ⚠️ ADDING "use client" directive (AI missed it)')
       console.log('[Enhanced AI] - Has hooks:', hasHooks)
       console.log('[Enhanced AI] - Has event handlers:', hasEventHandlers)
       console.log('[Enhanced AI] - Imports hooks:', importsHooks)
+      console.log('[Enhanced AI] - Has custom hooks:', hasCustomHooks)
       return `'use client'\n\n${code}`
     }
     
-    console.log('[Enhanced AI] No "use client" needed (no hooks or event handlers detected)')
+    console.log('[Enhanced AI] ✓ No "use client" needed (server component)')
 
     return code
   }

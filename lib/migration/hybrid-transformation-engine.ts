@@ -93,7 +93,7 @@ export class HybridTransformationEngine {
     const sections = css.split(/(\/\* From .*? \*\/)/)
     const seenRules = new Set<string>()
     const dedupedSections: string[] = []
-    
+
     for (const section of sections) {
       if (section.startsWith('/* From')) {
         // Keep comment
@@ -102,16 +102,16 @@ export class HybridTransformationEngine {
         // Process CSS rules
         const rules = section.split(/(?<=})\s*/)
         const dedupedRules: string[] = []
-        
+
         for (const rule of rules) {
           const trimmed = rule.trim()
           if (!trimmed) continue
-          
+
           // Extract selector (everything before {)
           const selectorMatch = trimmed.match(/^([^{]+){/)
           if (selectorMatch) {
             const selector = selectorMatch[1].trim()
-            
+
             // Only keep first occurrence of each selector
             if (!seenRules.has(selector)) {
               seenRules.add(selector)
@@ -122,11 +122,11 @@ export class HybridTransformationEngine {
             dedupedRules.push(trimmed)
           }
         }
-        
+
         dedupedSections.push(dedupedRules.join('\n\n'))
       }
     }
-    
+
     return dedupedSections.join('\n')
   }
 
@@ -169,61 +169,67 @@ export class HybridTransformationEngine {
       // Check if file can be transformed with AST
       const canUseAST = this.isTransformableWithAST(file.path)
 
-      // Step 1: Build transformation context
-      const context = this.buildTransformationContext(file, spec)
+      // Step 1: Determine new file path first (needed for import resolution)
+      const finalNewFilePath = newFilePath || this.determineNewFilePath(file.path, spec)
+      console.log(`[Hybrid Engine] transform() - Pre-context build for ${file.path}`)
+      console.log(`[Hybrid Engine]   - Original path: ${file.path}`)
+      console.log(`[Hybrid Engine]   - New path for import resolution: ${finalNewFilePath}`)
 
-      // Step 2: Load rules into rule engine
+      // Step 2: Build transformation context with NEW file path for import resolution
+      const context = this.buildTransformationContext(file, spec, finalNewFilePath)
+
+      // Step 3: Load rules into rule engine
       this.ruleEngine.loadRules(spec)
 
       // Step 3: Apply AST transformations first (deterministic) with error recovery
       // Skip AST transformation for non-JavaScript files
       const astResult = canUseAST
         ? await this.applyASTTransformationsWithRecovery(
-            file.content,
-            spec,
-            context,
-            recoveryContext
-          )
+          file.content,
+          spec,
+          context,
+          recoveryContext
+        )
         : { code: file.content, errors: [] }
 
       // Step 4: Apply AI transformations for semantic changes with error recovery
       console.log(`[Hybrid Engine] Checking if AI transformation is needed for ${file.path}`)
       console.log(`[Hybrid Engine] - Can use AST: ${canUseAST}`)
       console.log(`[Hybrid Engine] - AI available: ${this.aiEngine.isAvailable()}`)
-      
+
       // Special handling for package.json - always use AI if available
       const isPackageJson = file.path.endsWith('package.json')
       const shouldUseAI = this.aiEngine.isAvailable() && (canUseAST || isPackageJson)
-      
+
       if (!this.aiEngine.isAvailable()) {
         console.warn(`[Hybrid Engine] ⚠ AI transformations disabled: No ANTHROPIC_API_KEY configured`)
         console.warn(`[Hybrid Engine] Set ANTHROPIC_API_KEY environment variable to enable AI transformations`)
       }
-      
+
       if (!canUseAST && !isPackageJson) {
         console.log(`[Hybrid Engine] Skipping AI for non-JavaScript file: ${file.path}`)
       }
-      
+
       if (isPackageJson) {
         console.log(`[Hybrid Engine] Using AI for package.json transformation`)
       }
-      
+
       const aiResult = shouldUseAI
         ? await this.applyAITransformationsWithRecovery(
-            astResult.code,
-            spec,
-            context,
-            recoveryContext
-          )
+          astResult.code,
+          spec,
+          context,
+          recoveryContext
+        )
         : {
-            code: astResult.code,
-            confidence: 80,
-            warnings: this.aiEngine.isAvailable() 
-              ? [] 
-              : ['AI transformations skipped: No API key configured'],
-            requiresReview: false
-          }
-      
+          code: astResult.code,
+          confidence: 80,
+          warnings: this.aiEngine.isAvailable()
+            ? []
+            : ['AI transformations skipped: No API key configured'],
+          requiresReview: false
+        }
+
       console.log(`[Hybrid Engine] AI transformation result for ${file.path}:`)
       console.log(`[Hybrid Engine] - Confidence: ${aiResult.confidence}`)
       console.log(`[Hybrid Engine] - Requires review: ${aiResult.requiresReview}`)
@@ -238,17 +244,17 @@ export class HybridTransformationEngine {
 
       // Only apply CSS transformation to JavaScript/TypeScript files
       const canUseCSS = this.isTransformableWithAST(file.path)
-      
+
       if (cssToTailwindMap && cssToTailwindMap.size > 0 && canUseCSS) {
         console.log(`[Hybrid Engine] Applying CSS to Tailwind transformation for ${file.path}`)
-        
+
         try {
           const componentStyleTransformer = new ComponentStyleTransformer(cssToTailwindMap)
           cssTransformResult = await componentStyleTransformer.transformComponent(aiResult.code)
-          
+
           // Remove CSS imports
           cssTransformResult.code = componentStyleTransformer.removeCSSImports(cssTransformResult.code)
-          
+
           console.log(`[Hybrid Engine] Transformed ${cssTransformResult.transformedClasses} CSS classes`)
           if (cssTransformResult.unmappedClasses.length > 0) {
             console.log(`[Hybrid Engine] Unmapped classes: ${cssTransformResult.unmappedClasses.join(', ')}`)
@@ -271,13 +277,7 @@ export class HybridTransformationEngine {
       // Step 7: Generate diff between original and transformed code
       const diff = this.generateDiff(file.content, cssTransformResult.code)
 
-      // Step 7: Determine new file path (use provided path or determine from spec)
-      const finalNewFilePath = newFilePath || this.determineNewFilePath(file.path, spec)
-      console.log(`[Hybrid Engine] transform() for ${file.path}`)
-      console.log(`[Hybrid Engine]   - Provided newFilePath: ${newFilePath || 'NONE'}`)
-      console.log(`[Hybrid Engine]   - Final newFilePath: ${finalNewFilePath}`)
-
-      // Step 8: Build metadata describing the transformation
+      // Step 8: Build metadata describing the transformation (finalNewFilePath already calculated earlier)
       const metadata = this.buildMetadata(
         file,
         finalNewFilePath,
@@ -340,7 +340,7 @@ export class HybridTransformationEngine {
 
       // Log the error for monitoring
       const errorDetails = handleMigrationError(error)
-      
+
       // If transformation fails completely, return error result
       return {
         code: file.content,
@@ -392,7 +392,7 @@ export class HybridTransformationEngine {
   ): Promise<Map<string, Phase3TransformResult>> {
     const results = new Map<string, Phase3TransformResult>()
     const PARALLEL_LIMIT = 5 // Process 5 files at a time
-    
+
     // Step 1: Plan file structure changes
     console.log('[Hybrid Engine] ========================================')
     console.log('[Hybrid Engine] BATCH TRANSFORMATION STARTED')
@@ -402,12 +402,12 @@ export class HybridTransformationEngine {
     console.log('[Hybrid Engine] File list:', files.map(f => f.path).join(', '))
     console.log('[Hybrid Engine] Spec source:', spec.source.framework, spec.source.language)
     console.log('[Hybrid Engine] Spec target:', spec.target.framework, spec.target.routing)
-    
+
     const fileMap = new Map(files.map((f) => [f.path, f.content]))
     console.log('[Hybrid Engine] FileMap size:', fileMap.size)
     console.log('[Hybrid Engine] FileMap keys:', Array.from(fileMap.keys()))
     console.log('[Hybrid Engine] Calling fileStructureManager.planStructureChanges...')
-    
+
     const structureChanges =
       this.fileStructureManager.planStructureChanges(fileMap, spec)
 
@@ -448,7 +448,7 @@ export class HybridTransformationEngine {
     const cssFiles = files.filter((f) =>
       /\.(css|scss|sass)$/i.test(f.path)
     )
-    
+
     // Filter out files marked for deletion
     const filesToDelete = new Set(
       structureChanges
@@ -456,7 +456,7 @@ export class HybridTransformationEngine {
         .map((c) => c.originalPath)
     )
     console.log(`[Hybrid Engine] Files marked for deletion: ${Array.from(filesToDelete).join(', ')}`)
-    
+
     const componentFiles = files.filter(
       (f) => !/\.(css|scss|sass)$/i.test(f.path) && !filesToDelete.has(f.path)
     )
@@ -509,7 +509,7 @@ export class HybridTransformationEngine {
     for (let i = 0; i < componentFiles.length; i += PARALLEL_LIMIT) {
       // Get batch of files (up to PARALLEL_LIMIT)
       const batch = componentFiles.slice(i, i + PARALLEL_LIMIT)
-      
+
       // Transform batch in parallel
       const batchPromises = batch.map(async (file) => {
         try {
@@ -531,10 +531,10 @@ export class HybridTransformationEngine {
 
           // Transform the file with new path and CSS context
           const result = await this.transform(file, spec, newPath, cssToTailwindMap)
-          
+
           // Update progress counter
           processedFiles++
-          
+
           // Report progress after completion
           if (onProgress) {
             onProgress({
@@ -549,7 +549,7 @@ export class HybridTransformationEngine {
         } catch (error: any) {
           // Update progress counter even on error
           processedFiles++
-          
+
           // Report progress after error
           if (onProgress) {
             onProgress({
@@ -588,7 +588,7 @@ export class HybridTransformationEngine {
 
       // Wait for all files in batch to complete
       const batchResults = await Promise.all(batchPromises)
-      
+
       // Store results
       for (const { filePath, result } of batchResults) {
         results.set(filePath, result)
@@ -599,17 +599,17 @@ export class HybridTransformationEngine {
     console.log('[Hybrid Engine] Checking for CSS files to merge...')
     const cssChanges = structureChanges.filter(c => c.fileType === 'style')
     const globalsCssChanges = cssChanges.filter(c => c.newPath === 'app/globals.css')
-    
+
     console.log(`[Hybrid Engine] Found ${cssChanges.length} CSS changes`)
     console.log(`[Hybrid Engine] Found ${globalsCssChanges.length} files mapping to app/globals.css`)
-    
+
     if (globalsCssChanges.length > 0) {
       console.log(`[Hybrid Engine] Processing CSS files for globals.css`)
-      
+
       // Collect all CSS content from source files
       const cssContents: string[] = []
       const sourceFiles: string[] = []
-      
+
       for (const change of globalsCssChanges) {
         // Find the original CSS file
         const cssFile = cssFiles.find(f => f.path === change.originalPath)
@@ -621,18 +621,18 @@ export class HybridTransformationEngine {
           console.warn(`[Hybrid Engine] Could not find CSS file: ${change.originalPath}`)
         }
       }
-      
+
       if (cssContents.length > 0) {
         // Merge CSS and remove duplicates
         const allCss = cssContents.join('\n\n')
         const dedupedCss = this.removeDuplicateCSSRules(allCss)
-        
+
         // Create merged globals.css with Tailwind directives
         const mergedCss = `@tailwind base;\n@tailwind components;\n@tailwind utilities;\n\n${dedupedCss}`
-        
+
         console.log(`[Hybrid Engine] Created merged globals.css (${mergedCss.length} chars) from: ${sourceFiles.join(', ')}`)
         console.log(`[Hybrid Engine] Removed ${allCss.length - dedupedCss.length} chars of duplicate CSS`)
-        
+
         // Add merged result
         results.set('app/globals.css', {
           code: mergedCss,
@@ -665,19 +665,19 @@ export class HybridTransformationEngine {
 
     // Step 2: Handle file creation for missing files
     const filesToCreate = structureChanges.filter(c => c.action === 'create')
-    
+
     if (filesToCreate.length > 0) {
       console.log(`[Hybrid Engine] Creating ${filesToCreate.length} new files...`)
       console.log(`[Hybrid Engine] Files to create:`, filesToCreate.map(c => `${c.fileType}: ${c.newPath}`))
-      
+
       for (const change of filesToCreate) {
         console.log(`[Hybrid Engine] Generating content for ${change.newPath} (type: ${change.fileType})`)
-        
+
         // Generate content for the new file based on type
         const generatedContent = await this.generateFileContent(change, spec)
-        
+
         console.log(`[Hybrid Engine] Generated content length: ${generatedContent?.length || 0} chars`)
-        
+
         if (generatedContent) {
           console.log(`[Hybrid Engine] Adding ${change.newPath} to results`)
           results.set(change.newPath, {
@@ -774,6 +774,49 @@ export class HybridTransformationEngine {
       }
     }
 
+    // Step 4: Generate tsconfig.json with path aliases for TypeScript migrations
+    if (spec.target.language === 'typescript' || spec.target.language === 'TypeScript') {
+      console.log('[Hybrid Engine] Generating tsconfig.json with path aliases...')
+
+      try {
+        const tsconfigContent = this.appRouterFileGenerator.generateTsConfig(spec)
+
+        results.set('tsconfig.json', {
+          code: tsconfigContent,
+          originalCode: '',
+          filePath: 'tsconfig.json',
+          newFilePath: 'tsconfig.json',
+          metadata: {
+            newFilePath: 'tsconfig.json',
+            fileType: 'config',
+            language: 'json',
+            framework: spec.target.framework,
+            dependenciesAdded: ['typescript', '@types/react', '@types/node'],
+            dependenciesRemoved: [],
+            notes: [
+              'Generated TypeScript configuration',
+              'Includes Next.js recommended settings',
+              'Path aliases configured: @/, @components/, @lib/, @hooks/, @context/, @app/',
+              'Enables strict type checking',
+            ],
+            fileStructureChange: {
+              action: 'create',
+              originalPath: 'tsconfig.json',
+              isRouteFile: false,
+            },
+          },
+          diff: '',
+          confidence: 100,
+          requiresReview: false,
+          warnings: [],
+        })
+
+        console.log('[Hybrid Engine] ✓ tsconfig.json generated successfully with path aliases')
+      } catch (error) {
+        console.error('[Hybrid Engine] ✗ Error generating tsconfig.json:', error)
+      }
+    }
+
     // Report final progress
     if (onProgress) {
       onProgress({
@@ -800,7 +843,7 @@ export class HybridTransformationEngine {
   ): Promise<string | null> {
     // For now, return placeholder content
     // This will be replaced with AppRouterFileGenerator in Phase 3
-    
+
     switch (change.fileType) {
       case 'layout':
         return this.appRouterFileGenerator.generateRootLayout(spec, {
@@ -827,8 +870,8 @@ export class HybridTransformationEngine {
   /**
    * @deprecated Use AppRouterFileGenerator instead
    * Generate placeholder root layout
-   */
-  private generatePlaceholderLayout(spec: MigrationSpecification): string {
+ 
+  private generatePlaceholderLayout(_spec: MigrationSpecification): string {
     return `import type { Metadata } from 'next'
 import './globals.css'
 
@@ -850,10 +893,11 @@ export default function RootLayout({
 }
 `
   }
+    */
 
   /**
    * Generate placeholder error boundary
-   */
+  
   private generatePlaceholderError(): string {
     return `'use client'
 
@@ -873,20 +917,20 @@ export default function Error({
 }
 `
   }
-
+ */
   /**
    * Generate placeholder loading component
-   */
+  
   private generatePlaceholderLoading(): string {
     return `export default function Loading() {
   return <div>Loading...</div>
 }
 `
   }
-
+ */
   /**
    * Generate placeholder globals.css
-   */
+
   private generatePlaceholderGlobalsCss(): string {
     return `@tailwind base;
 @tailwind components;
@@ -909,7 +953,7 @@ body {
 }
 `
   }
-
+   */
   /**
    * Build transformation context from file and spec
    * 
@@ -919,11 +963,23 @@ body {
    * - Related files
    * 
    * Requirements: 5.1
+   * 
+   * @param file - Repository file to transform
+   * @param _spec - Migration specification
+   * @param newFilePath - Optional new file path for import resolution (defaults to original path)
    */
   private buildTransformationContext(
     file: RepositoryFile,
-    _spec: MigrationSpecification
+    _spec: MigrationSpecification,
+    newFilePath?: string
   ): TransformationContext {
+    // Use new file path for import resolution if provided
+    const pathForContext = newFilePath || file.path
+    
+    console.log(`[Hybrid Engine] buildTransformationContext:`)
+    console.log(`[Hybrid Engine]   - Original file path: ${file.path}`)
+    console.log(`[Hybrid Engine]   - Path for context (import resolution): ${pathForContext}`)
+
     // Determine file type from path
     const fileType = this.determineFileType(file.path)
 
@@ -937,7 +993,7 @@ body {
     const exports = this.extractExports(file.content)
 
     return {
-      filePath: file.path,
+      filePath: pathForContext, // Use new path for import resolution
       fileType,
       dependencies,
       imports,
@@ -1025,7 +1081,7 @@ body {
     requiresReview: boolean
   }> {
     console.log(`[Hybrid Engine] Starting AI transformation with recovery for ${context.filePath}`)
-    
+
     try {
       const result = await this.applyAITransformations(code, spec, context)
       console.log(`[Hybrid Engine] ✓ AI transformation succeeded without recovery`)
@@ -1033,7 +1089,7 @@ body {
     } catch (error: any) {
       console.error(`[Hybrid Engine] ✗ AI transformation failed, attempting recovery...`)
       console.error(`[Hybrid Engine] Error: ${error.message}`)
-      
+
       // Create transformation error
       const transformError = new TransformationError(
         `AI transformation failed: ${error.message}`,
@@ -1059,7 +1115,7 @@ body {
       if (recoveryResult.success && recoveryResult.data) {
         console.log(`[Hybrid Engine] ✓ Recovery successful using strategy: ${recoveryResult.strategy}`)
         console.log(`[Hybrid Engine] Recovery attempts: ${recoveryResult.attempts}`)
-        
+
         logMigrationEvent('transformation:ai:recovered', {
           filePath: context.filePath,
           strategy: recoveryResult.strategy,
@@ -1070,7 +1126,7 @@ body {
 
       // Recovery failed, return fallback result (AST-only with low confidence)
       console.warn(`[Hybrid Engine] ⚠ Recovery failed, using fallback (AST-only) for ${context.filePath}`)
-      
+
       logMigrationEvent('transformation:ai:fallback', {
         filePath: context.filePath
       })
@@ -1104,12 +1160,12 @@ body {
   ): Promise<{ code: string; errors: string[] }> {
     try {
       const result = await this.astEngine.transformCode(code, spec, context)
-      
+
       // Log transformation details if errors occurred
       if (result.errors.length > 0) {
         console.warn(`AST transformation warnings for ${context.filePath}:`, result.errors)
       }
-      
+
       return result
     } catch (error: any) {
       console.error(`AST transformation failed for ${context.filePath}:`, error)
@@ -1152,20 +1208,20 @@ body {
       // Check if AI transformation is needed
       const needsAI = this.needsAITransformation(code, spec, context)
       console.log(`[Hybrid Engine] AI transformation needed for ${context.filePath}: ${needsAI}`)
-      
+
       if (needsAI) {
         console.log(`[Hybrid Engine] ▶ Applying Enhanced AI transformation for ${context.filePath}`)
         console.log(`[Hybrid Engine] Code length: ${code.length} chars`)
-        
+
         // Step 1: Recognize patterns in the code
         const patterns = this.enhancedAI.recognizePatterns(code, 'react-to-nextjs')
         if (patterns.length > 0) {
           console.log(`[Hybrid Engine] 🎯 Recognized ${patterns.length} patterns:`)
           patterns.forEach(p => console.log(`[Hybrid Engine]    - ${p.name} (${p.confidence}% confidence)`))
         }
-        
+
         const startTime = Date.now()
-        
+
         // Step 2: Use enhanced transformer with context-aware transformation
         const aiResult = await this.enhancedAI.transformWithContext(
           code,
@@ -1179,7 +1235,7 @@ body {
             improveAccessibility: true,
           }
         )
-        
+
         const duration = Date.now() - startTime
 
         // Log AI transformation results
@@ -1189,7 +1245,7 @@ body {
         console.log(`[Hybrid Engine] - Warnings: ${aiResult.warnings.length}`)
         console.log(`[Hybrid Engine] - Output length: ${aiResult.code.length} chars`)
         console.log(`[Hybrid Engine] - Patterns applied: ${patterns.length}`)
-        
+
         if (aiResult.warnings.length > 0) {
           console.warn(`[Hybrid Engine] ⚠ AI warnings:`, aiResult.warnings)
         }
@@ -1213,7 +1269,7 @@ body {
     } catch (error: any) {
       console.error(`[Hybrid Engine] ✗ AI transformation failed for ${context.filePath}:`, error.message)
       console.error(`[Hybrid Engine] Error stack:`, error.stack)
-      
+
       return {
         code,
         confidence: 0,
@@ -1383,12 +1439,12 @@ body {
       // Auto-detect TypeScript syntax in the generated code
       const hasTypeScriptSyntax = this.detectTypeScriptSyntax(code)
       const language = hasTypeScriptSyntax ? 'typescript' : spec.target.language
-      
+
       console.log(`[Hybrid Engine] Validating syntax with language: ${language}`)
       if (hasTypeScriptSyntax && spec.target.language !== 'typescript') {
         console.log(`[Hybrid Engine] Auto-detected TypeScript syntax in generated code`)
       }
-      
+
       const ast = this.astEngine.parseCode(code, language)
       const validation = this.astEngine.validateAST(ast)
       return validation.valid
@@ -1423,7 +1479,7 @@ body {
       /\?\s*:/,                     // optional properties
       /!\s*\./,                     // non-null assertion
     ]
-    
+
     return typeScriptPatterns.some(pattern => pattern.test(code))
   }
 
@@ -1449,7 +1505,7 @@ body {
       // Auto-detect TypeScript syntax in the generated code
       const hasTypeScriptSyntax = this.detectTypeScriptSyntax(transformed)
       const targetLanguage = hasTypeScriptSyntax ? 'typescript' : spec.target.language
-      
+
       // Parse both versions
       const originalAST = this.astEngine.parseCode(
         original,
@@ -1711,7 +1767,7 @@ body {
       // Auto-detect TypeScript syntax in the generated code
       const hasTypeScriptSyntax = this.detectTypeScriptSyntax(transformed)
       const targetLanguage = hasTypeScriptSyntax ? 'typescript' : spec.target.language
-      
+
       const ast = this.astEngine.parseCode(transformed, targetLanguage)
       const unresolvedImports: string[] = []
 
@@ -2002,7 +2058,7 @@ body {
 
     // Check if this is a JavaScript/TypeScript file that should be transformed
     const isJSFile = /\.(js|jsx|ts|tsx|mjs|cjs)$/i.test(fileName)
-    
+
     // Non-JS files (CSS, JSON, MD, etc.) keep their original path and extension
     if (!isJSFile) {
       return originalPath
@@ -2070,23 +2126,23 @@ body {
 
     // Build transformation notes
     const notes: string[] = []
-    
+
     // Add transformation method notes
     if (astErrors.length > 0) {
       notes.push(`AST transformations applied with ${astErrors.length} warnings`)
     } else {
       notes.push('AST transformations applied successfully')
     }
-    
+
     if (aiWarnings.length > 0) {
       notes.push(`AI transformations applied with ${aiWarnings.length} warnings`)
     }
-    
+
     // Add file relocation note
     if (file.path !== newFilePath) {
       notes.push(`File relocated from ${file.path} to ${newFilePath}`)
     }
-    
+
     // Add dependency change notes
     if (dependenciesAdded.length > 0) {
       notes.push(`Added ${dependenciesAdded.length} new dependencies`)
@@ -2094,7 +2150,7 @@ body {
     if (dependenciesRemoved.length > 0) {
       notes.push(`Removed ${dependenciesRemoved.length} old dependencies`)
     }
-    
+
     // Add framework-specific notes
     if (spec.source.framework !== spec.target.framework) {
       notes.push(`Migrated from ${spec.source.framework} to ${spec.target.framework}`)
@@ -2130,13 +2186,13 @@ body {
       .replace(/^pages\//, '')
       .replace(/^src\/app\//, '')
       .replace(/^app\//, '')
-    
+
     route = route.replace(/\.(tsx?|jsx?)$/, '')
-    
+
     if (route === 'index' || route.endsWith('/index')) {
       route = route.replace(/\/?index$/, '')
     }
-    
+
     return route || '(root)'
   }
 
@@ -2191,8 +2247,8 @@ body {
     }
 
     // Calculate average confidence
-    stats.averageConfidence = stats.totalFiles > 0 
-      ? Math.round(totalConfidence / stats.totalFiles) 
+    stats.averageConfidence = stats.totalFiles > 0
+      ? Math.round(totalConfidence / stats.totalFiles)
       : 0
 
     return stats
@@ -2285,16 +2341,16 @@ body {
       console.log(`[Hybrid Engine] AI needed for package.json`)
       return true
     }
-    
+
     // AI needed for component transformations
     if (context.fileType === 'component' || context.fileType === 'page') {
       return true
     }
 
     // AI needed for lifecycle method mappings
-    if (code.includes('componentDidMount') || 
-        code.includes('componentWillUnmount') ||
-        code.includes('componentDidUpdate')) {
+    if (code.includes('componentDidMount') ||
+      code.includes('componentWillUnmount') ||
+      code.includes('componentDidUpdate')) {
       return true
     }
 

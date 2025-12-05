@@ -32,7 +32,7 @@ export class AppRouterFileGenerator {
    * Generate root layout.tsx
    */
   generateRootLayout(
-    spec: MigrationSpecification,
+    _spec: MigrationSpecification,
     options: FileGenerationOptions = {}
   ): string {
     const {
@@ -228,7 +228,7 @@ ${customStyles}`
   /**
    * Generate API route handler
    */
-  generateApiRoute(routeName: string = 'handler'): string {
+  generateApiRoute(_routeName: string = 'handler'): string {
     return `import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
@@ -310,5 +310,71 @@ export const config = {
     }
 
     return exports.length > 0 ? exports.join('\n') + '\n\n' : ''
+  }
+
+  /**
+   * Generate tsconfig.json with Next.js and path alias configuration
+   * 
+   * This generates a TypeScript configuration that includes:
+   * - Next.js recommended settings
+   * - Path aliases (@/, @components/, @lib/, etc.)
+   * - Strict type checking
+   * - Modern ES features
+   */
+  generateTsConfig(_spec: MigrationSpecification): string {
+    console.log('[AppRouterFileGenerator] Generating tsconfig.json with path aliases')
+    
+    const config = {
+      compilerOptions: {
+        // Next.js recommended settings
+        target: "ES2017",
+        lib: ["dom", "dom.iterable", "esnext"],
+        allowJs: true,
+        skipLibCheck: true,
+        strict: true,
+        noEmit: true,
+        esModuleInterop: true,
+        module: "esnext",
+        moduleResolution: "bundler",
+        resolveJsonModule: true,
+        isolatedModules: true,
+        jsx: "preserve",
+        incremental: true,
+        
+        // Path aliases for clean imports
+        baseUrl: ".",
+        paths: {
+          "@/*": ["./*"],
+          "@components/*": ["components/*"],
+          "@lib/*": ["lib/*"],
+          "@app/*": ["app/*"],
+          "@hooks/*": ["hooks/*"],
+          "@context/*": ["context/*"],
+          "@types/*": ["types/*"],
+          "@utils/*": ["utils/*"],
+          "@services/*": ["services/*"]
+        },
+        
+        // Next.js specific
+        plugins: [
+          {
+            name: "next"
+          }
+        ]
+      },
+      include: [
+        "next-env.d.ts",
+        "**/*.ts",
+        "**/*.tsx",
+        ".next/types/**/*.ts"
+      ],
+      exclude: [
+        "node_modules"
+      ]
+    }
+
+    console.log('[AppRouterFileGenerator] ✓ tsconfig.json generated with path aliases:', Object.keys(config.compilerOptions.paths))
+    
+    return JSON.stringify(config, null, 2) + '\n'
   }
 }

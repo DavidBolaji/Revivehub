@@ -306,7 +306,10 @@ export function Phase3Card({
         if (!prevResult) return prevResult
         
         // Update the transformations Map
-        const updatedTransformations = new Map(prevResult.transformations)
+        // Handle both Map and plain object (from JSON deserialization)
+        const updatedTransformations = prevResult.transformations instanceof Map
+          ? new Map(prevResult.transformations)
+          : new Map(Object.entries(prevResult.transformations as any))
         const existingTransform = updatedTransformations.get(filePath)
         
         if (existingTransform) {

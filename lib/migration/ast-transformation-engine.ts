@@ -79,11 +79,74 @@ export class ASTTransformationEngine {
   }
 
   /**
+   * Deduplicate import declarations in the AST
+   * Removes duplicate imports with the same source and specifiers
+   */
+  private deduplicateImports(ast: t.File): void {
+    const program = ast.program
+    const imports = program.body.filter((node): node is t.ImportDeclaration => 
+      t.isImportDeclaration(node)
+    )
+
+    if (imports.length === 0) return
+
+    const originalCount = imports.length
+
+    // Track unique imports by source and specifiers
+    const uniqueImports = new Map<string, t.ImportDeclaration>()
+    const seenImportKeys = new Set<string>()
+
+    for (const importNode of imports) {
+      const source = importNode.source.value
+      
+      // Create a key that includes source and all specifiers
+      const specifierKeys = importNode.specifiers
+        .map(spec => {
+          if (t.isImportDefaultSpecifier(spec)) {
+            return `default:${spec.local.name}`
+          } else if (t.isImportNamespaceSpecifier(spec)) {
+            return `namespace:${spec.local.name}`
+          } else if (t.isImportSpecifier(spec)) {
+            const imported = t.isIdentifier(spec.imported) 
+              ? spec.imported.name 
+              : spec.imported.value
+            return `named:${imported}:${spec.local.name}`
+          }
+          return ''
+        })
+        .sort()
+        .join(',')
+
+      const importKey = `${source}::${specifierKeys}`
+
+      if (!seenImportKeys.has(importKey)) {
+        seenImportKeys.add(importKey)
+        uniqueImports.set(importKey, importNode)
+      }
+    }
+
+    const uniqueCount = uniqueImports.size
+    if (uniqueCount < originalCount) {
+      console.log(`[AST Engine] Deduplicated imports: ${originalCount} -> ${uniqueCount} (removed ${originalCount - uniqueCount} duplicates)`)
+    }
+
+    // Remove all import declarations
+    program.body = program.body.filter(node => !t.isImportDeclaration(node))
+
+    // Add back only unique imports at the beginning
+    const uniqueImportNodes = Array.from(uniqueImports.values())
+    program.body.unshift(...uniqueImportNodes)
+  }
+
+  /**
    * Generate code from AST with formatting preservation
    * Requirements: 5.4
    */
   generateCode(ast: t.File, preserveFormatting: boolean = true): string {
     try {
+      // Deduplicate imports before generating code
+      this.deduplicateImports(ast)
+
       const output = generate(
         ast,
         {
@@ -133,6 +196,16 @@ export class ASTTransformationEngine {
             break
           }
         }
+
+        // Convert relative imports to path aliases for specific directories
+        // This handles the case where files are moved (e.g., src/components -> components)
+        // and we want to use @/ aliases instead of relative paths
+        const convertedSource = this.convertToPathAlias(source, context.filePath, spec)
+        if (convertedSource !== source) {
+          console.log(`[AST Engine] Converting import: ${source} -> ${convertedSource} in ${context.filePath}`)
+          path.node.source = t.stringLiteral(convertedSource)
+          context.imports.push(`${source} -> ${convertedSource} (path alias)`)
+        }
       },
 
       // Handle dynamic imports
@@ -146,10 +219,117 @@ export class ASTTransformationEngine {
               path.node.arguments[0] = t.stringLiteral(newSource)
               context.imports.push(`dynamic: ${source} -> ${newSource}`)
             }
+
+            // Convert relative imports in dynamic imports too
+            const convertedSource = this.convertToPathAlias(source, context.filePath, spec)
+            if (convertedSource !== source) {
+              console.log(`[AST Engine] Converting dynamic import: ${source} -> ${convertedSource} in ${context.filePath}`)
+              path.node.arguments[0] = t.stringLiteral(convertedSource)
+              context.imports.push(`dynamic: ${source} -> ${convertedSource} (path alias)`)
+            }
           }
         }
       },
     })
+  }
+
+  /**
+   * Convert relative imports to path aliases for specific directories
+   * 
+   * This handles the case where:
+   * - Files are moved from src/components to components
+   * - Imports like "../../components/Button" should become "@components/Button"
+   * - Imports like "../../lib/utils" should become "@lib/utils"
+   * - Imports like "../hooks/useTodos" should become "@hooks/useTodos"
+   * 
+   * @param importPath - The import path to convert
+   * @param currentFilePath - The path of the file containing the import
+   * @param spec - Migration specification
+   * @returns Converted import path with alias or original path
+   */
+  private convertToPathAlias(
+    importPath: string,
+    currentFilePath: string,
+    spec: MigrationSpecification
+  ): string {
+    // Only process relative imports
+    if (!importPath.startsWith('.')) {
+      return importPath
+    }
+
+    // Only convert for Next.js migrations
+    if (spec.target.framework !== 'Next.js' && !spec.target.framework.toLowerCase().includes('next')) {
+      return importPath
+    }
+
+    // Directories that should use path aliases with their specific prefixes
+    const aliasDirectories: Record<string, string> = {
+      'components': '@components',
+      'lib': '@lib',
+      'hooks': '@hooks',
+      'context': '@context',
+      'app': '@app',
+      'types': '@types',
+      'utils': '@utils',
+      'services': '@services'
+    }
+
+    try {
+      // Resolve the relative path to an absolute path
+      const currentDir = currentFilePath.includes('/')
+        ? currentFilePath.substring(0, currentFilePath.lastIndexOf('/'))
+        : ''
+
+      // Split the import path into segments
+      const importSegments = importPath.split('/')
+      const currentSegments = currentDir.split('/').filter(Boolean)
+
+      // Count how many levels up we go
+      let levelsUp = 0
+      for (const segment of importSegments) {
+        if (segment === '..') {
+          levelsUp++
+        } else if (segment !== '.') {
+          break
+        }
+      }
+
+      // Remove the '..' segments from import path
+      const remainingSegments = importSegments.filter(s => s !== '..' && s !== '.')
+
+      // Calculate the target directory
+      const targetSegments = currentSegments.slice(0, currentSegments.length - levelsUp).concat(remainingSegments)
+      const targetPath = targetSegments.join('/')
+
+      console.log(`[AST Engine] Analyzing import path conversion:`)
+      console.log(`[AST Engine]   - Import: ${importPath}`)
+      console.log(`[AST Engine]   - Current file: ${currentFilePath}`)
+      console.log(`[AST Engine]   - Current dir: ${currentDir}`)
+      console.log(`[AST Engine]   - Levels up: ${levelsUp}`)
+      console.log(`[AST Engine]   - Target path: ${targetPath}`)
+
+      // Check if the target path starts with one of our alias directories
+      for (const [aliasDir, aliasPrefix] of Object.entries(aliasDirectories)) {
+        if (targetPath.startsWith(aliasDir + '/')) {
+          // Extract the path after the directory (e.g., "components/Button" -> "Button")
+          const pathAfterDir = targetPath.substring(aliasDir.length + 1)
+          const aliasPath = `${aliasPrefix}/${pathAfterDir}`
+          console.log(`[AST Engine]   ✓ Converting to alias: ${aliasPath}`)
+          return aliasPath
+        } else if (targetPath === aliasDir) {
+          // Direct import from directory (e.g., "components")
+          const aliasPath = aliasPrefix
+          console.log(`[AST Engine]   ✓ Converting to alias: ${aliasPath}`)
+          return aliasPath
+        }
+      }
+
+      console.log(`[AST Engine]   - No alias conversion needed`)
+      return importPath
+    } catch (error) {
+      console.error(`[AST Engine] Error converting import path ${importPath}:`, error)
+      return importPath
+    }
   }
 
   /**
