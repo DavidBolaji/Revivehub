@@ -94,10 +94,25 @@ export class GitHubIntegrationService {
       if (permissions) {
         hasWriteAccess = permissions.push === true || permissions.admin === true
         if (!hasWriteAccess) {
-          errors.push('Insufficient permissions: write access required')
+          errors.push('Insufficient permissions: write access required. Please ensure your GitHub token has the "repo" scope and you have write access to this repository.')
         }
       } else {
-        errors.push('Unable to determine repository permissions')
+        // If permissions field is not present, try to verify by attempting to get a ref
+        // This is a workaround for tokens that don't return permissions in repos.get()
+        try {
+          await this.octokit.git.getRef({
+            owner,
+            repo,
+            ref: `heads/${defaultBranch}`,
+          })
+          // If we can read refs, assume we have access
+          // We'll verify write access when we actually try to create a branch
+          hasWriteAccess = true
+          console.log('[GitHub] Permissions field not available, assuming access based on successful ref read')
+        } catch (refError) {
+          errors.push('Unable to determine repository permissions. Please ensure your GitHub token has the "repo" scope.')
+          hasWriteAccess = false
+        }
       }
     } catch (error) {
       handleGitHubError(error)

@@ -36,7 +36,8 @@ export async function POST(request: NextRequest) {
       return Response.json(
         { 
           error: 'Unauthorized',
-          message: 'Please sign in to apply changes to GitHub. You need to authenticate with GitHub to create branches and pull requests.'
+          message: 'Please sign in to apply changes to GitHub. You need to authenticate with GitHub to create branches and pull requests.',
+          requiresReauth: true
         },
         { status: 401 }
       )
@@ -309,8 +310,10 @@ export async function POST(request: NextRequest) {
         return Response.json(
           {
             error: 'Insufficient permissions',
-            message: 'You do not have write access to this repository. Please check your permissions or contact the repository owner.',
+            message: 'Your GitHub token does not have write access to this repository. Please sign out and sign back in to grant the necessary permissions, or check that you have write access to the repository.',
             details: error.message,
+            requiresReauth: true,
+            helpUrl: 'https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps#available-scopes'
           },
           { status: 403 }
         )
