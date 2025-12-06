@@ -104,8 +104,11 @@ export class GitHubRepositoryFetcher {
       await this.checkRateLimitOrThrow()
 
       // Get repository metadata to determine default branch if not provided
-      const metadata = await this.fetchRepositoryMetadata(owner, repo)
-      const targetBranch = branch || metadata.defaultBranch
+      let targetBranch = branch
+      if (!targetBranch) {
+        const metadata = await this.fetchRepositoryMetadata(owner, repo)
+        targetBranch = metadata.defaultBranch
+      }
 
       // Get the tree SHA for the branch
       const { data: refData } = await this.octokit.git.getRef({
